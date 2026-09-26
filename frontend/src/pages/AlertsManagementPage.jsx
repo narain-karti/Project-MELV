@@ -19,8 +19,8 @@ export default function AlertsManagementPage() {
       vehicle_desc: newDesc.trim() || 'Suspect Vehicle',
       category: newCategory,
       severity: 'CRITICAL',
-      fir_number: `FIR-2026-BLR-${Math.floor(1000 + Math.random() * 9000)}`,
-      flagged_by: 'Central Crime Branch (CCB)',
+      fir_number: `FIR-2026-CHN-KAN-${Math.floor(1000 + Math.random() * 9000)}`,
+      flagged_by: 'Kanathur Police Station, Chennai',
       registered_date: new Date().toISOString().split('T')[0],
       status: 'ACTIVE_PURSUIT'
     };
@@ -33,31 +33,35 @@ export default function AlertsManagementPage() {
   const handleExportDossier = () => {
     const reportText = `
 ========================================================================
-             STATE POLICE DEPARTMENT - CRIME DISPATCH DOSSIER
+             TAMIL NADU POLICE DEPARTMENT - DISPATCH DOSSIER
                    PROJECT-MELV TRAJECTORY EVIDENCE LOG
 ========================================================================
 Generated At: ${new Date().toISOString()}
-Authority: State Traffic Management & Smart Cities Security Center
-Jurisdiction: Bengaluru Central Business District (CBD)
+Authority: Greater Chennai Police & Smart Cities Command Center
+Jurisdiction: East Coast Road (SH 49) / Kanathur Police Division
 
 ACTIVE HOTLIST TARGET IDENTIFIED:
 ------------------------------------------------------------------------
-Plate Registration : KA03HA7712
-Vehicle Model      : White Hyundai Creta (SUV)
-Classification     : SUV (Confidence: 96.5%)
+Plate Registration : TN07BX8819
+Vehicle Model      : White Mahindra Scorpio (SUV)
+Classification     : SUV (Confidence: 96.9%)
 Color              : White
-FIR Reference      : FIR-2026-BLR-0941
-Infraction Type    : Stolen Vehicle / Highway Evasion
+FIR Reference      : FIR-2026-CHN-KAN-0492
+Infraction Type    : Stolen Vehicle / High-Speed Corridor Evasion
 
 RECONSTRUCTED SPATIAL-TEMPORAL TRAJECTORY:
 ------------------------------------------------------------------------
-1. Node CAM-01 [MG Road Northbound]       - 10:17:05 IST (Speed: 74 km/h)
-2. Node CAM-02 [MG Road Trinity Junction]  - 10:18:42 IST (Speed: 89 km/h)
-   Elapsed Corridor Duration: 97 seconds (2.4 km)
-   Speed Limit Status: VIOLATION (+29 km/h over urban 60 km/h threshold)
+1. Node CAM-05 [AMET University Campus Gate (ECR)]  - 10:13:34 IST (Speed: 68 km/h)
+2. Node CAM-01 [CLV Nagar 1st St - West Gate (ECR)] - 10:14:16 IST (Speed: 72.8 km/h)
+   Elapsed Corridor Duration: 42 seconds (0.85 km)
+   Speed Limit Status: VIOLATION (+22.8 km/h over urban 50 km/h threshold)
 
 NEXT-NODE INTERCEPT PREDICTION:
 ------------------------------------------------------------------------
+Target Node        : Node CAM-02 [CLV Nagar 1st St - East Junction]
+Predicted ETA      : 14 Seconds from current position
+Tactical Advisory  : Dispatch Kanathur Intercept Unit K-04 to block exit onto Reddykuppam Rd
+
 Predicted Heading : Eastbound towards Old Airport Road
 Next Target Node  : CAM-04 (Domlur Flyover Ramp)
 Estimated Arrival : 10:22:22 IST (ETA: ~3 minutes 40 seconds)
