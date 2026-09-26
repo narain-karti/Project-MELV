@@ -1,16 +1,21 @@
-# City-Wide AI Engine for Multi-Camera ANPR Trajectory Tracking & Urban Traffic Analytics
+# Project-MELV: City-Wide AI Engine for Multi-Camera ANPR Trajectory Tracking & Urban Mobility Digital Twin
 ## Prototype Master Build Specification (v2.0 — SIH Edition)
 **Problem Statement ID:** 26127  
+**Problem Statement Title:** City-Wide AI Engine for Multi-Camera ANPR Trajectory Tracking and Urban Traffic Analytics  
 **Category:** Smart India Hackathon (SIH) — State Police / Smart Cities / Ministry of Road Transport  
+**Official Repository:** [https://github.com/narain-karti/Project-MELV.git](https://github.com/narain-karti/Project-MELV.git)  
 **Document Purpose:** Production-grade blueprint and execution manual for developing a winning hackathon prototype. Formatted directly for coding agents (Claude, Cursor, Antigravity) and development teams.
 
 ---
 
 ## 0. Executive Vision & Hackathon Strategy
 
-To win Smart India Hackathon Problem Statement 26127, the platform must deliver on two critical fronts:
+To win Smart India Hackathon Problem Statement 26127, **Project-MELV** delivers on two critical fronts:
 1. **Flawless Live Demonstration Reliability:** Live stage presentations fail when multi-stream video pipelines drop frames, choke CPU/GPU, or freeze. The core multi-camera trajectory tracking is built around synchronized feeds and pre-calibrated GIS event streams that guarantee 60 FPS fluid rendering on any judge's laptop without internet dependency.
-2. **Defensible Technical Depth:** SIH judges probe for real AI. When judges ask, *"Can we upload our own photo or clip to see if your AI actually works?"*, the platform provides a dedicated **"AI Inspector & Ingestion Sandbox"** tab running live inference using Indian-tailored models.
+2. **Defensible Technical Depth & Innovation:** SIH judges probe for real AI and innovative thinking. Project-MELV introduces:
+   * **Urban Mobility Digital Twin Architecture:** Elevating simple plate reading into a full spatiotemporal digital twin of city mobility.
+   * **Dual-Mode 3D/2D GIS Trajectory Map:** Hardware-accelerated 3D animated trajectory ribbons via **Deck.gl `TripsLayer`** + **MapLibre GL JS** over 3D extruded city blocks, backed by an instant one-click **2D Leaflet** fail-safe switch.
+   * **Dedicated AI Inspector Sandbox Tab:** Allowing judges to drag-and-drop arbitrary images/videos to prove live unscripted inference.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -18,10 +23,11 @@ To win Smart India Hackathon Problem Statement 26127, the platform must deliver 
 ├──────────────────────────────────────────┬─────────────────────────────────────────────┤
 │  TAB 1: LIVE TRAJECTORY TRACKING         │  TAB 2: AI INSPECTOR & TEST SANDBOX         │
 │  • Calibrated 2-Camera Synchronized Feed │  • Interactive Judge Upload (Image / Video) │
-│  • Leaflet GIS Real-time Trajectory Map  │  • Live IISc VehicleNet-Y26n Inference      │
-│  • Digital Vehicle Identity Card         │  • Live YOLO Plate Crop + PaddleOCR         │
-│  • Dynamic Speed & Velocity Anomaly Calc │  • Indian RTO Regex Normalizer              │
-│  • Monospace Real-Time Audit Ticker      │  • Digital Footprint Extraction             │
+│  • 3D Digital Twin Map (Deck.gl Trips)   │  • Live IISc VehicleNet-Y26n Inference      │
+│  • Instant 2D Leaflet Tactical Fallback  │  • Live YOLO Plate Crop + PaddleOCR         │
+│  • Digital Vehicle Identity Card         │  • Indian RTO Regex Normalizer              │
+│  • Dynamic Speed & Velocity Anomaly Calc │  • Digital Footprint Extraction             │
+│  • Monospace Real-Time Audit Ticker      │  • Multi-stage Visual Debug Pipeline        │
 ├──────────────────────────────────────────┴─────────────────────────────────────────────┤
 │  SUPPORTING INTELLIGENCE TABS:                                                          │
 │  • Tab 3: Trajectory Query & Spatial Graph (Multi-hop path history & clone detection) │
@@ -35,10 +41,10 @@ To win Smart India Hackathon Problem Statement 26127, the platform must deliver 
 
 ## 1. Problem Statement Requirements Mapping
 
-| PS 26127 Mandatory Requirement | How This Platform Solves It | Technical Implementation |
+| PS 26127 Mandatory Requirement | How Project-MELV Solves It | Technical Implementation |
 | :--- | :--- | :--- |
 | **1. High-Accuracy ANPR & OCR (>90%)** | Handles real Indian conditions: multi-class vehicles, two-row plates, dirty/angled plates, RTO validation. | **IISc AIM VehicleNet-Y26n** (14 classes) + YOLO Plate Detector + **PaddleOCR PP-OCRv4** with Indian Plate Grammar Rules. |
-| **2. Single Plate Trajectory Tracking** | Reconstructs complete spatial-temporal path across camera nodes chronologically with timestamps & speed. | **Leaflet GIS Map** with curved road-snapped polylines, velocity vectors, and direction tracking. |
+| **2. Single Plate Trajectory Tracking** | Reconstructs complete spatial-temporal path across camera nodes chronologically with timestamps & speed. | **Dual-Engine GIS Map:** 3D Digital Twin with **Deck.gl `TripsLayer`** (animated glowing ribbons) + **MapLibre GL JS** 3D building extrusions, with one-click **2D Leaflet** fallback. |
 | **3. Macro Traffic Flow & Analytics** | Aggregated city dynamics: density heatmaps, OD patterns, bottleneck detection, average speeds. | **Recharts Interactive Dashboard** displaying dual peak hours, vehicle modal shares, and OD flow matrices. |
 | **4. Real-time Alert & Anomaly Engine** | Flags blacklisted vehicles, speed violations, and suspicious route anomalies. | **Cloned Plate Velocity Anomaly Engine** (detects impossible travel speeds across nodes) + **Next-Camera Intercept Prediction**. |
 
@@ -164,11 +170,14 @@ To make this platform visually unforgettable for hackathon judges, the UI avoids
 * **Top Screen (Surveillance Wall):**
   * Two video players side-by-side representing Camera 1 (Upstream) and Camera 2 (Downstream), styled in chamfered containers with thin border glow.
   * Surveillance HUD overlay: Camera ID, live timestamp, FPS counter (`28.4 FPS`), and animated corner-bracket reticles (`[ ]`) locking onto detected vehicles in **Acid Lime (`#D4FF32`)**.
-* **Bottom Left / Center (GIS Tactical Map):**
-  * Built using **Leaflet.js** with dark-mode basemap tiles (`CartoDB.DarkMatter`).
-  * Features Camera Node 1 and Camera Node 2 as glowing pulse markers.
-  * When a vehicle passes Cam 1: Radar ping animation in Acid Lime at Node 1.
-  * When the vehicle reaches Cam 2: An animated polyline draws along the real road geometry between Cam 1 and Cam 2.
+* **Bottom Left / Center (Dual-Engine 3D/2D GIS Map):**
+  * **Default 3D Digital Twin Mode (Deck.gl `TripsLayer` + MapLibre GL JS):**
+    * 45° isometric camera tilt over 3D extruded dark building footprints.
+    * Glowing animated trajectory ribbons (`TripsLayer`) with timecode synchronization (`currentTime` matches video clock) displaying an animated fading comet trail moving along real road curves between nodes.
+    * Node 1 and Node 2 marked by pulsing 3D neon beacons in **Acid Lime (`#D4FF32`)**.
+  * **Fail-Safe 2D Tactical Mode (Leaflet.js + CartoDB DarkMatter):**
+    * One-click toggle button on the map frame: `[ 2D TACTICAL ] | [ 3D DIGITAL TWIN ]`.
+    * Instant fallback to 2D dark basemap with animated SVG/Canvas polylines for guaranteed 60 FPS performance on any laptop hardware.
   * Trajectory badge displays: Distance ($d = 2.4\text{ km}$), Time Elapsed ($\Delta t = 2\text{m } 15\text{s}$), and Computed Velocity ($v = 64\text{ km/h}$).
 * **Top Right (Digital Vehicle Identity Card):**
   * Auto-updates when a vehicle is confirmed:
@@ -232,7 +241,7 @@ To make this platform visually unforgettable for hackathon judges, the UI avoids
 | :--- | :--- | :--- | :--- |
 | **Frontend Framework** | React 18 + Vite | `react`, `react-dom`, `vite` | Ultra-fast startup, sub-millisecond hot reload, zero bundle bloat. |
 | **Styling & UI Kit** | Tailwind CSS + Lucide Icons | `tailwindcss`, `lucide-react`, `clsx` | Neo-Brutalist / Cyber-Industrial design tokens: chamfered polygon cards, acid-lime `#D4FF32` HUD accents, and monospace telemetry. |
-| **Interactive GIS Map** | Leaflet.js | `leaflet`, `react-leaflet` | 100% reliable, zero external API key requirements, runs offline with cached tiles or local GeoJSON. |
+| **3D Digital Twin & 2D GIS Map** | Deck.gl + MapLibre GL JS + Leaflet | `@deck.gl/core`, `@deck.gl/geo-layers`, `maplibre-gl`, `leaflet`, `react-leaflet` | Hardware-accelerated 3D animated `TripsLayer` on extruded 3D city buildings + 2D fail-safe Leaflet fallback. Zero commercial API keys required. |
 | **Data Visualization** | Recharts | `recharts` | Clean, responsive charting for volume trends, modal splits, and congestion indices. |
 | **Animation & Motion** | Framer Motion | `framer-motion` | Smooth card transitions, slide-in alert toasts, and map marker radar pings. |
 | **Backend & Inference API** | Python 3.10+ FastAPI | `fastapi`, `uvicorn`, `python-multipart` | Powers the Tab 2 Live Inspector sandbox and offline batch video processor. |
@@ -289,7 +298,9 @@ Project-MELV/
         │   │   └── ReticleOverlay.jsx   # Corner-bracket HUD targeting box
         │   ├── tracking/
         │   │   ├── VideoSurveillance.jsx# Dual video players with synchronized overlays
-        │   │   ├── TacticalMap.jsx      # Leaflet GIS map with animated trajectory
+        │   │   ├── TacticalMap.jsx      # Dual-mode Map Container with [2D/3D] toggle
+        │   │   │   ├── DigitalTwin3D.jsx# Deck.gl TripsLayer + MapLibre GL 3D building view
+        │   │   │   └── Leaflet2D.jsx    # Leaflet 2D CartoDB DarkMatter fail-safe view
         │   │   ├── DigitalIdentityCard.jsx # Vehicle silhouette, plate chip, confidence
         │   │   ├── OcrConsole.jsx       # Monospace scrolling terminal
         │   │   └── NotificationFeed.jsx # Chronological alert toasts
@@ -455,7 +466,7 @@ function onMasterClockTick(currentTime) {
 │ PHASE 1: REPOSITORY SETUP & CORE UI SHELL                                              │
 │  [Step 1] Initialize Vite + React project with Tailwind CSS & Lucide Icons             │
 │  [Step 2] Build high-impact Dark Control Room layout (Sidebar, System Ticker, Tabs)     │
-│  [Step 3] Set up Leaflet.js container with custom dark CartoDB tiles                   │
+│  [Step 3] Set up Dual-Engine GIS Map: 3D Deck.gl + MapLibre & 2D Leaflet Dark tiles    │
 │                                                                                        │
 │ PHASE 2: AI BACKEND & MODEL PIPELINE (OFFLINE & SANDBOX)                              │
 │  [Step 4] Set up Python environment with ultralytics & paddleocr                       │
@@ -466,8 +477,8 @@ function onMasterClockTick(currentTime) {
 │                                                                                        │
 │ PHASE 3: LIVE TRACKING SYNCHRONIZATION (TAB 1)                                         │
 │  [Step 9] Wire dual synchronized video players with HUD reticle bounding boxes         │
-│  [Step 10] Connect state machine: Video currentTime -> events.json -> Leaflet ping     │
-│  [Step 11] Implement animated road-following curved trajectory polyline & speed calc   │
+│  [Step 10] Connect state machine: Video currentTime -> events.json -> Map node pings   │
+│  [Step 11] Implement 3D Deck.gl TripsLayer trajectory animation & 2D Leaflet fallback │
 │  [Step 12] Wire Digital Identity Card & Monospace OCR Console                          │
 │                                                                                        │
 │ PHASE 4: ANALYTICS, ALERTS & POLISH (TABS 3-6)                                         │
