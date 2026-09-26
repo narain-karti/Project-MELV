@@ -29,17 +29,17 @@
     { "name": "Others", "value": 2, "color": "#64748B" }
   ],
   "od_matrix": [
-    { "origin": "CBD (MG Road / Brigade)", "destination": "Whitefield IT Hub", "trips": 12840, "avg_time_mins": 54, "congestion": "SEVERE" },
-    { "origin": "Koramangala", "destination": "Indiranagar 100ft", "trips": 9420, "avg_time_mins": 26, "congestion": "MODERATE" },
-    { "origin": "Electronic City", "destination": "Silk Board Junction", "trips": 16210, "avg_time_mins": 48, "congestion": "CRITICAL" },
-    { "origin": "Hebbal Gateway", "destination": "M.G. Road", "trips": 11340, "avg_time_mins": 38, "congestion": "MODERATE" },
-    { "origin": "Outer Ring Road (Bellandur)", "destination": "Marathahalli", "trips": 14190, "avg_time_mins": 42, "congestion": "SEVERE" }
+    { "origin": "Kanathur ECR Corridor", "destination": "Sholinganallur OMR IT Hub", "trips": 14820, "avg_time_mins": 22, "congestion": "SEVERE" },
+    { "origin": "Thiruvanmiyur ECR Gate", "destination": "Kanathur (Mayajaal / AMET)", "trips": 11450, "avg_time_mins": 19, "congestion": "MODERATE" },
+    { "origin": "CLV Nagar 1st Street", "destination": "East Coast Road (SH 49)", "trips": 4210, "avg_time_mins": 4, "congestion": "OPTIMAL" },
+    { "origin": "Kelambakkam Junction", "destination": "Kanathur Reddykuppam", "trips": 8940, "avg_time_mins": 16, "congestion": "MODERATE" },
+    { "origin": "Kovalam Beach Link", "destination": "Akkarai Junction", "trips": 12190, "avg_time_mins": 28, "congestion": "SEVERE" }
   ],
   "corridor_hotspots": [
-    { "rank": 1, "corridor": "Silk Board Junction Feeder", "current_speed_kmh": 12, "design_speed_kmh": 50, "delay_factor": "4.2x", "status": "GRIDLOCK" },
-    { "rank": 2, "corridor": "Outer Ring Road - Bellandur Tech Park", "current_speed_kmh": 16, "design_speed_kmh": 60, "delay_factor": "3.8x", "status": "SEVERE" },
-    { "rank": 3, "corridor": "Tin Factory Junction", "current_speed_kmh": 14, "design_speed_kmh": 50, "delay_factor": "3.6x", "status": "SEVERE" },
-    { "rank": 4, "corridor": "Trinity Circle - MG Road", "current_speed_kmh": 22, "design_speed_kmh": 50, "delay_factor": "2.3x", "status": "MODERATE" },
-    { "rank": 5, "corridor": "Domlur Flyover Ramp", "current_speed_kmh": 24, "design_speed_kmh": 50, "delay_factor": "2.1x", "status": "MODERATE" }
+    { "rank": 1, "corridor": "Sholinganallur Junction (OMR-ECR Link)", "current_speed_kmh": 14, "design_speed_kmh": 50, "delay_factor": "3.6x", "status": "GRIDLOCK" },
+    { "rank": 2, "corridor": "Thiruvanmiyur ECR Toll Plaza Approach", "current_speed_kmh": 18, "design_speed_kmh": 60, "delay_factor": "3.3x", "status": "SEVERE" },
+    { "rank": 3, "corridor": "Akkarai - ECR Beach Corridor", "current_speed_kmh": 22, "design_speed_kmh": 60, "delay_factor": "2.7x", "status": "SEVERE" },
+    { "rank": 4, "corridor": "Kanathur AMET University Crosswalk", "current_speed_kmh": 26, "design_speed_kmh": 50, "delay_factor": "1.9x", "status": "MODERATE" },
+    { "rank": 5, "corridor": "Mayajaal Multiplex North Feeder", "current_speed_kmh": 28, "design_speed_kmh": 50, "delay_factor": "1.8x", "status": "MODERATE" }
   ]
 }

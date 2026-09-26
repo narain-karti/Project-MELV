@@ -1,12 +1,12 @@
 [
   {
-    "plate_number": "KA03HA7712",
-    "vehicle_desc": "White Hyundai Creta (SUV)",
-    "category": "Stolen Vehicle",
+    "plate_number": "TN07BX8819",
+    "vehicle_desc": "White Mahindra Scorpio (SUV)",
+    "category": "Stolen Vehicle / Interpol Watchlist",
     "severity": "CRITICAL",
-    "fir_number": "FIR-2026-BLR-0941",
-    "flagged_by": "Indiranagar Police Station",
-    "registered_date": "2026-09-21",
+    "fir_number": "FIR-2026-CHN-KAN-0492",
+    "flagged_by": "Kanathur Police Station, Chennai",
+    "registered_date": "2026-09-22",
     "status": "ACTIVE_PURSUIT"
   },
   {

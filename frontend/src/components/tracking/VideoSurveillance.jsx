@@ -10,8 +10,8 @@ export default function VideoSurveillance() {
       {/* Camera Feed 01 */}
       <CameraPanel
         cameraId="CAM-01"
-        cameraName="MG Road Northbound (Node 1)"
-        fps="28.4"
+        cameraName="CLV Nagar 1st St - West Gate (ECR)"
+        fps="29.9"
         videoSrc="/videos/cam_01_upstream.mp4"
         reticle={activeReticles['CAM-01']}
         currentTime={currentTime}
@@ -21,8 +21,8 @@ export default function VideoSurveillance() {
       {/* Camera Feed 02 */}
       <CameraPanel
         cameraId="CAM-02"
-        cameraName="MG Road - Trinity Junction (Node 2)"
-        fps="29.1"
+        cameraName="CLV Nagar 1st St - East Junction"
+        fps="29.9"
         videoSrc="/videos/cam_02_downstream.mp4"
         reticle={activeReticles['CAM-02']}
         currentTime={currentTime}

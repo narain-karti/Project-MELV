@@ -2,46 +2,47 @@ import React, { useState } from 'react';
 import { Search, MapPin, Clock, Gauge, AlertTriangle, ShieldCheck, ArrowRight } from 'lucide-react';
 
 const SAMPLE_TRAJECTORIES = {
-  'KA04MB2040': {
-    plate: 'KA04MB2040',
-    vClass: 'Three-wheeler (Auto-rickshaw)',
-    color: 'Yellow-Green',
+  'TN11AH4920': {
+    plate: 'TN11AH4920',
+    vClass: 'Motorcycle (Hero Splendor)',
+    color: 'Black-Silver',
     isAnomaly: false,
     history: [
-      { node: 'CAM-01', name: 'MG Road Northbound', time: '10:14:22 IST', speed: '52 km/h' },
-      { node: 'CAM-02', name: 'MG Road - Trinity Junction', time: '10:16:37 IST', speed: '64 km/h' },
-      { node: 'CAM-04', name: 'Old Airport Road', time: '10:22:10 IST', speed: '48 km/h' }
+      { node: 'CAM-02', name: 'CLV Nagar 1st St - East Junction', time: '10:14:04 IST', speed: '36 km/h' },
+      { node: 'CAM-01', name: 'CLV Nagar 1st St - West Gate (ECR)', time: '10:14:11 IST', speed: '38.6 km/h' },
+      { node: 'CAM-05', name: 'AMET University Campus Gate (ECR)', time: '10:15:30 IST', speed: '42 km/h' }
     ]
   },
-  'KA03HA7712': {
-    plate: 'KA03HA7712',
-    vClass: 'SUV (Hyundai Creta)',
+  'TN07BX8819': {
+    plate: 'TN07BX8819',
+    vClass: 'SUV (Mahindra Scorpio)',
     color: 'White',
     isAnomaly: false,
     isWanted: true,
-    fir: 'FIR-2026-BLR-0941',
+    fir: 'FIR-2026-CHN-KAN-0492',
     history: [
-      { node: 'CAM-01', name: 'MG Road Northbound', time: '10:17:05 IST', speed: '74 km/h' },
-      { node: 'CAM-02', name: 'MG Road - Trinity Junction', time: '10:18:42 IST', speed: '89 km/h (VIOLATION)' },
-      { node: 'CAM-05', name: 'Indiranagar 100ft Road', time: '10:24:18 IST', speed: '68 km/h' }
+      { node: 'CAM-05', name: 'AMET University Campus Gate (ECR)', time: '10:13:34 IST', speed: '68 km/h' },
+      { node: 'CAM-01', name: 'CLV Nagar 1st St - West Gate (ECR)', time: '10:14:16 IST', speed: '72.8 km/h (VIOLATION)' },
+      { node: 'CAM-02', name: 'CLV Nagar 1st St - East Junction', time: '10:14:31 IST (PREDICTED)', speed: 'INTERCEPT UNIT DISPATCHED' }
     ]
   },
-  'DL01CZ4040': {
-    plate: 'DL01CZ4040',
-    vClass: 'Sedan (Honda City)',
-    color: 'Silver',
+  'TN09BK6112': {
+    plate: 'TN09BK6112',
+    vClass: 'Commercial Heavy / Tipper',
+    color: 'Yellow',
     isAnomaly: true,
-    anomalyDesc: 'CLONED NUMBER PLATE: Implied transit speed of 360 km/h between distant nodes indicates two distinct vehicles operating under identical registration.',
+    anomalyDesc: 'CLONED NUMBER PLATE: Implied transit speed of 380 km/h between distant nodes indicates two distinct vehicles operating under identical registration.',
     history: [
-      { node: 'CAM-01', name: 'MG Road Central', time: '10:10:00 IST', speed: '45 km/h' },
-      { node: 'CAM-08', name: 'Silk Board Flyover (18 km away)', time: '10:13:00 IST', speed: '360 km/h [IMPOSSIBLE]' }
+      { node: 'CAM-01', name: 'CLV Nagar 1st St - ECR', time: '10:10:00 IST', speed: '35 km/h' },
+      { node: 'CAM-06', name: 'Mayajaal Multiplex North ECR', time: '10:10:45 IST', speed: '42 km/h' },
+      { node: 'CAM-08', name: 'Tambaram East Bypass (24 km away)', time: '10:14:30 IST', speed: '380 km/h [IMPOSSIBLE PHYSICAL VELOCITY]' }
     ]
   }
 };
 
 export default function TrajectoryQueryPage() {
-  const [searchQuery, setSearchQuery] = useState('KA04MB2040');
-  const [activeResult, setActiveResult] = useState(SAMPLE_TRAJECTORIES['KA04MB2040']);
+  const [searchQuery, setSearchQuery] = useState('TN11AH4920');
+  const [activeResult, setActiveResult] = useState(SAMPLE_TRAJECTORIES['TN11AH4920']);
 
   const handleSearch = (e) => {
     e.preventDefault();

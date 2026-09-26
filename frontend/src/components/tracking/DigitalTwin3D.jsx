@@ -19,7 +19,7 @@ export default function DigitalTwin3D() {
     resize();
     window.addEventListener('resize', resize);
 
-    // Simulated 3D Isometric Urban Grid Coordinates
+    // 3D Isometric Urban Digital Twin for Kanathur, Chennai
     const render = () => {
       const w = canvas.width;
       const h = canvas.height;
@@ -34,33 +34,34 @@ export default function DigitalTwin3D() {
       ctx.lineWidth = 1;
 
       const originX = w / 2;
-      const originY = h / 2 - 40;
+      const originY = h / 2 - 30;
       const gridStep = 45;
 
-      // Draw isometric grid
+      // Draw isometric floor grid
       for (let i = -8; i <= 8; i++) {
-        // Line 1 (x-axis tilted)
         ctx.beginPath();
         ctx.moveTo(originX + (i * gridStep * 1.5) - 400, originY + (i * gridStep * 0.75) + 200);
         ctx.lineTo(originX + (i * gridStep * 1.5) + 400, originY + (i * gridStep * 0.75) - 200);
         ctx.stroke();
 
-        // Line 2 (y-axis tilted)
         ctx.beginPath();
         ctx.moveTo(originX - (i * gridStep * 1.5) - 400, originY + (i * gridStep * 0.75) - 200);
         ctx.lineTo(originX - (i * gridStep * 1.5) + 400, originY + (i * gridStep * 0.75) + 200);
         ctx.stroke();
       }
 
-      // 3. 3D Extruded Building Blocks (Simulated Digital Twin City Model)
+      // 3. 3D Extruded Building Blocks along CLV Nagar 1st Street
       const buildings = [
-        { x: -140, y: -40, w: 60, h: 50, height3d: 90 },
-        { x: -70, y: -90, w: 70, h: 50, height3d: 130 },
-        { x: 40, y: -70, w: 80, h: 60, height3d: 110 },
-        { x: 140, y: -30, w: 60, h: 70, height3d: 85 },
-        { x: -160, y: 70, w: 70, h: 50, height3d: 70 },
-        { x: -50, y: 90, w: 80, h: 60, height3d: 120 },
-        { x: 70, y: 80, w: 65, h: 50, height3d: 95 }
+        { x: -160, y: -60, w: 50, h: 40, height3d: 65, label: 'Res-101' },
+        { x: -90, y: -80, w: 60, h: 45, height3d: 80, label: 'Res-103' },
+        { x: -10, y: -75, w: 55, h: 50, height3d: 70, label: 'Res-105' },
+        { x: 70, y: -85, w: 65, h: 45, height3d: 90, label: 'Res-107' },
+        { x: 150, y: -65, w: 50, h: 45, height3d: 60, label: 'Res-109' },
+        { x: -170, y: 65, w: 55, h: 45, height3d: 70, label: 'Res-102' },
+        { x: -95, y: 75, w: 65, h: 50, height3d: 85, label: 'Res-104' },
+        { x: -15, y: 70, w: 60, h: 45, height3d: 65, label: 'Res-106' },
+        { x: 65, y: 80, w: 55, h: 45, height3d: 75, label: 'Res-108' },
+        { x: 145, y: 70, w: 60, h: 45, height3d: 80, label: 'Res-110' }
       ];
 
       buildings.forEach(b => {
@@ -75,8 +76,8 @@ export default function DigitalTwin3D() {
         ctx.fillStyle = '#1E293B';
         ctx.beginPath();
         ctx.moveTo(bx, by);
-        ctx.lineTo(bx + 15, by - (b.height3d * 0.4));
-        ctx.lineTo(bx + b.w + 15, by - (b.height3d * 0.4));
+        ctx.lineTo(bx + 12, by - (b.height3d * 0.35));
+        ctx.lineTo(bx + b.w + 12, by - (b.height3d * 0.35));
         ctx.lineTo(bx + b.w, by);
         ctx.closePath();
         ctx.fill();
@@ -85,8 +86,8 @@ export default function DigitalTwin3D() {
         ctx.fillStyle = '#131D31';
         ctx.beginPath();
         ctx.moveTo(bx + b.w, by);
-        ctx.lineTo(bx + b.w + 15, by - (b.height3d * 0.4));
-        ctx.lineTo(bx + b.w + 15, by + b.h - (b.height3d * 0.4));
+        ctx.lineTo(bx + b.w + 12, by - (b.height3d * 0.35));
+        ctx.lineTo(bx + b.w + 12, by + b.h - (b.height3d * 0.35));
         ctx.lineTo(bx + b.w, by + b.h);
         ctx.closePath();
         ctx.fill();
@@ -96,31 +97,46 @@ export default function DigitalTwin3D() {
         ctx.strokeRect(bx, by, b.w, b.h);
       });
 
-      // 4. MG Road Transit Corridor (Primary Vector)
-      const cam1X = originX - 160;
-      const cam1Y = originY + 20;
-      const cam2X = originX + 160;
-      const cam2Y = originY + 20;
+      // 4. CLV Nagar 1st Street Corridor (Primary Vector)
+      const cam1X = originX - 180;
+      const cam1Y = originY + 10;
+      const cam2X = originX + 180;
+      const cam2Y = originY + 10;
 
       // Roadway ribbon
-      ctx.strokeStyle = 'rgba(15, 23, 42, 0.9)';
-      ctx.lineWidth = 28;
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.95)';
+      ctx.lineWidth = 32;
       ctx.beginPath();
-      ctx.moveTo(cam1X - 60, cam1Y + 15);
-      ctx.quadraticCurveTo(originX, originY - 10, cam2X + 60, cam2Y + 25);
+      ctx.moveTo(cam1X - 70, cam1Y + 5);
+      ctx.lineTo(cam2X + 70, cam2Y + 5);
       ctx.stroke();
 
-      // Road edge lines
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+      // Road edge lines (Neon Cyan/Blue boundary)
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
       ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cam1X - 70, cam1Y - 10);
+      ctx.lineTo(cam2X + 70, cam2Y - 10);
+      ctx.moveTo(cam1X - 70, cam1Y + 20);
+      ctx.lineTo(cam2X + 70, cam2Y + 20);
       ctx.stroke();
+
+      // Road Centerline Dashes
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([8, 8]);
+      ctx.beginPath();
+      ctx.moveTo(cam1X - 70, cam1Y + 5);
+      ctx.lineTo(cam2X + 70, cam2Y + 5);
+      ctx.stroke();
+      ctx.setLineDash([]); // reset
 
       // 5. Camera Node Beacons (3D Glowing Pillars)
-      const drawBeacon = (x, y, label, isCam1) => {
+      const drawBeacon = (x, y, id, label) => {
         // Vertical beam
         const grad = ctx.createLinearGradient(x, y - 80, x, y);
         grad.addColorStop(0, 'rgba(212, 255, 50, 0)');
-        grad.addColorStop(1, 'rgba(212, 255, 50, 0.8)');
+        grad.addColorStop(1, 'rgba(212, 255, 50, 0.85)');
         ctx.strokeStyle = grad;
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -142,38 +158,80 @@ export default function DigitalTwin3D() {
         ctx.ellipse(x, y, 16 + pulse * 10, 8 + pulse * 5, 0, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Label Tag
+        // Label Tag Box
         ctx.fillStyle = '#0F172A';
         ctx.strokeStyle = '#D4FF32';
         ctx.lineWidth = 1;
-        ctx.fillRect(x - 30, y - 95, 60, 18);
-        ctx.strokeRect(x - 30, y - 95, 60, 18);
+        ctx.fillRect(x - 42, y - 98, 84, 20);
+        ctx.strokeRect(x - 42, y - 98, 84, 20);
 
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = '10px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#D4FF32';
+        ctx.font = 'bold 10px "JetBrains Mono", monospace';
         ctx.textAlign = 'center';
-        ctx.fillText(label, x, y - 82);
+        ctx.fillText(id, x, y - 84);
       };
 
-      drawBeacon(cam1X, cam1Y, 'CAM-01', true);
-      drawBeacon(cam2X, cam2Y, 'CAM-02', false);
+      drawBeacon(cam1X, cam1Y + 5, 'CAM-01', 'West Gate (ECR)');
+      drawBeacon(cam2X, cam2Y + 5, 'CAM-02', 'East Junction');
 
-      // 6. Dynamic Trajectory Ribbons (Deck.gl TripsLayer equivalent)
-      if (activeTrajectory) {
-        const isViolation = activeTrajectory.status === 'SPEED_VIOLATION';
+      // 6. Dynamic Trajectory Ribbons & Moving Vehicle
+      let vehProgress = null;
+      let vehLabel = '';
+      let isViolation = false;
+
+      if (currentTime >= 4.0 && currentTime <= 12.5) {
+        // Motorcycle moving CAM-02 -> CAM-01
+        vehProgress = 1 - Math.min(1, Math.max(0, (currentTime - 4.0) / 8.0));
+        vehLabel = 'TN11AH4920';
+        isViolation = false;
+      } else if (currentTime >= 16.0 && currentTime <= 20.0) {
+        // Wanted SUV moving CAM-01 -> CAM-02
+        vehProgress = Math.min(1, Math.max(0, (currentTime - 16.0) / 4.0));
+        vehLabel = '⚠ TN07BX8819';
+        isViolation = true;
+      }
+
+      // Draw Trajectory Trail
+      if (activeTrajectory || vehProgress !== null) {
         const color = isViolation ? '#FF3B30' : '#D4FF32';
-
-        // Animated neon trail along the quadratic curve
         ctx.strokeStyle = color;
         ctx.lineWidth = 4;
         ctx.shadowColor = color;
         ctx.shadowBlur = 12;
 
         ctx.beginPath();
-        ctx.moveTo(cam1X, cam1Y);
-        ctx.quadraticCurveTo(originX, originY - 10, cam2X, cam2Y);
+        ctx.moveTo(cam1X, cam1Y + 5);
+        ctx.lineTo(cam2X, cam2Y + 5);
         ctx.stroke();
         ctx.shadowBlur = 0; // reset
+      }
+
+      // Draw Moving Vehicle Marker in 3D
+      if (vehProgress !== null) {
+        const vx = cam1X + (cam2X - cam1X) * vehProgress;
+        const vy = cam1Y + 5;
+        const color = isViolation ? '#FF3B30' : '#D4FF32';
+
+        // Vehicle glowing orb
+        ctx.fillStyle = color;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(vx, vy, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Vehicle plate label chip
+        ctx.fillStyle = '#000000';
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.fillRect(vx - 40, vy - 24, 80, 16);
+        ctx.strokeRect(vx - 40, vy - 24, 80, 16);
+
+        ctx.fillStyle = color;
+        ctx.font = 'bold 9px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(vehLabel, vx, vy - 13);
       }
 
       animationFrameId = requestAnimationFrame(render);
@@ -188,31 +246,43 @@ export default function DigitalTwin3D() {
   }, [currentTime, activeTrajectory]);
 
   return (
-    <div className="relative w-full h-full min-h-[300px] rounded-lg overflow-hidden border border-slate-800">
-      <canvas ref={canvasRef} className="w-full h-full min-h-[300px]" />
+    <div className="relative w-full h-full min-h-[340px] rounded-lg overflow-hidden border border-slate-800 bg-slate-950">
+      <canvas ref={canvasRef} className="w-full h-full min-h-[340px] block" />
 
-      {/* Top 3D Camera Coordinate HUD */}
-      <div className="absolute top-3 left-3 z-10 bg-black/80 px-2.5 py-1 rounded text-[10px] font-mono text-slate-300 border border-slate-800 flex items-center space-x-2">
-        <Compass className="w-3 h-3 text-cyan-hud" />
-        <span>PITCH: 45° | BEARING: -17.6° | ELEVATION: 110m</span>
+      {/* Street Name Badge */}
+      <div className="absolute top-3 left-3 z-10 bg-black/85 border border-slate-800 px-3 py-1.5 rounded text-[11px] font-mono text-slate-300 flex items-center space-x-2">
+        <span className="w-2 h-2 rounded-full bg-lime-hud animate-pulse"></span>
+        <span className="font-bold text-slate-100">CLV Nagar 1st Street, Kanathur</span>
+        <span className="text-slate-500">|</span>
+        <span className="text-lime-hud">Chennai 3D Digital Twin</span>
       </div>
 
-      {/* Trajectory HUD Overlay */}
+      {/* Orientation Compass HUD */}
+      <div className="absolute top-3 right-3 z-10 bg-black/80 border border-slate-800 p-2 rounded text-[10px] font-mono text-slate-400 flex items-center space-x-1.5">
+        <Compass className="w-3.5 h-3.5 text-lime-hud animate-spin" style={{ animationDuration: '24s' }} />
+        <span>CANVAS: ISOMETRIC 3D</span>
+      </div>
+
+      {/* Speed & Inter-Node HUD */}
       {activeTrajectory && (
         <div className="absolute bottom-3 left-3 z-10 bg-black/90 border border-lime-hud/50 px-3 py-2 rounded-lg text-xs font-mono shadow-hud-lime flex items-center space-x-4">
           <div>
-            <div className="text-[10px] text-slate-400">3D DIGITAL TWIN TRACE</div>
+            <div className="text-[10px] text-slate-400">VEHICLE TRACKED</div>
             <div className="text-lime-hud font-bold text-sm">{activeTrajectory.plate}</div>
           </div>
-          <div className="border-l border-slate-700 pl-3">
-            <div className="text-[10px] text-slate-400">CORRIDOR SPEED</div>
-            <div className={`font-bold text-sm ${activeTrajectory.status === 'SPEED_VIOLATION' ? 'text-crimson-alert' : 'text-slate-100'}`}>
-              {activeTrajectory.speedKmh} km/h
+          <div className="h-6 w-px bg-slate-800"></div>
+          <div>
+            <div className="text-[10px] text-slate-400">SPEED (INTER-NODE)</div>
+            <div className="text-white font-bold text-sm">
+              {activeTrajectory.speedKmh} <span className="text-[10px] text-slate-400">km/h</span>
             </div>
           </div>
-          <div className="border-l border-slate-700 pl-3">
-            <div className="text-[10px] text-slate-400">DISTANCE</div>
-            <div className="text-slate-200 font-semibold">{activeTrajectory.distanceKm} km</div>
+          <div className="h-6 w-px bg-slate-800"></div>
+          <div>
+            <div className="text-[10px] text-slate-400">STATUS</div>
+            <div className={`font-bold ${activeTrajectory.status === 'SPEED_VIOLATION' ? 'text-crimson-alert' : 'text-emerald-400'}`}>
+              {activeTrajectory.status}
+            </div>
           </div>
         </div>
       )}

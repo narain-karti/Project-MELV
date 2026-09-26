@@ -5,13 +5,13 @@ import blacklistData from '../data/blacklist.json';
 
 const TrackingContext = createContext(null);
 
-export const CYCLE_DURATION = 14.0; // Seconds for the synchronized loop
+export const CYCLE_DURATION = 20.2; // Calibrated to 20.22s user CCTV footage length
 
 export function TrackingProvider({ children }) {
   const [activeTab, setActiveTab] = useState('live_tracking');
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [mapMode, setMapMode] = useState('3d'); // '3d' (Deck.gl) or '2d' (Leaflet)
+  const [mapMode, setMapMode] = useState('2d'); // '2d' (Leaflet) or '3d' (Digital Twin)
   
   // Dynamic State driven by the clock
   const [firedEventIds, setFiredEventIds] = useState(new Set());
@@ -22,9 +22,9 @@ export function TrackingProvider({ children }) {
   
   // Audit Logs (monospaced terminal stream)
   const [consoleLogs, setConsoleLogs] = useState([
-    { id: 1, time: '10:14:00', text: 'SYSTEM INGEST ONLINE :: 2 NODES SYNCHRONIZED', type: 'info' },
-    { id: 2, time: '10:14:01', text: 'EDGE AI ENGINE :: Perception365/VehicleNet-Y26n LOADED', type: 'success' },
-    { id: 3, time: '10:14:02', text: 'ANPR PIPELINE :: PaddleOCR PP-OCRv4 + RTO GRAMMAR ACTIVE', type: 'info' }
+    { id: 1, time: '10:14:00', text: 'SYSTEM INGEST ONLINE :: KANATHUR MESH (2 REAL CAMERAS + 6 EDGE NODES)', type: 'info' },
+    { id: 2, time: '10:14:01', text: 'EDGE AI ENGINE :: Perception365/VehicleNet-Y26n [14 INDIAN CLASSES] ACTIVE', type: 'success' },
+    { id: 3, time: '10:14:02', text: 'GEODESIC MESH :: CLV NAGAR 1ST STREET (CHENNAI 603112) CALIBRATED', type: 'info' }
   ]);
 
   // Notifications Stack

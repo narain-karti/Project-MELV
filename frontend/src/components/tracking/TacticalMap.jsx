@@ -8,7 +8,7 @@ export default function TacticalMap() {
   const { mapMode, setMapMode } = useTracking();
 
   return (
-    <div className="relative w-full h-[320px] bg-surface-card border border-slate-800 rounded-lg overflow-hidden flex flex-col">
+    <div className="relative w-full h-[400px] bg-surface-card border border-slate-800 rounded-lg overflow-hidden flex flex-col shadow-xl">
       {/* Top Map Header & Mode Selector */}
       <div className="h-9 px-3 bg-surface-dark border-b border-slate-800 flex items-center justify-between z-20 text-xs font-mono">
         <div className="flex items-center space-x-2">
@@ -17,7 +17,7 @@ export default function TacticalMap() {
             {mapMode === '3d' ? '3D URBAN MOBILITY DIGITAL TWIN' : '2D TACTICAL GIS MAP'}
           </span>
           <span className="text-[10px] text-slate-400">
-            [BENGALURU CENTRAL MESH]
+            [CHENNAI - KANATHUR MESH]
           </span>
         </div>
 
