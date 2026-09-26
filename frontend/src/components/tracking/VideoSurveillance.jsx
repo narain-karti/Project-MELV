@@ -61,7 +61,7 @@ function CameraPanel({ cameraId, cameraName, fps, videoSrc, reticle, currentTime
         />
 
         {/* Subtle CCTV Grid & Scanline */}
-        <div className="absolute inset-0 surveillance-scanline opacity-40 pointer-events-none"></div>
+        <div className="absolute inset-0 surveillance-scanline opacity-[0.08] pointer-events-none"></div>
 
         {/* Dynamic Vehicle Targeting Reticle */}
         {isTargetLocked && (

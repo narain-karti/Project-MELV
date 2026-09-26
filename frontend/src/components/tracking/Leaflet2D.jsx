@@ -32,10 +32,9 @@ export default function Leaflet2D() {
         attributionControl: false
       });
 
-      // CartoDB DarkMatter Tiles (High contrast, tactical dark mode)
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        subdomains: 'abcd'
+      // Dark tactical tiles (free, no API key required)
+      L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19
       }).addTo(map);
 
       // Baseline Street Corridor line

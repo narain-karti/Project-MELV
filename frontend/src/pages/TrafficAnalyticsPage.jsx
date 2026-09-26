@@ -7,6 +7,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  CartesianGrid,
   PieChart,
   Pie,
   Cell
@@ -44,12 +45,15 @@ export default function TrafficAnalyticsPage() {
           <div className="h-56 w-full pt-2">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={hourly_volume}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
                 <XAxis dataKey="hour" stroke="#64748B" tick={{ fontSize: 10 }} />
-                <YAxis stroke="#64748B" tick={{ fontSize: 10 }} />
+                <YAxis yAxisId="left" stroke="#64748B" tick={{ fontSize: 10 }} />
+                <YAxis yAxisId="right" orientation="right" stroke="#00F2FE" tick={{ fontSize: 10 }} domain={[0, 80]} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#0A0D12', borderColor: '#334155', fontSize: '11px', color: '#fff' }}
                 />
                 <Line
+                  yAxisId="left"
                   type="monotone"
                   dataKey="volume"
                   stroke="#D4FF32"
@@ -58,6 +62,7 @@ export default function TrafficAnalyticsPage() {
                   name="Vehicles/Hour"
                 />
                 <Line
+                  yAxisId="right"
                   type="monotone"
                   dataKey="avg_speed"
                   stroke="#00F2FE"
@@ -82,10 +87,15 @@ export default function TrafficAnalyticsPage() {
               <PieChart>
                 <Pie
                   data={modal_split}
+                  cx="50%"
+                  cy="50%"
                   innerRadius={38}
                   outerRadius={65}
                   paddingAngle={3}
                   dataKey="value"
+                  nameKey="name"
+                  stroke="#0A0D12"
+                  strokeWidth={2}
                 >
                   {modal_split.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />

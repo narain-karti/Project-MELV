@@ -1,5 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import L from 'leaflet';
+import camerasData from '../data/camera_nodes.json';
 import { Search, MapPin, Clock, Gauge, AlertTriangle, ShieldCheck, ArrowRight } from 'lucide-react';
+
+const RTO_STATE_MAP = {
+  'KA': 'Karnataka', 'TN': 'Tamil Nadu', 'DL': 'Delhi', 'MH': 'Maharashtra',
+  'UP': 'Uttar Pradesh', 'GJ': 'Gujarat', 'HR': 'Haryana', 'TS': 'Telangana',
+  'AP': 'Andhra Pradesh', 'WB': 'West Bengal', 'KL': 'Kerala', 'RJ': 'Rajasthan',
+  'PB': 'Punjab', 'CH': 'Chandigarh', 'GA': 'Goa', 'JH': 'Jharkhand',
+  'BR': 'Bihar', 'OR': 'Odisha', 'MP': 'Madhya Pradesh', 'CG': 'Chhattisgarh'
+};
+const getStateFromPlate = (plate) => RTO_STATE_MAP[plate?.slice(0, 2)] || 'Unknown';
 
 const SAMPLE_TRAJECTORIES = {
   'TN11AH4920': {
@@ -134,7 +145,7 @@ export default function TrajectoryQueryPage() {
               </div>
               <div>
                 <div className="font-bold text-slate-200">{activeResult.vClass}</div>
-                <div className="text-slate-400 text-[10px]">{activeResult.color} • State: Karnataka</div>
+                <div className="text-slate-400 text-[10px]">{activeResult.color} • State: {getStateFromPlate(activeResult.plate)}</div>
               </div>
             </div>
 
@@ -146,49 +157,168 @@ export default function TrajectoryQueryPage() {
             </div>
           </div>
 
-          {/* Chronological Timeline */}
-          <div className="bg-surface-card border border-slate-800 p-4 rounded-lg space-y-4">
-            <div className="text-xs font-bold text-slate-300 border-b border-slate-800 pb-2 flex items-center justify-between">
-              <span>CHRONOLOGICAL JOURNEY PATHWAY</span>
-              <span className="text-[10px] text-slate-400">SPATIAL-TEMPORAL STITCHING</span>
-            </div>
+          {/* Two-column: Timeline + Route Map */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            {/* Chronological Timeline */}
+            <div className="bg-surface-card border border-slate-800 p-4 rounded-lg space-y-4">
+              <div className="text-xs font-bold text-slate-300 border-b border-slate-800 pb-2 flex items-center justify-between">
+                <span>CHRONOLOGICAL JOURNEY PATHWAY</span>
+                <span className="text-[10px] text-slate-400">SPATIAL-TEMPORAL STITCHING</span>
+              </div>
 
-            <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-700">
-              {activeResult.history.map((step, idx) => (
-                <div key={idx} className="relative flex items-start justify-between group">
-                  {/* Pin Dot */}
-                  <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-slate-900 border-2 border-lime-hud flex items-center justify-center shadow-hud-lime">
-                    <div className="w-1.5 h-1.5 rounded-full bg-lime-hud"></div>
+              <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-700">
+                {activeResult.history.map((step, idx) => (
+                  <div key={idx} className="relative flex items-start justify-between group">
+                    {/* Pin Dot */}
+                    <div className={`absolute -left-6 top-1 w-4 h-4 rounded-full bg-slate-900 border-2 flex items-center justify-center ${
+                      step.speed.includes('IMPOSSIBLE') || step.speed.includes('VIOLATION') ? 'border-crimson-alert shadow-hud-crimson' : 'border-lime-hud shadow-hud-lime'
+                    }`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${
+                        step.speed.includes('IMPOSSIBLE') || step.speed.includes('VIOLATION') ? 'bg-crimson-alert' : 'bg-lime-hud'
+                      }`}></div>
+                    </div>
+
+                    <div className="space-y-0.5">
+                      <div className="font-bold text-slate-100 flex items-center gap-2">
+                        <span className="text-lime-hud">[{step.node}]</span>
+                        <span>{step.name}</span>
+                      </div>
+                      <div className="flex items-center space-x-3 text-[10px] text-slate-400">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-slate-400" />
+                          {step.time}
+                        </span>
+                        <span className={`flex items-center gap-1 ${
+                          step.speed.includes('IMPOSSIBLE') || step.speed.includes('VIOLATION') ? 'text-crimson-alert font-bold' : 'text-slate-300'
+                        }`}>
+                          <Gauge className="w-3 h-3 text-cyan-hud" />
+                          {step.speed}
+                        </span>
+                      </div>
+                    </div>
+
+                    {idx < activeResult.history.length - 1 && (
+                      <div className="text-[10px] text-slate-400 font-mono">
+                        <span>TRANSIT STEP {idx + 1}</span>
+                      </div>
+                    )}
                   </div>
+                ))}
+              </div>
 
-                  <div className="space-y-0.5">
-                    <div className="font-bold text-slate-100 flex items-center gap-2">
-                      <span className="text-lime-hud">[{step.node}]</span>
-                      <span>{step.name}</span>
-                    </div>
-                    <div className="flex items-center space-x-3 text-[10px] text-slate-400">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-slate-400" />
-                        {step.time}
-                      </span>
-                      <span className="flex items-center gap-1 text-slate-300">
-                        <Gauge className="w-3 h-3 text-cyan-hud" />
-                        {step.speed}
-                      </span>
-                    </div>
-                  </div>
-
-                  {idx < activeResult.history.length - 1 && (
-                    <div className="text-[10px] text-slate-400 font-mono">
-                      <span>TRANSIT STEP {idx + 1}</span>
-                    </div>
-                  )}
+              {/* Wanted Vehicle FIR Info */}
+              {activeResult.isWanted && (
+                <div className="border-t border-crimson-alert/30 pt-3 flex items-center gap-2 text-[10px]">
+                  <AlertTriangle className="w-4 h-4 text-crimson-alert" />
+                  <span className="text-crimson-alert font-bold">WANTED VEHICLE</span>
+                  <span className="text-slate-400">FIR: {activeResult.fir}</span>
                 </div>
-              ))}
+              )}
             </div>
+
+            {/* Route Map */}
+            <TrajectoryRouteMap history={activeResult.history} isAnomaly={activeResult.isAnomaly} isWanted={activeResult.isWanted} />
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// Inline mini Leaflet map for trajectory visualization
+function TrajectoryRouteMap({ history, isAnomaly, isWanted }) {
+  const mapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+
+  // Build camera coordinate lookup
+  const camCoords = {};
+  camerasData.forEach(c => { camCoords[c.id] = [c.lat, c.lng]; });
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    // Cleanup previous instance
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.remove();
+      mapInstanceRef.current = null;
+    }
+
+    const coords = history
+      .map(s => camCoords[s.node])
+      .filter(Boolean);
+
+    if (coords.length === 0) return;
+
+    const map = L.map(mapRef.current, {
+      center: coords[0],
+      zoom: 16,
+      zoomControl: false,
+      attributionControl: false
+    });
+
+    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    // Fit bounds to all coords
+    if (coords.length > 1) {
+      map.fitBounds(coords, { padding: [40, 40] });
+    }
+
+    // Draw trajectory polyline
+    const lineColor = isAnomaly ? '#FF3B30' : isWanted ? '#F59E0B' : '#D4FF32';
+    L.polyline(coords, {
+      color: lineColor,
+      weight: 4,
+      opacity: 0.9,
+      dashArray: isAnomaly ? '8, 6' : undefined
+    }).addTo(map);
+
+    // Add camera node markers
+    history.forEach((step, idx) => {
+      const coord = camCoords[step.node];
+      if (!coord) return;
+
+      const isFirst = idx === 0;
+      const isLast = idx === history.length - 1;
+      const color = isAnomaly && isLast ? '#FF3B30' : '#D4FF32';
+
+      const icon = L.divIcon({
+        className: 'trajectory-node-marker',
+        html: `
+          <div style="display:flex;align-items:center;justify-content:center;position:relative;">
+            <span style="position:absolute;width:20px;height:20px;border-radius:50%;background:${color}33;${isFirst || isLast ? 'animation:ping 1.5s infinite;' : ''}"></span>
+            <span style="width:10px;height:10px;border-radius:50%;background:${color};border:2px solid #000;"></span>
+            <span style="position:absolute;top:14px;white-space:nowrap;background:rgba(0,0,0,0.9);color:${color};font-size:9px;font-family:monospace;font-weight:bold;padding:1px 5px;border-radius:3px;border:1px solid ${color}44;">${step.node}</span>
+          </div>
+        `,
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+      });
+
+      L.marker(coord, { icon }).addTo(map);
+    });
+
+    mapInstanceRef.current = map;
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [history, isAnomaly, isWanted]);
+
+  return (
+    <div className="bg-surface-card border border-slate-800 rounded-lg overflow-hidden flex flex-col">
+      <div className="px-4 py-2.5 border-b border-slate-800 flex items-center justify-between">
+        <div className="text-xs font-bold text-slate-300 flex items-center gap-2">
+          <MapPin className="w-3.5 h-3.5 text-lime-hud" />
+          SPATIAL ROUTE RECONSTRUCTION
+        </div>
+        <span className="text-[10px] text-slate-400">{history.length} NODES PLOTTED</span>
+      </div>
+      <div ref={mapRef} className="flex-1 min-h-[280px] bg-slate-950" />
     </div>
   );
 }
