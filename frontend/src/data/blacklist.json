@@ -1,0 +1,42 @@
+[
+  {
+    "plate_number": "KA03HA7712",
+    "vehicle_desc": "White Hyundai Creta (SUV)",
+    "category": "Stolen Vehicle",
+    "severity": "CRITICAL",
+    "fir_number": "FIR-2026-BLR-0941",
+    "flagged_by": "Indiranagar Police Station",
+    "registered_date": "2026-09-21",
+    "status": "ACTIVE_PURSUIT"
+  },
+  {
+    "plate_number": "MH12QZ9901",
+    "vehicle_desc": "Dark Blue Mahindra Scorpio (SUV)",
+    "category": "Organized Crime / Narcotics Watch",
+    "severity": "CRITICAL",
+    "fir_number": "FIR-2026-CCB-4412",
+    "flagged_by": "Central Crime Branch (CCB)",
+    "registered_date": "2026-09-18",
+    "status": "WATCHLIST"
+  },
+  {
+    "plate_number": "DL01CZ4040",
+    "vehicle_desc": "Silver Honda City (Sedan)",
+    "category": "Repeated Toll Evasion & Cloned Plate",
+    "severity": "HIGH",
+    "fir_number": "E-CHALLAN-2026-8812",
+    "flagged_by": "Electronic City Traffic Division",
+    "registered_date": "2026-09-24",
+    "status": "FLAGGED"
+  },
+  {
+    "plate_number": "TN09BK6112",
+    "vehicle_desc": "Yellow Ashok Leyland Tipper (Truck)",
+    "category": "Daytime Heavy Vehicle Ban Violation",
+    "severity": "MEDIUM",
+    "fir_number": "CHALLAN-TRF-0912",
+    "flagged_by": "CBD Traffic Management",
+    "registered_date": "2026-09-26",
+    "status": "FLAGGED"
+  }
+]

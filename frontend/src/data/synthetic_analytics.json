@@ -1,0 +1,45 @@
+{
+  "hourly_volume": [
+    { "hour": "00:00", "volume": 420, "avg_speed": 58 },
+    { "hour": "02:00", "volume": 210, "avg_speed": 62 },
+    { "hour": "04:00", "volume": 380, "avg_speed": 59 },
+    { "hour": "06:00", "volume": 1250, "avg_speed": 48 },
+    { "hour": "08:00", "volume": 3840, "avg_speed": 28 },
+    { "hour": "09:00", "volume": 4820, "avg_speed": 19 },
+    { "hour": "10:00", "volume": 4650, "avg_speed": 21 },
+    { "hour": "11:00", "volume": 3910, "avg_speed": 26 },
+    { "hour": "12:00", "volume": 3200, "avg_speed": 34 },
+    { "hour": "14:00", "volume": 2980, "avg_speed": 36 },
+    { "hour": "16:00", "volume": 3890, "avg_speed": 30 },
+    { "hour": "17:00", "volume": 4920, "avg_speed": 18 },
+    { "hour": "18:00", "volume": 5460, "avg_speed": 14 },
+    { "hour": "19:00", "volume": 5210, "avg_speed": 16 },
+    { "hour": "20:00", "volume": 4180, "avg_speed": 24 },
+    { "hour": "21:00", "volume": 3120, "avg_speed": 38 },
+    { "hour": "22:00", "volume": 1840, "avg_speed": 46 },
+    { "hour": "23:00", "volume": 890, "avg_speed": 52 }
+  ],
+  "modal_split": [
+    { "name": "Two-wheeler", "value": 44, "color": "#D4FF32" },
+    { "name": "Hatchback", "value": 22, "color": "#00F2FE" },
+    { "name": "Three-wheeler (Auto)", "value": 14, "color": "#F59E0B" },
+    { "name": "SUV / MUV", "value": 10, "color": "#8B5CF6" },
+    { "name": "Truck / LCV", "value": 5, "color": "#EC4899" },
+    { "name": "Bus (Public/Private)", "value": 3, "color": "#10B981" },
+    { "name": "Others", "value": 2, "color": "#64748B" }
+  ],
+  "od_matrix": [
+    { "origin": "CBD (MG Road / Brigade)", "destination": "Whitefield IT Hub", "trips": 12840, "avg_time_mins": 54, "congestion": "SEVERE" },
+    { "origin": "Koramangala", "destination": "Indiranagar 100ft", "trips": 9420, "avg_time_mins": 26, "congestion": "MODERATE" },
+    { "origin": "Electronic City", "destination": "Silk Board Junction", "trips": 16210, "avg_time_mins": 48, "congestion": "CRITICAL" },
+    { "origin": "Hebbal Gateway", "destination": "M.G. Road", "trips": 11340, "avg_time_mins": 38, "congestion": "MODERATE" },
+    { "origin": "Outer Ring Road (Bellandur)", "destination": "Marathahalli", "trips": 14190, "avg_time_mins": 42, "congestion": "SEVERE" }
+  ],
+  "corridor_hotspots": [
+    { "rank": 1, "corridor": "Silk Board Junction Feeder", "current_speed_kmh": 12, "design_speed_kmh": 50, "delay_factor": "4.2x", "status": "GRIDLOCK" },
+    { "rank": 2, "corridor": "Outer Ring Road - Bellandur Tech Park", "current_speed_kmh": 16, "design_speed_kmh": 60, "delay_factor": "3.8x", "status": "SEVERE" },
+    { "rank": 3, "corridor": "Tin Factory Junction", "current_speed_kmh": 14, "design_speed_kmh": 50, "delay_factor": "3.6x", "status": "SEVERE" },
+    { "rank": 4, "corridor": "Trinity Circle - MG Road", "current_speed_kmh": 22, "design_speed_kmh": 50, "delay_factor": "2.3x", "status": "MODERATE" },
+    { "rank": 5, "corridor": "Domlur Flyover Ramp", "current_speed_kmh": 24, "design_speed_kmh": 50, "delay_factor": "2.1x", "status": "MODERATE" }
+  ]
+}

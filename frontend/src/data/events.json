@@ -1,0 +1,129 @@
+[
+  {
+    "id": "EVT-001",
+    "camera_id": "CAM-01",
+    "camera_name": "MG Road Northbound (Node 1)",
+    "timestamp_video": 2.4,
+    "real_timestamp": "10:14:22 IST",
+    "plate_number": "KA04MB2040",
+    "plate_type": "commercial_yellow",
+    "confidence_ocr": 0.962,
+    "vehicle_class": "Three-wheeler",
+    "vehicle_color": "Yellow-Green",
+    "confidence_vehicle": 0.941,
+    "bbox_pct": { "x": 42, "y": 48, "w": 22, "h": 26 },
+    "is_blacklist": false
+  },
+  {
+    "id": "EVT-002",
+    "camera_id": "CAM-02",
+    "camera_name": "MG Road - Trinity Junction (Node 2)",
+    "timestamp_video": 4.8,
+    "real_timestamp": "10:16:37 IST",
+    "plate_number": "KA04MB2040",
+    "plate_type": "commercial_yellow",
+    "confidence_ocr": 0.954,
+    "vehicle_class": "Three-wheeler",
+    "vehicle_color": "Yellow-Green",
+    "confidence_vehicle": 0.938,
+    "bbox_pct": { "x": 38, "y": 44, "w": 24, "h": 28 },
+    "is_blacklist": false,
+    "trajectory_link": {
+      "origin_cam": "CAM-01",
+      "distance_km": 2.4,
+      "elapsed_seconds": 135,
+      "computed_speed_kmh": 64,
+      "status": "NORMAL"
+    }
+  },
+  {
+    "id": "EVT-003",
+    "camera_id": "CAM-01",
+    "camera_name": "MG Road Northbound (Node 1)",
+    "timestamp_video": 6.2,
+    "real_timestamp": "10:17:05 IST",
+    "plate_number": "KA03HA7712",
+    "plate_type": "standard_private",
+    "confidence_ocr": 0.958,
+    "vehicle_class": "SUV",
+    "vehicle_color": "White",
+    "confidence_vehicle": 0.965,
+    "bbox_pct": { "x": 32, "y": 40, "w": 28, "h": 32 },
+    "is_blacklist": true,
+    "blacklist_info": {
+      "category": "Stolen Vehicle / Wanted",
+      "fir_number": "FIR-2026-BLR-0941",
+      "severity": "CRITICAL"
+    }
+  },
+  {
+    "id": "EVT-004",
+    "camera_id": "CAM-02",
+    "camera_name": "MG Road - Trinity Junction (Node 2)",
+    "timestamp_video": 8.6,
+    "real_timestamp": "10:18:42 IST",
+    "plate_number": "KA03HA7712",
+    "plate_type": "standard_private",
+    "confidence_ocr": 0.961,
+    "vehicle_class": "SUV",
+    "vehicle_color": "White",
+    "confidence_vehicle": 0.971,
+    "bbox_pct": { "x": 35, "y": 38, "w": 30, "h": 34 },
+    "is_blacklist": true,
+    "blacklist_info": {
+      "category": "Stolen Vehicle / Wanted",
+      "fir_number": "FIR-2026-BLR-0941",
+      "severity": "CRITICAL"
+    },
+    "trajectory_link": {
+      "origin_cam": "CAM-01",
+      "distance_km": 2.4,
+      "elapsed_seconds": 97,
+      "computed_speed_kmh": 89,
+      "status": "SPEED_VIOLATION",
+      "intercept_prediction": {
+        "predicted_node": "CAM-04",
+        "node_name": "Old Airport Road - Domlur Flyover",
+        "eta_seconds": 220,
+        "recommended_action": "Dispatch Intercept Unit 14"
+      }
+    }
+  },
+  {
+    "id": "EVT-005",
+    "camera_id": "CAM-01",
+    "camera_name": "MG Road Northbound (Node 1)",
+    "timestamp_video": 9.8,
+    "real_timestamp": "10:19:15 IST",
+    "plate_number": "KA05EF3419",
+    "plate_type": "standard_private",
+    "confidence_ocr": 0.941,
+    "vehicle_class": "Two-wheeler",
+    "vehicle_color": "Black",
+    "confidence_vehicle": 0.952,
+    "bbox_pct": { "x": 55, "y": 52, "w": 16, "h": 22 },
+    "is_blacklist": false
+  },
+  {
+    "id": "EVT-006",
+    "camera_id": "CAM-02",
+    "camera_name": "MG Road - Trinity Junction (Node 2)",
+    "timestamp_video": 12.4,
+    "real_timestamp": "10:21:05 IST",
+    "plate_number": "KA05EF3419",
+    "plate_type": "standard_private",
+    "confidence_ocr": 0.948,
+    "vehicle_class": "Two-wheeler",
+    "vehicle_color": "Black",
+    "confidence_vehicle": 0.949,
+    "bbox_pct": { "x": 52, "y": 48, "w": 18, "h": 24 },
+    "is_blacklist": false,
+    "trajectory_link": {
+      "origin_cam": "CAM-01",
+      "distance_km": 2.4,
+      "elapsed_seconds": 110,
+      "computed_speed_kmh": 78,
+      "status": "NORMAL"
+    }
+  }
+]
