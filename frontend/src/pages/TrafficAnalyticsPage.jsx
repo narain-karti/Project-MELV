@@ -14,12 +14,14 @@ import {
 } from 'recharts';
 import { BarChart3, TrendingUp, AlertTriangle } from 'lucide-react';
 import CityDigitalTwin3D from '../components/analytics/CityDigitalTwin3D';
+import { getApiUrl } from '../utils/apiConfig';
 
 export default function TrafficAnalyticsPage() {
   const [data, setData] = useState(analyticsData);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/analytics')
+    fetch(getApiUrl('/api/analytics'))
+
       .then(res => res.ok ? res.json() : null)
       .then(json => {
         if (json) {

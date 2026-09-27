@@ -396,7 +396,7 @@ export default function HomePage() {
             </Link>
 
             {/* Feature 2 */}
-            <Link to="/trajectory" className="md:col-span-6 lg:col-span-4 bg-brand-paper text-brand-black p-8 chamfer-card cursor-pointer group hover:-translate-y-2 transition-transform duration-300 block lg:mt-16">
+            <Link to="/trajectory" className="md:col-span-6 lg:col-span-4 bg-brand-paper text-brand-black p-8 chamfer-card cursor-pointer group hover:-translate-y-2 transition-transform duration-300 block">
               <div className="editorial-number text-6xl opacity-20 mb-4 leading-none">02</div>
               <div className="text-[10px] font-bold uppercase tracking-widest mb-2">Trajectory Reconstruction</div>
               <h3 className="editorial-headline text-2xl md:text-3xl mb-3">LIVE TRAJECTORY</h3>
@@ -422,7 +422,7 @@ export default function HomePage() {
             </Link>
 
             {/* Feature 4 */}
-            <Link to="/alerts" className="md:col-span-6 lg:col-span-4 bg-brand-paper text-brand-black p-8 chamfer-card cursor-pointer group hover:-translate-y-2 transition-transform duration-300 block lg:-mt-8">
+            <Link to="/alerts" className="md:col-span-6 lg:col-span-4 bg-brand-paper text-brand-black p-8 chamfer-card cursor-pointer group hover:-translate-y-2 transition-transform duration-300 block">
               <div className="editorial-number text-6xl opacity-20 mb-4 leading-none">04</div>
               <div className="text-[10px] font-bold uppercase tracking-widest mb-2 text-brand-purple">Security & Alerts</div>
               <h3 className="editorial-headline text-2xl md:text-3xl mb-3">ALERTS & DISPATCH</h3>

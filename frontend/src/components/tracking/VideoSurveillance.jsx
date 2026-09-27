@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useTracking } from '../../context/TrackingContext';
 import { Camera, Radio, Eye, Crosshair, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import videoDetectionsData from '../../data/video_detections.json';
+import { getApiUrl } from '../../utils/apiConfig';
+
 
 export default function VideoSurveillance() {
   const { currentTime, isPlaying, setDigitalIdentity } = useTracking();
@@ -169,10 +171,11 @@ function CameraPanel({ cameraId, cameraName, fps, videoSrc, globalTime, isPlayin
         {isLiveStream ? (
           <div className="relative w-full h-full bg-black flex items-center justify-center">
             <img
-              src={`http://localhost:8000/api/stream/cctv?camera=${cameraId}`}
+              src={getApiUrl(`/api/stream/cctv?camera=${cameraId}`)}
               alt={cameraName}
               className="w-full h-full object-cover"
             />
+
             <div className="absolute top-2 right-2 bg-brand-black/90 border border-brand-acid text-brand-acid px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest shadow-editorial flex items-center gap-1 z-30">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-acid animate-ping"></span>
               <span>LIVE OPENCV BAKE</span>

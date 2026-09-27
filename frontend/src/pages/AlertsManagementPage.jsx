@@ -20,6 +20,10 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { ActionModal } from '../App';
+import CameraHoverPreview from '../components/common/CameraHoverPreview';
+import { getApiUrl } from '../utils/apiConfig';
+
+
 
 const DEFAULT_ALERTS = [
   {
@@ -112,10 +116,13 @@ export default function AlertsManagementPage() {
   const [dossierDownloaded, setDossierDownloaded] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [actionModal, setActionModal] = useState({ isOpen: false, title: '', message: '', severity: 'info' });
+  const [hoverPreview, setHoverPreview] = useState(null);
+  const hoverTimeoutRef = useRef(null);
 
   // Fetch catalog from backend on mount
+
   useEffect(() => {
-    fetch('http://localhost:8000/api/alerts/catalog')
+    fetch(getApiUrl('/api/alerts/catalog'))
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
@@ -149,13 +156,14 @@ export default function AlertsManagementPage() {
     setNewDesc('');
 
     try {
-      await fetch('http://localhost:8000/api/alerts', {
+      await fetch(getApiUrl('/api/alerts'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ plate: cleanPlate, reason: newCategory })
       });
     } catch {}
   };
+
 
   const handleAction = (alertId, actionType) => {
     const targetAlert = alerts.find(a => a.id === alertId);
@@ -438,9 +446,36 @@ Digital Signature  : SHA256:${hex(alert.plate)}
                   <div className="flex items-center gap-2 text-[9px] text-brand-gray">
                     <Clock className="w-3 h-3 text-brand-acid" />
                     <span>{alert.timestamp}</span>
-                    <span className="text-brand-paper font-bold">[{alert.camera_id}]</span>
+                    <span
+                      className="text-brand-acid font-bold bg-brand-black px-1.5 py-0.5 border border-brand-dark-gray/60 cursor-pointer hover:border-brand-acid transition-colors shadow-[1px_1px_0px_#202020]"
+                      onMouseEnter={(e) => {
+                        if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                        setHoverPreview({
+                          camId: alert.camera_id,
+                          name: alert.location,
+                          zone: 'City ANPR Mesh',
+                          x: e.clientX,
+                          y: e.clientY
+                        });
+                      }}
+                      onMouseMove={(e) => {
+                        setHoverPreview(prev => prev ? {
+                          ...prev,
+                          x: e.clientX,
+                          y: e.clientY
+                        } : null);
+                      }}
+                      onMouseLeave={() => {
+                        hoverTimeoutRef.current = setTimeout(() => {
+                          setHoverPreview(null);
+                        }, 60);
+                      }}
+                    >
+                      [{alert.camera_id}]
+                    </span>
                   </div>
                 </div>
+
 
                 <p className="text-[10px] text-brand-paper font-sans leading-relaxed mb-3">
                   {alert.details}
@@ -496,6 +531,8 @@ Digital Signature  : SHA256:${hex(alert.plate)}
         message={actionModal.message}
         severity={actionModal.severity}
       />
+      <CameraHoverPreview previewData={hoverPreview} />
     </div>
   );
 }
+

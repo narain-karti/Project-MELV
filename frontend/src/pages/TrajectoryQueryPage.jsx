@@ -3,6 +3,10 @@ import L from 'leaflet';
 import camerasData from '../data/camera_nodes.json';
 import { Search, MapPin, Clock, Gauge, AlertTriangle, ShieldCheck, ArrowRight, Download } from 'lucide-react';
 import { ActionModal } from '../App';
+import CameraHoverPreview from '../components/common/CameraHoverPreview';
+import { getApiUrl } from '../utils/apiConfig';
+
+
 
 const RTO_STATE_MAP = {
   'KA': 'Karnataka', 'TN': 'Tamil Nadu', 'DL': 'Delhi', 'MH': 'Maharashtra',
@@ -63,7 +67,9 @@ export default function TrajectoryQueryPage() {
     const query = plate.trim().toUpperCase();
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/trajectory/${encodeURIComponent(query)}`);
+      const res = await fetch(getApiUrl(`/api/trajectory/${encodeURIComponent(query)}`));
+
+
       if (res.ok) {
         const data = await res.json();
         setDossierText(data.dossier_text);
@@ -328,10 +334,12 @@ Authority Signature   : SHA256:8f4c99e120bd918e3820a4b1
 function TrajectoryRouteMap({ history, isAnomaly, isWanted }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
+  const [hoverPreview, setHoverPreview] = useState(null);
+  const hoverTimeoutRef = useRef(null);
 
-  // Build camera coordinate lookup
-  const camCoords = {};
-  camerasData.forEach(c => { camCoords[c.id] = [c.lat, c.lng]; });
+  // Build camera coordinate and meta lookup
+  const camLookup = {};
+  camerasData.forEach(c => { camLookup[c.id] = c; });
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -343,7 +351,7 @@ function TrajectoryRouteMap({ history, isAnomaly, isWanted }) {
     }
 
     const coords = history
-      .map(s => camCoords[s.node])
+      .map(s => camLookup[s.node] ? [camLookup[s.node].lat, camLookup[s.node].lng] : null)
       .filter(Boolean);
 
     if (coords.length === 0) return;
@@ -375,18 +383,18 @@ function TrajectoryRouteMap({ history, isAnomaly, isWanted }) {
 
     // Add camera node markers
     history.forEach((step, idx) => {
-      const coord = camCoords[step.node];
-      if (!coord) return;
+      const camMeta = camLookup[step.node];
+      if (!camMeta) return;
+      const coord = [camMeta.lat, camMeta.lng];
 
       const isFirst = idx === 0;
       const isLast = idx === history.length - 1;
       const color = isAnomaly && isLast ? '#8050E8' : '#C8E84D';
-      const textColor = '#202020';
 
       const icon = L.divIcon({
         className: 'trajectory-node-marker',
         html: `
-          <div style="display:flex;align-items:center;justify-content:center;position:relative;">
+          <div style="display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;">
             <span style="position:absolute;width:20px;height:20px;border-radius:0;background:${color}33;${isFirst || isLast ? 'animation:ping 1.5s infinite;' : ''}"></span>
             <span style="width:12px;height:12px;border-radius:0;background:${color};border:2px solid #202020;transform:rotate(45deg);"></span>
             <span style="position:absolute;top:16px;white-space:nowrap;background:#202020;color:${color};font-size:9px;font-family:monospace;font-weight:bold;padding:2px 6px;border:1px solid ${color};text-transform:uppercase;letter-spacing:1px;">${step.node}</span>
@@ -396,7 +404,34 @@ function TrajectoryRouteMap({ history, isAnomaly, isWanted }) {
         iconAnchor: [10, 10]
       });
 
-      L.marker(coord, { icon }).addTo(map);
+      const marker = L.marker(coord, { icon }).addTo(map);
+
+      marker.on('mouseover', (e) => {
+        if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+        const origEvent = e.originalEvent;
+        setHoverPreview({
+          camId: step.node,
+          name: step.name || camMeta.name,
+          zone: camMeta.zone,
+          x: origEvent.clientX,
+          y: origEvent.clientY
+        });
+      });
+
+      marker.on('mousemove', (e) => {
+        const origEvent = e.originalEvent;
+        setHoverPreview(prev => prev ? {
+          ...prev,
+          x: origEvent.clientX,
+          y: origEvent.clientY
+        } : null);
+      });
+
+      marker.on('mouseout', () => {
+        hoverTimeoutRef.current = setTimeout(() => {
+          setHoverPreview(null);
+        }, 60);
+      });
     });
 
     mapInstanceRef.current = map;
@@ -410,7 +445,7 @@ function TrajectoryRouteMap({ history, isAnomaly, isWanted }) {
   }, [history, isAnomaly, isWanted]);
 
   return (
-    <div className="bg-brand-paper border border-brand-black flex flex-col chamfer-card shadow-editorial overflow-hidden">
+    <div className="bg-brand-paper border border-brand-black flex flex-col chamfer-card shadow-editorial overflow-hidden relative">
       <div className="px-4 py-3 bg-brand-black border-b border-brand-black flex items-center justify-between">
         <div className="text-[10px] font-bold text-brand-paper flex items-center gap-2 uppercase tracking-widest">
           <MapPin className="w-3.5 h-3.5 text-brand-acid" />
@@ -419,6 +454,8 @@ function TrajectoryRouteMap({ history, isAnomaly, isWanted }) {
         <span className="text-[9px] text-brand-gray uppercase tracking-widest">{history.length} NODES PLOTTED</span>
       </div>
       <div ref={mapRef} className="flex-1 min-h-[300px] bg-brand-black relative" />
+      <CameraHoverPreview previewData={hoverPreview} />
     </div>
   );
 }
+

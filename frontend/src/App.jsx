@@ -40,30 +40,22 @@ const NAV_ITEMS = [
   { id: 'architecture', label: '[07] Architecture', path: '/architecture' },
 ];
 
-// Syncs route with TrackingContext so old setActiveTab calls still work
+// Syncs route with TrackingContext when route changes
 function RouteSync() {
-  const { activeTab, setActiveTab } = useTracking();
-  const navigate = useNavigate();
+  const { setActiveTab } = useTracking();
   const location = useLocation();
 
-  // When URL changes, sync to context
+  // When URL changes, sync active tab to context safely without triggering navigation loops
   useEffect(() => {
     const tab = TAB_FROM_PATH[location.pathname];
-    if (tab && tab !== activeTab) {
+    if (tab) {
       setActiveTab(tab);
     }
   }, [location.pathname, setActiveTab]);
 
-  // When context tab changes (via old setActiveTab calls), sync to URL
-  useEffect(() => {
-    const expectedPath = ROUTE_MAP[activeTab];
-    if (expectedPath && expectedPath !== location.pathname) {
-      navigate(expectedPath, { replace: true });
-    }
-  }, [activeTab, navigate, location.pathname]);
-
   return null;
 }
+
 
 // Modal component for dispatch/action confirmations
 function ActionModal({ isOpen, onClose, title, message, severity = 'info' }) {

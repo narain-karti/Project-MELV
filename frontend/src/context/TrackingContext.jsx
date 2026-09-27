@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import eventsData from '../data/events.json';
 import camerasData from '../data/camera_nodes.json';
 import blacklistData from '../data/blacklist.json';
+import { getApiUrl } from '../utils/apiConfig';
+
 
 const TrackingContext = createContext(null);
 
@@ -40,7 +42,8 @@ export function TrackingProvider({ children }) {
     let active = true;
     const pollBackend = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/telemetry?camera=CAM-01');
+        const res = await fetch(getApiUrl('/api/telemetry?camera=CAM-01'));
+
         if (res.ok) {
           const data = await res.json();
           if (active) {

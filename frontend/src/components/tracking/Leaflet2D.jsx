@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { useTracking } from '../../context/TrackingContext';
+import CameraHoverPreview from '../common/CameraHoverPreview';
 
 // CLV Nagar 1st Street, Kanathur, Chennai (Way ID 767936872)
 const CLV_NAGAR_WAYPOINTS = [
@@ -12,13 +13,15 @@ const CLV_NAGAR_WAYPOINTS = [
   [12.853110, 80.244436]  // Reddykuppam Feeder connection
 ];
 
+
 export default function Leaflet2D() {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const polylineRef = useRef(null);
   const corridorLineRef = useRef(null);
   const vehicleMarkerRef = useRef(null);
-  const { cameras, activeTrajectory, currentTime } = useTracking();
+  const [hoverPreview, setHoverPreview] = useState(null);
+  const hoverTimeoutRef = useRef(null);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -49,7 +52,7 @@ export default function Leaflet2D() {
       cameras.forEach(cam => {
         const isDemoNode = cam.type === 'physical_demo';
         const markerHtml = `
-          <div class="relative flex items-center justify-center">
+          <div class="relative flex items-center justify-center cursor-pointer group">
             <span class="absolute w-7 h-7 rounded-full ${isDemoNode ? 'bg-lime-hud/30 animate-ping' : 'bg-slate-500/20'}"></span>
             <span class="w-3.5 h-3.5 rounded-full ${isDemoNode ? 'bg-lime-hud shadow-hud-lime' : 'bg-slate-400'} border-2 border-black flex items-center justify-center">
               <span class="w-1 h-1 rounded-full bg-black"></span>
@@ -67,13 +70,41 @@ export default function Leaflet2D() {
           iconAnchor: [12, 12]
         });
 
-        L.marker([cam.lat, cam.lng], { icon })
+        const marker = L.marker([cam.lat, cam.lng], { icon })
           .addTo(map)
           .bindPopup(`<strong>${cam.id}</strong>: ${cam.name}<br/><span style="color:#94a3b8;font-size:11px;">${cam.zone}, Chennai</span>`);
+
+        marker.on('mouseover', (e) => {
+          if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+          const origEvent = e.originalEvent;
+          setHoverPreview({
+            camId: cam.id,
+            name: cam.name,
+            zone: cam.zone,
+            x: origEvent.clientX,
+            y: origEvent.clientY
+          });
+        });
+
+        marker.on('mousemove', (e) => {
+          const origEvent = e.originalEvent;
+          setHoverPreview(prev => prev ? {
+            ...prev,
+            x: origEvent.clientX,
+            y: origEvent.clientY
+          } : null);
+        });
+
+        marker.on('mouseout', () => {
+          hoverTimeoutRef.current = setTimeout(() => {
+            setHoverPreview(null);
+          }, 60);
+        });
       });
 
       mapInstanceRef.current = map;
     }
+
 
     return () => {
       if (mapInstanceRef.current) {
@@ -207,6 +238,11 @@ export default function Leaflet2D() {
           </div>
         </div>
       )}
+
+      {/* Floating 16:9 Live Camera Hover Preview */}
+      <CameraHoverPreview previewData={hoverPreview} />
     </div>
   );
 }
+
+

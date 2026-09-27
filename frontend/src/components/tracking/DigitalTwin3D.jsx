@@ -1,10 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTracking } from '../../context/TrackingContext';
 import { Box, Compass } from 'lucide-react';
+import CameraHoverPreview from '../common/CameraHoverPreview';
 
 export default function DigitalTwin3D() {
   const canvasRef = useRef(null);
   const { currentTime, activeTrajectory, cameras } = useTracking();
+  const [hoverPreview, setHoverPreview] = useState(null);
+  const hoverTimeoutRef = useRef(null);
+
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -245,9 +249,72 @@ export default function DigitalTwin3D() {
     };
   }, [currentTime, activeTrajectory]);
 
+  const handleCanvasMouseMove = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    const w = canvas.width;
+    const h = canvas.height;
+    const originX = w / 2;
+    const originY = h / 2 - 30;
+
+    const cam1X = originX - 180;
+    const cam1Y = originY + 10;
+    const cam2X = originX + 180;
+    const cam2Y = originY + 10;
+
+    // Check distance to CAM-01 beacon
+    const dist1 = Math.hypot(mouseX - cam1X, mouseY - (cam1Y - 40));
+    // Check distance to CAM-02 beacon
+    const dist2 = Math.hypot(mouseX - cam2X, mouseY - (cam2Y - 40));
+
+    if (dist1 < 50) {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      setHoverPreview({
+        camId: 'CAM-01',
+        name: 'CLV Nagar 1st St - West Gate (ECR)',
+        zone: 'Kanathur Sector 1',
+        x: e.clientX,
+        y: e.clientY
+      });
+      canvas.style.cursor = 'pointer';
+    } else if (dist2 < 50) {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      setHoverPreview({
+        camId: 'CAM-02',
+        name: 'CLV Nagar 1st St - East Junction',
+        zone: 'Kanathur Sector 1',
+        x: e.clientX,
+        y: e.clientY
+      });
+      canvas.style.cursor = 'pointer';
+    } else {
+      canvas.style.cursor = 'default';
+      if (!hoverTimeoutRef.current) {
+        hoverTimeoutRef.current = setTimeout(() => {
+          setHoverPreview(null);
+          hoverTimeoutRef.current = null;
+        }, 80);
+      }
+    }
+  };
+
+  const handleCanvasMouseLeave = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setHoverPreview(null);
+  };
+
   return (
     <div className="relative w-full h-full min-h-[340px] rounded-lg overflow-hidden border border-slate-800 bg-slate-950">
-      <canvas ref={canvasRef} className="w-full h-full min-h-[340px] block" />
+      <canvas
+        ref={canvasRef}
+        onMouseMove={handleCanvasMouseMove}
+        onMouseLeave={handleCanvasMouseLeave}
+        className="w-full h-full min-h-[340px] block"
+      />
 
       {/* Street Name Badge */}
       <div className="absolute top-3 left-3 z-10 bg-black/85 border border-slate-800 px-3 py-1.5 rounded text-[11px] font-mono text-slate-300 flex items-center space-x-2">
@@ -286,6 +353,10 @@ export default function DigitalTwin3D() {
           </div>
         </div>
       )}
+
+      {/* Floating 16:9 Live Camera Hover Preview */}
+      <CameraHoverPreview previewData={hoverPreview} />
     </div>
   );
 }
+

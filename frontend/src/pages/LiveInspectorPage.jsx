@@ -19,6 +19,8 @@ import {
   Clock,
   Eye
 } from 'lucide-react';
+import { getApiUrl } from '../utils/apiConfig';
+
 
 const BENCHMARK_FEEDS = [
   {
@@ -79,8 +81,9 @@ export default function LiveInspectorPage() {
     const fetchTelemetry = async () => {
       try {
         const cameraParam = isCustomUpload ? 'SANDBOX' : 'CAM-01';
-        const res = await fetch(`http://localhost:8000/api/telemetry?camera=${cameraParam}`);
+        const res = await fetch(getApiUrl(`/api/telemetry?camera=${cameraParam}`));
         if (res.ok) {
+
           const data = await res.json();
           setBackendOnline(true);
           if (data.metrics) {
@@ -127,10 +130,11 @@ export default function LiveInspectorPage() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('http://localhost:8000/api/upload_video', {
+      const res = await fetch(getApiUrl('/api/upload_video'), {
         method: 'POST',
         body: formData
       });
+
 
       if (res.ok) {
         setStreamMode('baked'); // Automatically switch to backend AI baked stream
@@ -368,9 +372,10 @@ export default function LiveInspectorPage() {
             <div className="relative aspect-video w-full bg-black border border-brand-dark-gray/40 overflow-hidden flex items-center justify-center">
               {streamMode === 'baked' && backendOnline ? (
                 <img
-                  src={`http://localhost:8000/api/stream/cctv?camera=${isCustomUpload ? 'SANDBOX' : 'CAM-01'}`}
+                  src={getApiUrl(`/api/stream/cctv?camera=${isCustomUpload ? 'SANDBOX' : 'CAM-01'}`)}
                   alt="Live AI Annotated Stream"
                   className="w-full h-full object-contain"
+
                   onError={() => setStreamMode('client')}
                 />
               ) : (
