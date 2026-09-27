@@ -157,11 +157,17 @@ export function TrackingProvider({ children }) {
         mapMode,
         setMapMode,
         activeReticles,
+        setActiveReticles,
         digitalIdentity,
+        setDigitalIdentity,
         activeTrajectory,
+        setActiveTrajectory,
         interceptAlert,
+        setInterceptAlert,
         consoleLogs,
+        setConsoleLogs,
         notifications,
+        setNotifications,
         cameras: camerasData,
         blacklist: blacklistData
       }}

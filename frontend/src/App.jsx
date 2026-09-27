@@ -8,6 +8,7 @@ import TrajectoryQueryPage from './pages/TrajectoryQueryPage';
 import TrafficAnalyticsPage from './pages/TrafficAnalyticsPage';
 import AlertsManagementPage from './pages/AlertsManagementPage';
 import EdgeNetworkPage from './pages/EdgeNetworkPage';
+import TacticalVisionLabPage from './pages/TacticalVisionLabPage';
 import { ArrowLeft } from 'lucide-react';
 
 function InternalTopNav() {
@@ -22,7 +23,8 @@ function InternalTopNav() {
           Project-MELV
         </div>
       </div>
-      <nav className="hidden md:flex gap-8 text-[10px] uppercase font-bold tracking-widest text-brand-gray font-mono">
+      <nav className="hidden md:flex gap-6 text-[10px] uppercase font-bold tracking-widest text-brand-gray font-mono">
+        <button className={`hover:text-brand-paper transition-colors ${activeTab === 'tactical_vision' ? 'text-brand-acid bg-brand-dark-gray px-2 py-1' : ''}`} onClick={() => setActiveTab('tactical_vision')}>[00] Vision Lab</button>
         <button className={`hover:text-brand-paper transition-colors ${activeTab === 'live_tracking' ? 'text-brand-acid' : ''}`} onClick={() => setActiveTab('live_tracking')}>[01] Trajectory</button>
         <button className={`hover:text-brand-paper transition-colors ${activeTab === 'ai_inspector' ? 'text-brand-acid' : ''}`} onClick={() => setActiveTab('ai_inspector')}>[02] Sandbox</button>
         <button className={`hover:text-brand-paper transition-colors ${activeTab === 'trajectory_query' ? 'text-brand-acid' : ''}`} onClick={() => setActiveTab('trajectory_query')}>[03] Query</button>
@@ -45,6 +47,8 @@ function AppContent() {
 
   const renderActivePage = () => {
     switch (activeTab) {
+      case 'tactical_vision':
+        return <TacticalVisionLabPage />;
       case 'live_tracking':
         return <LiveTrackingPage />;
       case 'ai_inspector':
@@ -58,7 +62,7 @@ function AppContent() {
       case 'network_status':
         return <EdgeNetworkPage />;
       default:
-        return <LiveTrackingPage />;
+        return <TacticalVisionLabPage />;
     }
   };
 

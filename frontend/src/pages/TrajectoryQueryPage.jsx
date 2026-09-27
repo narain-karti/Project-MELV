@@ -76,36 +76,36 @@ export default function TrajectoryQueryPage() {
   };
 
   return (
-    <div className="space-y-4 max-w-5xl mx-auto font-mono text-xs">
+    <div className="space-y-6 max-w-5xl mx-auto font-mono text-xs">
       {/* Query Bar */}
-      <div className="bg-surface-card border border-slate-800 p-4 rounded-lg">
-        <div className="flex items-center justify-between mb-2">
-          <span className="font-bold text-slate-200">[TAB 03] SPATIOTEMPORAL TRAJECTORY QUERY</span>
-          <span className="text-[10px] text-slate-400">INDEXED PLATES: 48,290</span>
+      <div className="bg-brand-paper border border-brand-black p-5 chamfer-card shadow-editorial">
+        <div className="flex items-center justify-between mb-4 pb-2 border-b border-brand-black/20">
+          <span className="font-bold text-brand-black uppercase tracking-widest text-[10px]">SPATIOTEMPORAL TRAJECTORY QUERY</span>
+          <span className="text-[9px] text-brand-gray font-bold tracking-widest uppercase">INDEXED PLATES: <span className="text-brand-acid bg-brand-black px-1.5 py-0.5 ml-1">48,290</span></span>
         </div>
 
-        <form onSubmit={handleSearch} className="flex gap-2">
+        <form onSubmit={handleSearch} className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <Search className="w-5 h-5 text-brand-black absolute left-3 top-3" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ENTER VEHICLE REGISTRATION (e.g. KA04MB2040, KA03HA7712, DL01CZ4040)..."
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-4 py-2.5 text-slate-100 uppercase tracking-wider focus:outline-none focus:border-lime-hud transition-colors"
+              placeholder="ENTER VEHICLE REGISTRATION (e.g. KA04MB2040, DL01CZ4040)..."
+              className="w-full bg-white border-2 border-brand-black pl-11 pr-4 py-3 text-brand-black font-bold uppercase tracking-widest focus:outline-none focus:border-brand-purple transition-colors chamfer-card shadow-editorial"
             />
           </div>
           <button
             type="submit"
-            className="chamfer-btn bg-lime-hud hover:bg-lime-400 text-black px-6 font-bold shadow-hud-lime"
+            className="chamfer-btn bg-brand-acid text-brand-black px-8 font-bold text-[11px] uppercase tracking-widest border-2 border-brand-black hover:bg-white hover:-translate-y-1 hover:translate-x-1 transition-all shadow-editorial"
           >
             RECONSTRUCT
           </button>
         </form>
 
         {/* Quick query tags */}
-        <div className="flex items-center space-x-2 mt-3 text-[10px] text-slate-400">
-          <span>SAMPLE QUERIES:</span>
+        <div className="flex flex-wrap items-center gap-2 mt-4 text-[9px] font-bold tracking-widest uppercase text-brand-dark-gray">
+          <span className="mr-2">SAMPLE QUERIES:</span>
           {Object.keys(SAMPLE_TRAJECTORIES).map((p) => (
             <button
               key={p}
@@ -113,7 +113,7 @@ export default function TrajectoryQueryPage() {
                 setSearchQuery(p);
                 setActiveResult(SAMPLE_TRAJECTORIES[p]);
               }}
-              className="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 hover:border-lime-hud text-slate-300"
+              className="px-2 py-1 bg-brand-black text-brand-paper hover:bg-brand-acid hover:text-brand-black transition-colors shadow-editorial"
             >
               {p}
             </button>
@@ -126,11 +126,11 @@ export default function TrajectoryQueryPage() {
         <div className="space-y-3">
           {/* Anomaly Banner if Cloned Plate */}
           {activeResult.isAnomaly && (
-            <div className="bg-crimson-alert/20 border-2 border-crimson-alert p-3 rounded-lg text-crimson-alert flex items-start space-x-3 shadow-hud-crimson">
-              <AlertTriangle className="w-6 h-6 flex-shrink-0 animate-bounce" />
+            <div className="bg-brand-purple border-2 border-brand-black p-4 text-brand-paper flex items-start space-x-4 shadow-editorial chamfer-card">
+              <AlertTriangle className="w-8 h-8 flex-shrink-0 animate-bounce text-brand-acid" />
               <div>
-                <strong className="text-sm">⚠ CLONED NUMBER PLATE DETECTED</strong>
-                <p className="text-[11px] font-sans text-slate-200 mt-0.5">
+                <strong className="text-sm font-mono uppercase tracking-widest block mb-1">⚠ CLONED NUMBER PLATE DETECTED</strong>
+                <p className="text-[11px] font-sans text-brand-paper leading-relaxed">
                   {activeResult.anomalyDesc}
                 </p>
               </div>
@@ -138,68 +138,68 @@ export default function TrajectoryQueryPage() {
           )}
 
           {/* Vehicle Metadata Header */}
-          <div className="bg-surface-card border border-slate-800 p-3.5 rounded-lg flex items-center justify-between">
+          <div className="bg-brand-black border border-brand-black p-4 flex items-center justify-between shadow-editorial chamfer-card">
             <div className="flex items-center space-x-3">
-              <div className="bg-white text-black px-3 py-1 rounded font-bold text-sm tracking-wider border border-black">
+              <div className="bg-white text-black px-3 py-1 rounded font-bold text-sm tracking-wider border border-brand-black shadow-editorial transform -skew-x-6">
                 {activeResult.plate}
               </div>
               <div>
-                <div className="font-bold text-slate-200">{activeResult.vClass}</div>
-                <div className="text-slate-400 text-[10px]">{activeResult.color} • State: {getStateFromPlate(activeResult.plate)}</div>
+                <div className="font-bold text-brand-acid uppercase tracking-widest text-[11px]">{activeResult.vClass}</div>
+                <div className="text-brand-gray text-[9px] uppercase tracking-widest mt-1">{activeResult.color} • State: {getStateFromPlate(activeResult.plate)}</div>
               </div>
             </div>
 
             <div className="flex items-center space-x-3 text-right">
               <div>
-                <div className="text-[10px] text-slate-400">DETECTED NODES</div>
-                <div className="text-lime-hud font-bold text-sm">{activeResult.history.length} CAMERAS</div>
+                <div className="text-[9px] text-brand-gray uppercase tracking-widest font-bold">DETECTED NODES</div>
+                <div className="text-brand-acid font-bold text-sm uppercase">{activeResult.history.length} CAMERAS</div>
               </div>
             </div>
           </div>
 
           {/* Two-column: Timeline + Route Map */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Chronological Timeline */}
-            <div className="bg-surface-card border border-slate-800 p-4 rounded-lg space-y-4">
-              <div className="text-xs font-bold text-slate-300 border-b border-slate-800 pb-2 flex items-center justify-between">
-                <span>CHRONOLOGICAL JOURNEY PATHWAY</span>
-                <span className="text-[10px] text-slate-400">SPATIAL-TEMPORAL STITCHING</span>
+            <div className="bg-brand-paper border border-brand-black p-5 chamfer-card shadow-editorial space-y-6">
+              <div className="text-[10px] font-bold text-brand-black border-b border-brand-black/20 pb-3 flex items-center justify-between uppercase tracking-widest">
+                <span>CHRONOLOGICAL PATHWAY</span>
+                <span className="text-[9px] text-brand-gray bg-brand-dark-gray px-2 py-1 text-brand-paper">SPATIO-TEMPORAL</span>
               </div>
 
-              <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-700">
+              <div className="relative pl-6 space-y-8 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-[2px] before:bg-brand-black">
                 {activeResult.history.map((step, idx) => (
                   <div key={idx} className="relative flex items-start justify-between group">
                     {/* Pin Dot */}
-                    <div className={`absolute -left-6 top-1 w-4 h-4 rounded-full bg-slate-900 border-2 flex items-center justify-center ${
-                      step.speed.includes('IMPOSSIBLE') || step.speed.includes('VIOLATION') ? 'border-crimson-alert shadow-hud-crimson' : 'border-lime-hud shadow-hud-lime'
+                    <div className={`absolute -left-6 top-1 w-4 h-4 flex items-center justify-center bg-brand-paper border-2 ${
+                      step.speed.includes('IMPOSSIBLE') || step.speed.includes('VIOLATION') ? 'border-brand-purple shadow-editorial' : 'border-brand-black shadow-editorial'
                     }`}>
-                      <div className={`w-1.5 h-1.5 rounded-full ${
-                        step.speed.includes('IMPOSSIBLE') || step.speed.includes('VIOLATION') ? 'bg-crimson-alert' : 'bg-lime-hud'
+                      <div className={`w-1.5 h-1.5 ${
+                        step.speed.includes('IMPOSSIBLE') || step.speed.includes('VIOLATION') ? 'bg-brand-purple' : 'bg-brand-black'
                       }`}></div>
                     </div>
 
-                    <div className="space-y-0.5">
-                      <div className="font-bold text-slate-100 flex items-center gap-2">
-                        <span className="text-lime-hud">[{step.node}]</span>
+                    <div className="space-y-1.5">
+                      <div className="font-bold text-brand-black flex items-center gap-2 uppercase tracking-widest text-[10px]">
+                        <span className="bg-brand-black text-brand-paper px-1.5 py-0.5">{step.node}</span>
                         <span>{step.name}</span>
                       </div>
-                      <div className="flex items-center space-x-3 text-[10px] text-slate-400">
+                      <div className="flex items-center space-x-3 text-[9px] text-brand-gray font-bold uppercase tracking-widest">
                         <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-slate-400" />
+                          <Clock className="w-3 h-3 text-brand-black" />
                           {step.time}
                         </span>
-                        <span className={`flex items-center gap-1 ${
-                          step.speed.includes('IMPOSSIBLE') || step.speed.includes('VIOLATION') ? 'text-crimson-alert font-bold' : 'text-slate-300'
+                        <span className={`flex items-center gap-1 px-1.5 py-0.5 ${
+                          step.speed.includes('IMPOSSIBLE') || step.speed.includes('VIOLATION') ? 'bg-brand-purple text-brand-paper font-bold shadow-editorial -rotate-1' : 'bg-brand-acid text-brand-black border border-brand-black shadow-editorial rotate-1'
                         }`}>
-                          <Gauge className="w-3 h-3 text-cyan-hud" />
+                          <Gauge className="w-3 h-3" />
                           {step.speed}
                         </span>
                       </div>
                     </div>
 
                     {idx < activeResult.history.length - 1 && (
-                      <div className="text-[10px] text-slate-400 font-mono">
-                        <span>TRANSIT STEP {idx + 1}</span>
+                      <div className="text-[9px] text-brand-gray font-mono font-bold uppercase tracking-widest">
+                        <span>STEP {idx + 1}</span>
                       </div>
                     )}
                   </div>
@@ -208,10 +208,12 @@ export default function TrajectoryQueryPage() {
 
               {/* Wanted Vehicle FIR Info */}
               {activeResult.isWanted && (
-                <div className="border-t border-crimson-alert/30 pt-3 flex items-center gap-2 text-[10px]">
-                  <AlertTriangle className="w-4 h-4 text-crimson-alert" />
-                  <span className="text-crimson-alert font-bold">WANTED VEHICLE</span>
-                  <span className="text-slate-400">FIR: {activeResult.fir}</span>
+                <div className="border-t border-brand-purple/30 pt-4 mt-4 flex items-center justify-between text-[9px] uppercase tracking-widest font-bold">
+                  <div className="flex items-center gap-2 text-brand-purple">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span>WANTED VEHICLE</span>
+                  </div>
+                  <span className="text-brand-black bg-brand-acid px-2 py-1 shadow-editorial">FIR: {activeResult.fir}</span>
                 </div>
               )}
             </div>
@@ -266,7 +268,7 @@ function TrajectoryRouteMap({ history, isAnomaly, isWanted }) {
     }
 
     // Draw trajectory polyline
-    const lineColor = isAnomaly ? '#FF3B30' : isWanted ? '#F59E0B' : '#D4FF32';
+    const lineColor = isAnomaly ? '#8050E8' : isWanted ? '#FF3B30' : '#C8E84D';
     L.polyline(coords, {
       color: lineColor,
       weight: 4,
@@ -281,15 +283,16 @@ function TrajectoryRouteMap({ history, isAnomaly, isWanted }) {
 
       const isFirst = idx === 0;
       const isLast = idx === history.length - 1;
-      const color = isAnomaly && isLast ? '#FF3B30' : '#D4FF32';
+      const color = isAnomaly && isLast ? '#8050E8' : '#C8E84D';
+      const textColor = '#202020';
 
       const icon = L.divIcon({
         className: 'trajectory-node-marker',
         html: `
           <div style="display:flex;align-items:center;justify-content:center;position:relative;">
-            <span style="position:absolute;width:20px;height:20px;border-radius:50%;background:${color}33;${isFirst || isLast ? 'animation:ping 1.5s infinite;' : ''}"></span>
-            <span style="width:10px;height:10px;border-radius:50%;background:${color};border:2px solid #000;"></span>
-            <span style="position:absolute;top:14px;white-space:nowrap;background:rgba(0,0,0,0.9);color:${color};font-size:9px;font-family:monospace;font-weight:bold;padding:1px 5px;border-radius:3px;border:1px solid ${color}44;">${step.node}</span>
+            <span style="position:absolute;width:20px;height:20px;border-radius:0;background:${color}33;${isFirst || isLast ? 'animation:ping 1.5s infinite;' : ''}"></span>
+            <span style="width:12px;height:12px;border-radius:0;background:${color};border:2px solid #202020;transform:rotate(45deg);"></span>
+            <span style="position:absolute;top:16px;white-space:nowrap;background:#202020;color:${color};font-size:9px;font-family:monospace;font-weight:bold;padding:2px 6px;border:1px solid ${color};text-transform:uppercase;letter-spacing:1px;">${step.node}</span>
           </div>
         `,
         iconSize: [20, 20],
@@ -310,15 +313,15 @@ function TrajectoryRouteMap({ history, isAnomaly, isWanted }) {
   }, [history, isAnomaly, isWanted]);
 
   return (
-    <div className="bg-surface-card border border-slate-800 rounded-lg overflow-hidden flex flex-col">
-      <div className="px-4 py-2.5 border-b border-slate-800 flex items-center justify-between">
-        <div className="text-xs font-bold text-slate-300 flex items-center gap-2">
-          <MapPin className="w-3.5 h-3.5 text-lime-hud" />
+    <div className="bg-brand-paper border border-brand-black flex flex-col chamfer-card shadow-editorial overflow-hidden">
+      <div className="px-4 py-3 bg-brand-black border-b border-brand-black flex items-center justify-between">
+        <div className="text-[10px] font-bold text-brand-paper flex items-center gap-2 uppercase tracking-widest">
+          <MapPin className="w-3.5 h-3.5 text-brand-acid" />
           SPATIAL ROUTE RECONSTRUCTION
         </div>
-        <span className="text-[10px] text-slate-400">{history.length} NODES PLOTTED</span>
+        <span className="text-[9px] text-brand-gray uppercase tracking-widest">{history.length} NODES PLOTTED</span>
       </div>
-      <div ref={mapRef} className="flex-1 min-h-[280px] bg-slate-950" />
+      <div ref={mapRef} className="flex-1 min-h-[300px] bg-brand-black relative" />
     </div>
   );
 }

@@ -20,54 +20,54 @@ export default function TrafficAnalyticsPage() {
   return (
     <div className="space-y-4 max-w-6xl mx-auto font-mono text-xs">
       {/* Top Title Banner */}
-      <div className="bg-surface-card border border-slate-800 p-3.5 rounded-lg flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <BarChart3 className="w-4 h-4 text-cyan-hud" />
-          <span className="font-bold text-slate-200">[TAB 04] MACRO URBAN TRAFFIC ANALYTICS</span>
+      <div className="bg-brand-paper border border-brand-black p-5 chamfer-card shadow-editorial flex flex-col md:flex-row items-center justify-between">
+        <div className="flex items-center space-x-3 mb-2 md:mb-0">
+          <BarChart3 className="w-6 h-6 text-brand-black" />
+          <span className="font-bold text-brand-black uppercase tracking-widest text-[11px] md:text-sm">MACRO URBAN TRAFFIC ANALYTICS</span>
         </div>
-        <div className="text-[10px] text-slate-400">
-          DAILY PASS-THROUGHS: <strong className="text-lime-hud">842,190 VEHICLES</strong>
+        <div className="text-[10px] text-brand-gray font-bold tracking-widest uppercase">
+          DAILY PASS-THROUGHS: <strong className="text-brand-acid bg-brand-black px-2 py-1 ml-1 shadow-editorial">842,190 VEHICLES</strong>
         </div>
       </div>
 
       {/* Grid: Hourly Density Curves + Modal Split */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Hourly Volume Line Chart (8 of 12 cols) */}
-        <div className="lg:col-span-8 bg-surface-card border border-slate-800 p-4 rounded-lg flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-2">
+        <div className="lg:col-span-8 bg-brand-paper border border-brand-black p-5 chamfer-card shadow-editorial flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-4 border-b border-brand-black/20 pb-3">
             <div>
-              <div className="font-bold text-slate-200">HOURLY TRAFFIC DENSITY CURVE</div>
-              <div className="text-[10px] text-slate-400 font-sans">Dual peak-hour patterns: 08:30-11:00 AM & 17:30-20:30 PM</div>
+              <div className="font-bold text-brand-black uppercase tracking-widest text-[11px]">HOURLY TRAFFIC DENSITY CURVE</div>
+              <div className="text-[9px] text-brand-gray font-sans mt-1">Dual peak-hour patterns: 08:30-11:00 AM & 17:30-20:30 PM</div>
             </div>
-            <span className="text-[10px] text-lime-hud font-bold">LIVE TELEMETRY</span>
+            <span className="text-[9px] bg-brand-black text-brand-acid px-2 py-1 uppercase tracking-widest font-bold shadow-editorial">LIVE TELEMETRY</span>
           </div>
 
           <div className="h-56 w-full pt-2">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={hourly_volume}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-                <XAxis dataKey="hour" stroke="#64748B" tick={{ fontSize: 10 }} />
-                <YAxis yAxisId="left" stroke="#64748B" tick={{ fontSize: 10 }} />
-                <YAxis yAxisId="right" orientation="right" stroke="#00F2FE" tick={{ fontSize: 10 }} domain={[0, 80]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#202020" strokeOpacity={0.1} />
+                <XAxis dataKey="hour" stroke="#777777" tick={{ fontSize: 9, fill: '#777777', fontWeight: 'bold' }} />
+                <YAxis yAxisId="left" stroke="#777777" tick={{ fontSize: 9, fill: '#777777', fontWeight: 'bold' }} />
+                <YAxis yAxisId="right" orientation="right" stroke="#777777" tick={{ fontSize: 9, fill: '#777777', fontWeight: 'bold' }} domain={[0, 80]} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#0A0D12', borderColor: '#334155', fontSize: '11px', color: '#fff' }}
+                  contentStyle={{ backgroundColor: '#202020', borderColor: '#202020', fontSize: '10px', color: '#E5E5E6', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 'bold' }}
                 />
                 <Line
                   yAxisId="left"
                   type="monotone"
                   dataKey="volume"
-                  stroke="#D4FF32"
-                  strokeWidth={2}
-                  dot={{ fill: '#D4FF32', r: 3 }}
+                  stroke="#202020"
+                  strokeWidth={3}
+                  dot={{ fill: '#202020', r: 4 }}
                   name="Vehicles/Hour"
                 />
                 <Line
                   yAxisId="right"
                   type="monotone"
                   dataKey="avg_speed"
-                  stroke="#00F2FE"
-                  strokeWidth={2}
-                  dot={{ fill: '#00F2FE', r: 2 }}
+                  stroke="#C8E84D"
+                  strokeWidth={3}
+                  dot={{ fill: '#C8E84D', r: 3 }}
                   name="Avg Speed (km/h)"
                 />
               </LineChart>
@@ -76,10 +76,10 @@ export default function TrafficAnalyticsPage() {
         </div>
 
         {/* Modal Split Donut (4 of 12 cols) */}
-        <div className="lg:col-span-4 bg-surface-card border border-slate-800 p-4 rounded-lg flex flex-col justify-between">
-          <div>
-            <div className="font-bold text-slate-200">VEHICLE MODAL SPLIT</div>
-            <div className="text-[10px] text-slate-400 font-sans">From VehicleNet-Y26n 14 classes</div>
+        <div className="lg:col-span-4 bg-brand-paper border border-brand-black p-5 chamfer-card shadow-editorial flex flex-col justify-between">
+          <div className="mb-4 border-b border-brand-black/20 pb-3">
+            <div className="font-bold text-brand-black uppercase tracking-widest text-[11px]">VEHICLE MODAL SPLIT</div>
+            <div className="text-[9px] text-brand-gray font-sans mt-1">From VehicleNet-Y26n 14 classes</div>
           </div>
 
           <div className="h-44 w-full flex items-center justify-center">
@@ -94,53 +94,57 @@ export default function TrafficAnalyticsPage() {
                   paddingAngle={3}
                   dataKey="value"
                   nameKey="name"
-                  stroke="#0A0D12"
+                  stroke="#E5E5E6"
                   strokeWidth={2}
                 >
-                  {modal_split.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
+                  {modal_split.map((entry, index) => {
+                    const customColor = entry.name === 'Two-Wheeler' ? '#C8E84D' : entry.name === 'Commercial' ? '#8050E8' : entry.name === 'Car' ? '#202020' : '#777777';
+                    return <Cell key={`cell-${index}`} fill={customColor} />;
+                  })}
                 </Pie>
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#0A0D12', borderColor: '#334155', fontSize: '11px', color: '#fff' }}
+                  contentStyle={{ backgroundColor: '#202020', borderColor: '#202020', fontSize: '10px', color: '#E5E5E6', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 'bold' }}
                 />
               </PieChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="grid grid-cols-2 gap-1 text-[9px] text-slate-400 pt-2 border-t border-slate-800">
-            {modal_split.slice(0, 4).map((m) => (
-              <div key={m.name} className="flex items-center space-x-1.5">
-                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }}></span>
-                <span className="truncate">{m.name}: <strong>{m.value}%</strong></span>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 gap-2 text-[9px] text-brand-black pt-3 border-t border-brand-black/20 uppercase tracking-widest font-bold">
+            {modal_split.slice(0, 4).map((m) => {
+              const customColor = m.name === 'Two-Wheeler' ? '#C8E84D' : m.name === 'Commercial' ? '#8050E8' : m.name === 'Car' ? '#202020' : '#777777';
+              return (
+                <div key={m.name} className="flex items-center space-x-1.5">
+                  <span className="w-2.5 h-2.5 bg-brand-black shadow-editorial transform -rotate-3 border border-brand-black" style={{ backgroundColor: customColor }}></span>
+                  <span className="truncate">{m.name}: <strong className="text-brand-acid bg-brand-black px-1 ml-0.5 shadow-editorial">{m.value}%</strong></span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
 
       {/* Origin-Destination (OD) Matrix & Bottlenecks */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* OD Matrix */}
-        <div className="bg-surface-card border border-slate-800 p-4 rounded-lg">
-          <div className="font-bold text-slate-200 mb-2">ORIGIN-DESTINATION (OD) TRANSIT MATRIX</div>
+        <div className="bg-brand-paper border border-brand-black p-5 chamfer-card shadow-editorial">
+          <div className="font-bold text-brand-black uppercase tracking-widest text-[11px] mb-4 border-b border-brand-black/20 pb-3">ORIGIN-DESTINATION (OD) TRANSIT MATRIX</div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-[11px]">
-              <thead className="text-[10px] text-slate-400 border-b border-slate-800 pb-1">
+            <table className="w-full text-left text-[10px] uppercase tracking-widest">
+              <thead className="text-[9px] text-brand-gray border-b border-brand-black pb-2 font-bold">
                 <tr>
-                  <th className="pb-1.5">ORIGIN</th>
-                  <th className="pb-1.5">DESTINATION</th>
-                  <th className="pb-1.5 text-right">DAILY TRIPS</th>
-                  <th className="pb-1.5 text-right">AVG DURATION</th>
+                  <th className="pb-2">ORIGIN</th>
+                  <th className="pb-2">DESTINATION</th>
+                  <th className="pb-2 text-right">DAILY TRIPS</th>
+                  <th className="pb-2 text-right">AVG DURATION</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-brand-black/20">
                 {od_matrix.map((row, i) => (
-                  <tr key={i} className="hover:bg-slate-900/40">
-                    <td className="py-2 text-slate-200 font-sans">{row.origin}</td>
-                    <td className="py-2 text-slate-200 font-sans">{row.destination}</td>
-                    <td className="py-2 text-right font-bold text-lime-hud">{row.trips.toLocaleString()}</td>
-                    <td className="py-2 text-right text-slate-400">{row.avg_time_mins} mins</td>
+                  <tr key={i} className="hover:bg-brand-acid/30 transition-colors">
+                    <td className="py-2.5 text-brand-black font-bold">{row.origin}</td>
+                    <td className="py-2.5 text-brand-black font-bold">{row.destination}</td>
+                    <td className="py-2.5 text-right font-bold text-brand-black bg-white/50">{row.trips.toLocaleString()}</td>
+                    <td className="py-2.5 text-right text-brand-dark-gray">{row.avg_time_mins} mins</td>
                   </tr>
                 ))}
               </tbody>
@@ -149,33 +153,33 @@ export default function TrafficAnalyticsPage() {
         </div>
 
         {/* Bottleneck Hotspots */}
-        <div className="bg-surface-card border border-slate-800 p-4 rounded-lg">
-          <div className="font-bold text-slate-200 mb-2 flex items-center justify-between">
+        <div className="bg-brand-paper border border-brand-black p-5 chamfer-card shadow-editorial">
+          <div className="font-bold text-brand-black uppercase tracking-widest text-[11px] mb-4 border-b border-brand-black/20 pb-3 flex items-center justify-between">
             <span>CONGESTION BOTTLENECK CORRIDORS</span>
-            <span className="text-crimson-alert text-[10px] flex items-center gap-1 font-bold">
+            <span className="text-brand-paper bg-brand-purple px-2 py-1 text-[9px] flex items-center gap-1 font-bold shadow-editorial -rotate-1">
               <AlertTriangle className="w-3 h-3" />
               HOTSPOTS
             </span>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-[11px]">
-              <thead className="text-[10px] text-slate-400 border-b border-slate-800 pb-1">
+            <table className="w-full text-left text-[10px] uppercase tracking-widest">
+              <thead className="text-[9px] text-brand-gray border-b border-brand-black pb-2 font-bold">
                 <tr>
-                  <th className="pb-1.5">RANK</th>
-                  <th className="pb-1.5">CORRIDOR</th>
-                  <th className="pb-1.5 text-right">SPEED</th>
-                  <th className="pb-1.5 text-right">STATUS</th>
+                  <th className="pb-2">RANK</th>
+                  <th className="pb-2">CORRIDOR</th>
+                  <th className="pb-2 text-right">SPEED</th>
+                  <th className="pb-2 text-right">STATUS</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-brand-black/20">
                 {corridor_hotspots.map((c) => (
-                  <tr key={c.rank} className="hover:bg-slate-900/40">
-                    <td className="py-2 text-slate-400 font-bold">#{c.rank}</td>
-                    <td className="py-2 text-slate-200 font-sans">{c.corridor}</td>
-                    <td className="py-2 text-right font-bold text-cyan-hud">{c.current_speed_kmh} km/h</td>
-                    <td className="py-2 text-right">
-                      <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                        c.status === 'GRIDLOCK' ? 'bg-crimson-alert/20 text-crimson-alert border border-crimson-alert/30' : 'bg-amber-hazard/20 text-amber-hazard'
+                  <tr key={c.rank} className="hover:bg-brand-acid/30 transition-colors">
+                    <td className="py-2.5 text-brand-gray font-bold">#{c.rank}</td>
+                    <td className="py-2.5 text-brand-black font-bold">{c.corridor}</td>
+                    <td className="py-2.5 text-right font-bold text-brand-black bg-white/50">{c.current_speed_kmh} km/h</td>
+                    <td className="py-2.5 text-right">
+                      <span className={`px-2 py-1 text-[9px] font-bold shadow-editorial ${
+                        c.status === 'GRIDLOCK' ? 'bg-brand-purple text-brand-paper rotate-1 inline-block' : 'bg-brand-black text-brand-acid -rotate-1 inline-block'
                       }`}>
                         {c.status}
                       </span>

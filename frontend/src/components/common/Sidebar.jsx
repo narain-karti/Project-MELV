@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTracking } from '../../context/TrackingContext';
-import { Video, Cpu, Search, BarChart3, AlertOctagon, Network } from 'lucide-react';
+import { Video, Cpu, Search, BarChart3, AlertOctagon, Network, Crosshair } from 'lucide-react';
 
 const NAV_ITEMS = [
+  { id: 'tactical_vision', index: '00', label: 'Tactical Vision Lab', icon: Crosshair, badge: 'AI+' },
   { id: 'live_tracking', index: '01', label: 'Live Trajectory', icon: Video, badge: 'REC' },
   { id: 'ai_inspector', index: '02', label: 'AI Sandbox Lab', icon: Cpu, badge: 'TEST' },
   { id: 'trajectory_query', index: '03', label: 'Trajectory Query', icon: Search, badge: null },

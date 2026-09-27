@@ -8,42 +8,38 @@ import { MapPin, Video, Activity } from 'lucide-react';
 
 export default function LiveTrackingPage() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 h-full">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
       {/* Left Column: Surveillance feeds + GIS Map (8 of 12 cols) */}
-      <div className="lg:col-span-8 flex flex-col space-y-3">
-        {/* Street & Camera Pair Identification Bar */}
-        <div className="bg-surface-card border border-slate-800 rounded-lg px-3.5 py-2 flex flex-wrap items-center justify-between text-xs font-mono shadow-md">
-          <div className="flex items-center space-x-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-lime-hud animate-pulse"></span>
-            <span className="text-slate-400">STREET:</span>
-            <span className="text-white font-bold tracking-wide">CLV NAGAR 1ST STREET, KANATHUR</span>
-            <span className="text-slate-600">|</span>
-            <span className="text-cyan-hud">CHENNAI, TN 603112</span>
+      <div className="lg:col-span-8 flex flex-col space-y-6">
+        
+        {/* Editorial Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-brand-dark-gray/30 pb-4">
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-brand-acid mb-1 font-mono">Operations</div>
+            <h2 className="editorial-headline text-4xl text-brand-paper">LIVE TRAJECTORY</h2>
           </div>
-          <div className="text-[11px] text-slate-400 flex items-center space-x-3 mt-1 sm:mt-0">
-            <span className="flex items-center space-x-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span>CAM-01: <strong className="text-slate-200">WEST (ECR GATE)</strong></span>
-            </span>
-            <span className="text-slate-600">⟷</span>
-            <span className="flex items-center space-x-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span>CAM-02: <strong className="text-slate-200">EAST JUNCTION</strong></span>
-            </span>
+          <div className="mt-4 md:mt-0 text-[10px] font-mono font-bold uppercase text-brand-gray bg-brand-dark-gray px-3 py-1.5 inline-flex items-center">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-acid mr-2 animate-pulse"></span>
+            CLV NAGAR 1ST STREET
           </div>
         </div>
 
         {/* Dual Video Surveillance Stream */}
-        <VideoSurveillance />
+        <div className="bg-brand-paper border border-brand-black p-1 chamfer-card">
+          <VideoSurveillance />
+        </div>
 
         {/* Live GIS Map / 3D Digital Twin */}
-        <div className="flex-1 min-h-[360px]">
+        <div className="flex-1 min-h-[360px] bg-brand-paper border border-brand-black p-1 chamfer-card relative">
           <TacticalMap />
+          <div className="absolute top-0 right-0 bg-brand-black text-brand-paper text-[9px] font-bold px-2 py-1 uppercase tracking-wider font-mono z-[400] border-l border-b border-brand-black">
+            SPATIAL ENGINE
+          </div>
         </div>
       </div>
 
       {/* Right Column: Identity Card + Terminal Stream + Dispatch Feed (4 of 12 cols) */}
-      <div className="lg:col-span-4 flex flex-col space-y-3">
+      <div className="lg:col-span-4 flex flex-col space-y-6">
         <DigitalIdentityCard />
         <OcrConsole />
         <div className="flex-1 min-h-[220px]">

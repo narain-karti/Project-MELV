@@ -11,23 +11,23 @@ export default function OcrConsole() {
   }, [consoleLogs]);
 
   return (
-    <div className="bg-surface-card border border-slate-800 rounded-lg overflow-hidden flex flex-col h-48 font-mono text-xs shadow-md">
+    <div className="bg-brand-paper border border-brand-black overflow-hidden flex flex-col h-48 font-mono text-xs chamfer-card shadow-editorial">
       {/* Console Header */}
-      <div className="h-8 px-3 bg-surface-dark border-b border-slate-800 flex items-center justify-between text-slate-300">
+      <div className="h-8 px-3 bg-brand-black border-b border-brand-black flex items-center justify-between text-brand-paper">
         <div className="flex items-center space-x-2">
-          <Terminal className="w-3.5 h-3.5 text-lime-hud" />
-          <span className="text-[11px] font-bold text-slate-200">
+          <Terminal className="w-3.5 h-3.5 text-brand-acid" />
+          <span className="text-[10px] font-bold text-brand-paper uppercase tracking-widest">
             EDGE TELEMETRY STREAM
           </span>
-          <span className="text-[10px] text-slate-400">
+          <span className="text-[9px] text-brand-gray uppercase tracking-widest hidden sm:inline">
             [PADDLEOCR + RTO GRAMMAR]
           </span>
         </div>
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span className="w-2 h-2 bg-brand-acid animate-pulse rotate-45"></span>
       </div>
 
       {/* Terminal Content */}
-      <div className="flex-1 p-2.5 overflow-y-auto space-y-1.5 bg-obsidian/90 text-[11px]">
+      <div className="flex-1 p-3 overflow-y-auto space-y-1.5 bg-brand-black text-[10px] uppercase tracking-wider">
         {consoleLogs.map((log) => {
           const isCritical = log.type === 'critical';
           const isSuccess = log.type === 'success';
@@ -37,16 +37,16 @@ export default function OcrConsole() {
               key={log.id}
               className={`flex items-start space-x-2 leading-relaxed ${
                 isCritical
-                  ? 'text-crimson-alert bg-crimson-alert/10 px-1 rounded font-bold'
+                  ? 'text-brand-paper bg-brand-purple px-1 font-bold'
                   : isSuccess
-                  ? 'text-lime-hud'
-                  : 'text-slate-300'
+                  ? 'text-brand-acid'
+                  : 'text-brand-gray'
               }`}
             >
-              <span className="text-slate-400 text-[10px] flex-shrink-0 select-none">
+              <span className="text-brand-dark-gray text-[9px] flex-shrink-0 select-none">
                 [{log.time}]
               </span>
-              {isCritical && <ShieldAlert className="w-3.5 h-3.5 flex-shrink-0 text-crimson-alert mt-0.5" />}
+              {isCritical && <ShieldAlert className="w-3.5 h-3.5 flex-shrink-0 text-brand-paper mt-0.5" />}
               <span className="break-all">{log.text}</span>
             </div>
           );

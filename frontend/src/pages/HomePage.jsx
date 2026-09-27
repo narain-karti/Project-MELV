@@ -16,7 +16,8 @@ export default function HomePage() {
           <div className="text-[11px] font-bold tracking-widest uppercase font-mono">
             Project-MELV <br /> SIH 26127
           </div>
-          <nav className="hidden md:flex gap-12 text-[10.5px] uppercase font-bold tracking-widest text-brand-gray">
+          <nav className="hidden md:flex gap-8 text-[10.5px] uppercase font-bold tracking-widest text-brand-gray">
+            <button className="text-brand-acid hover:text-brand-black transition-colors font-bold" onClick={() => setActiveTab('tactical_vision')}>★ Vision Lab Demo</button>
             <button className="hover:text-brand-black transition-colors" onClick={() => setActiveTab('live_tracking')}>Live Trajectory</button>
             <button className="hover:text-brand-black transition-colors" onClick={() => setActiveTab('ai_inspector')}>AI Sandbox</button>
             <button className="hover:text-brand-black transition-colors" onClick={() => setActiveTab('traffic_analytics')}>Analytics</button>
@@ -59,12 +60,20 @@ export default function HomePage() {
             Bridging isolated CCTV silos into a cohesive, spatial-temporal intelligence grid.
           </p>
 
-          <button 
-            onClick={() => setActiveTab('live_tracking')}
-            className="mt-12 bg-brand-acid text-brand-black font-bold text-xs uppercase tracking-widest px-8 py-4 rounded-lg -rotate-2 hover:rotate-0 hover:translate-y-[-4px] transition-all duration-300 shadow-editorial"
-          >
-            Enter Command Center
-          </button>
+          <div className="mt-12 flex flex-col sm:flex-row gap-4">
+            <button 
+              onClick={() => setActiveTab('tactical_vision')}
+              className="bg-brand-acid text-brand-black font-bold text-xs uppercase tracking-widest px-8 py-4 -rotate-1 hover:rotate-0 hover:translate-y-[-4px] transition-all duration-300 shadow-editorial border-2 border-brand-black flex items-center justify-center gap-2"
+            >
+              <span>★ Launch Vision Lab Demo</span>
+            </button>
+            <button 
+              onClick={() => setActiveTab('live_tracking')}
+              className="bg-brand-black text-brand-paper font-bold text-xs uppercase tracking-widest px-8 py-4 rotate-1 hover:rotate-0 hover:translate-y-[-4px] transition-all duration-300 shadow-editorial border-2 border-brand-black"
+            >
+              Enter Command Center
+            </button>
+          </div>
         </div>
         
         {/* Bottom utility */}

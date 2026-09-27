@@ -1,0 +1,1529 @@
+{
+  "CAM-01": [
+    {
+      "t": 0.0,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 35,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 3.6,
+            "y": 41.8,
+            "w": 11.2,
+            "h": 6.1
+          }
+        }
+      ]
+    },
+    {
+      "t": 1.0,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 41,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 4.1,
+            "y": 41.8,
+            "w": 11.0,
+            "h": 6.0
+          }
+        }
+      ]
+    },
+    {
+      "t": 1.5,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 32,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 4.8,
+            "y": 41.8,
+            "w": 10.7,
+            "h": 6.0
+          }
+        }
+      ]
+    },
+    {
+      "t": 2.0,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 36,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 5.3,
+            "y": 41.7,
+            "w": 10.3,
+            "h": 6.0
+          }
+        }
+      ]
+    },
+    {
+      "t": 2.5,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 40,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 5.3,
+            "y": 41.7,
+            "w": 10.2,
+            "h": 6.1
+          }
+        }
+      ]
+    },
+    {
+      "t": 3.0,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 36,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 5.3,
+            "y": 41.7,
+            "w": 10.1,
+            "h": 6.1
+          }
+        }
+      ]
+    },
+    {
+      "t": 3.5,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 49,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 5.2,
+            "y": 41.7,
+            "w": 10.2,
+            "h": 6.2
+          }
+        }
+      ]
+    },
+    {
+      "t": 4.0,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 33,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 4.9,
+            "y": 41.7,
+            "w": 10.8,
+            "h": 6.0
+          }
+        }
+      ]
+    },
+    {
+      "t": 4.5,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 32,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 4.8,
+            "y": 41.7,
+            "w": 11.2,
+            "h": 5.9
+          }
+        }
+      ]
+    },
+    {
+      "t": 5.0,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 33,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 4.6,
+            "y": 41.7,
+            "w": 11.5,
+            "h": 5.9
+          }
+        }
+      ]
+    },
+    {
+      "t": 5.5,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 51,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 3.2,
+            "y": 41.7,
+            "w": 12.9,
+            "h": 5.9
+          }
+        }
+      ]
+    },
+    {
+      "t": 6.0,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 45,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 4.4,
+            "y": 41.7,
+            "w": 11.9,
+            "h": 5.9
+          }
+        }
+      ]
+    },
+    {
+      "t": 7.0,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 34,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 5.6,
+            "y": 41.7,
+            "w": 10.8,
+            "h": 5.9
+          }
+        }
+      ]
+    },
+    {
+      "t": 7.5,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 31,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 5.6,
+            "y": 41.7,
+            "w": 10.8,
+            "h": 5.9
+          }
+        }
+      ]
+    },
+    {
+      "t": 10.5,
+      "detections": [
+        {
+          "class": "Hatchback",
+          "model_conf": 28,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 5.5,
+            "y": 41.6,
+            "w": 10.7,
+            "h": 6.0
+          }
+        }
+      ]
+    },
+    {
+      "t": 11.0,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 53,
+          "plate": "TN11AH4920",
+          "ocr_conf": 97.4,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 15.3,
+            "y": 62.4,
+            "w": 77.3,
+            "h": 37.6
+          }
+        }
+      ]
+    },
+    {
+      "t": 11.5,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 62,
+          "plate": "TN11AH4920",
+          "ocr_conf": 97.4,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 15.6,
+            "y": 61.1,
+            "w": 43.1,
+            "h": 38.8
+          }
+        },
+        {
+          "class": "Hatchback",
+          "model_conf": 44,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 5.6,
+            "y": 41.7,
+            "w": 10.8,
+            "h": 5.9
+          }
+        }
+      ]
+    },
+    {
+      "t": 12.0,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 75,
+          "plate": "TN11AH4920",
+          "ocr_conf": 97.4,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 12.2,
+            "y": 57.9,
+            "w": 28.9,
+            "h": 28.1
+          }
+        },
+        {
+          "class": "Hatchback",
+          "model_conf": 38,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 5.7,
+            "y": 41.6,
+            "w": 10.9,
+            "h": 5.7
+          }
+        }
+      ]
+    },
+    {
+      "t": 12.5,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 59,
+          "plate": "TN11AH4920",
+          "ocr_conf": 97.4,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 11.3,
+            "y": 54.0,
+            "w": 21.6,
+            "h": 22.3
+          }
+        },
+        {
+          "class": "Hatchback",
+          "model_conf": 46,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 5.3,
+            "y": 41.7,
+            "w": 11.4,
+            "h": 5.7
+          }
+        }
+      ]
+    },
+    {
+      "t": 13.0,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 56,
+          "plate": "TN11AH4920",
+          "ocr_conf": 97.4,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 11.3,
+            "y": 51.0,
+            "w": 18.4,
+            "h": 19.3
+          }
+        },
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 25,
+          "plate": "TN11AH4920",
+          "ocr_conf": 97.4,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 0.4,
+            "y": 50.2,
+            "w": 7.4,
+            "h": 7.9
+          }
+        }
+      ]
+    },
+    {
+      "t": 13.5,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 59,
+          "plate": "TN11AH4920",
+          "ocr_conf": 97.4,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 12.5,
+            "y": 49.3,
+            "w": 16.3,
+            "h": 16.7
+          }
+        },
+        {
+          "class": "Hatchback",
+          "model_conf": 31,
+          "plate": "TN09CJ4381",
+          "ocr_conf": 93.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 6.0,
+            "y": 41.7,
+            "w": 11.0,
+            "h": 5.9
+          }
+        }
+      ]
+    },
+    {
+      "t": 14.0,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 60,
+          "plate": "TN11AH4920",
+          "ocr_conf": 97.4,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 14.4,
+            "y": 49.3,
+            "w": 13.0,
+            "h": 13.2
+          }
+        }
+      ]
+    },
+    {
+      "t": 14.5,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 61,
+          "plate": "TN11AH4920",
+          "ocr_conf": 97.4,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 16.0,
+            "y": 48.5,
+            "w": 11.9,
+            "h": 11.4
+          }
+        }
+      ]
+    },
+    {
+      "t": 15.0,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 37,
+          "plate": "TN11AH4920",
+          "ocr_conf": 97.4,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 18.8,
+            "y": 46.3,
+            "w": 10.4,
+            "h": 11.3
+          }
+        }
+      ]
+    },
+    {
+      "t": 15.5,
+      "detections": [
+        {
+          "class": "SUV (Wanted)",
+          "model_conf": 59,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 5.6,
+            "y": 41.8,
+            "w": 11.6,
+            "h": 6.0
+          }
+        }
+      ]
+    },
+    {
+      "t": 16.0,
+      "detections": [
+        {
+          "class": "SUV (Wanted)",
+          "model_conf": 64,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 6.2,
+            "y": 41.8,
+            "w": 11.0,
+            "h": 6.0
+          }
+        },
+        {
+          "class": "SUV (Wanted)",
+          "model_conf": 30,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 24.7,
+            "y": 44.0,
+            "w": 9.5,
+            "h": 10.6
+          }
+        }
+      ]
+    },
+    {
+      "t": 16.5,
+      "detections": [
+        {
+          "class": "SUV (Wanted)",
+          "model_conf": 35,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 6.8,
+            "y": 41.9,
+            "w": 10.7,
+            "h": 5.9
+          }
+        }
+      ]
+    },
+    {
+      "t": 17.0,
+      "detections": [
+        {
+          "class": "SUV (Wanted)",
+          "model_conf": 37,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 7.1,
+            "y": 41.8,
+            "w": 10.5,
+            "h": 6.0
+          }
+        }
+      ]
+    },
+    {
+      "t": 17.5,
+      "detections": [
+        {
+          "class": "SUV (Wanted)",
+          "model_conf": 41,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 6.9,
+            "y": 41.9,
+            "w": 11.1,
+            "h": 6.0
+          }
+        },
+        {
+          "class": "SUV (Wanted)",
+          "model_conf": 30,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 18.1,
+            "y": 43.5,
+            "w": 4.3,
+            "h": 2.6
+          }
+        }
+      ]
+    },
+    {
+      "t": 18.0,
+      "detections": [
+        {
+          "class": "SUV (Wanted)",
+          "model_conf": 30,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 6.9,
+            "y": 41.9,
+            "w": 11.2,
+            "h": 6.1
+          }
+        }
+      ]
+    },
+    {
+      "t": 18.5,
+      "detections": [
+        {
+          "class": "SUV (Wanted)",
+          "model_conf": 28,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 7.2,
+            "y": 41.9,
+            "w": 11.0,
+            "h": 6.0
+          }
+        }
+      ]
+    },
+    {
+      "t": 19.0,
+      "detections": [
+        {
+          "class": "SUV (Wanted)",
+          "model_conf": 35,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 7.2,
+            "y": 41.9,
+            "w": 11.0,
+            "h": 6.0
+          }
+        }
+      ]
+    },
+    {
+      "t": 19.5,
+      "detections": [
+        {
+          "class": "SUV (Wanted)",
+          "model_conf": 48,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 7.0,
+            "y": 41.9,
+            "w": 11.2,
+            "h": 6.0
+          }
+        }
+      ]
+    },
+    {
+      "t": 20.0,
+      "detections": [
+        {
+          "class": "SUV (Wanted)",
+          "model_conf": 28,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 7.3,
+            "y": 42.0,
+            "w": 11.1,
+            "h": 5.9
+          }
+        }
+      ]
+    }
+  ],
+  "CAM-02": [
+    {
+      "t": 0.0,
+      "detections": [
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 52,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 32.4,
+            "y": 56.6,
+            "w": 3.8,
+            "h": 5.0
+          }
+        }
+      ]
+    },
+    {
+      "t": 0.5,
+      "detections": [
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 47,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 33.5,
+            "y": 56.2,
+            "w": 3.6,
+            "h": 5.5
+          }
+        },
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 30,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 32.2,
+            "y": 56.2,
+            "w": 5.0,
+            "h": 6.4
+          }
+        }
+      ]
+    },
+    {
+      "t": 1.0,
+      "detections": [
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 44,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 33.2,
+            "y": 55.5,
+            "w": 3.8,
+            "h": 5.4
+          }
+        }
+      ]
+    },
+    {
+      "t": 1.5,
+      "detections": [
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 52,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 34.2,
+            "y": 55.4,
+            "w": 3.6,
+            "h": 5.4
+          }
+        }
+      ]
+    },
+    {
+      "t": 2.0,
+      "detections": [
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 57,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 35.6,
+            "y": 55.8,
+            "w": 3.6,
+            "h": 5.3
+          }
+        }
+      ]
+    },
+    {
+      "t": 2.5,
+      "detections": [
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 45,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 36.8,
+            "y": 56.1,
+            "w": 3.6,
+            "h": 5.1
+          }
+        }
+      ]
+    },
+    {
+      "t": 3.0,
+      "detections": [
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 48,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 36.3,
+            "y": 55.4,
+            "w": 4.0,
+            "h": 5.4
+          }
+        }
+      ]
+    },
+    {
+      "t": 3.5,
+      "detections": [
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 42,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 37.0,
+            "y": 55.0,
+            "w": 3.4,
+            "h": 5.2
+          }
+        },
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 35,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 49.3,
+            "y": 77.1,
+            "w": 17.6,
+            "h": 22.3
+          }
+        }
+      ]
+    },
+    {
+      "t": 4.0,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 63,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 46.1,
+            "y": 74.6,
+            "w": 15.4,
+            "h": 24.6
+          }
+        },
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 44,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 37.4,
+            "y": 54.6,
+            "w": 3.3,
+            "h": 5.2
+          }
+        }
+      ]
+    },
+    {
+      "t": 4.5,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 72,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 43.3,
+            "y": 70.4,
+            "w": 12.2,
+            "h": 29.2
+          }
+        },
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 47,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 37.3,
+            "y": 54.4,
+            "w": 3.3,
+            "h": 5.2
+          }
+        }
+      ]
+    },
+    {
+      "t": 5.0,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 70,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 41.3,
+            "y": 67.6,
+            "w": 10.1,
+            "h": 29.7
+          }
+        },
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 56,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 37.2,
+            "y": 54.5,
+            "w": 3.2,
+            "h": 5.4
+          }
+        }
+      ]
+    },
+    {
+      "t": 5.5,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 73,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 41.4,
+            "y": 68.1,
+            "w": 7.1,
+            "h": 23.7
+          }
+        },
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 43,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 37.3,
+            "y": 54.5,
+            "w": 3.3,
+            "h": 5.3
+          }
+        }
+      ]
+    },
+    {
+      "t": 6.0,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 56,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 40.8,
+            "y": 67.1,
+            "w": 6.0,
+            "h": 19.6
+          }
+        },
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 47,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 37.0,
+            "y": 55.2,
+            "w": 3.6,
+            "h": 5.4
+          }
+        }
+      ]
+    },
+    {
+      "t": 6.5,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 44,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 40.4,
+            "y": 67.8,
+            "w": 4.7,
+            "h": 15.5
+          }
+        },
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 36,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 36.7,
+            "y": 56.4,
+            "w": 3.6,
+            "h": 5.4
+          }
+        }
+      ]
+    },
+    {
+      "t": 7.0,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 56,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 40.1,
+            "y": 66.8,
+            "w": 4.5,
+            "h": 13.9
+          }
+        },
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 31,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 40.3,
+            "y": 70.2,
+            "w": 4.1,
+            "h": 10.4
+          }
+        },
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 25,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 36.5,
+            "y": 57.0,
+            "w": 3.5,
+            "h": 5.4
+          }
+        }
+      ]
+    },
+    {
+      "t": 7.5,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 64,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 39.5,
+            "y": 66.2,
+            "w": 4.0,
+            "h": 12.5
+          }
+        },
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 45,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 36.0,
+            "y": 57.6,
+            "w": 3.8,
+            "h": 5.2
+          }
+        }
+      ]
+    },
+    {
+      "t": 8.0,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 54,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 39.1,
+            "y": 66.1,
+            "w": 3.9,
+            "h": 10.6
+          }
+        },
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 40,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 35.8,
+            "y": 58.5,
+            "w": 3.6,
+            "h": 4.8
+          }
+        }
+      ]
+    },
+    {
+      "t": 8.5,
+      "detections": [
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 53,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 35.2,
+            "y": 59.1,
+            "w": 3.6,
+            "h": 5.4
+          }
+        },
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 27,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 39.0,
+            "y": 65.7,
+            "w": 3.4,
+            "h": 10.3
+          }
+        },
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 26,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 39.2,
+            "y": 66.7,
+            "w": 3.1,
+            "h": 7.7
+          }
+        }
+      ]
+    },
+    {
+      "t": 9.0,
+      "detections": [
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 40,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 38.9,
+            "y": 66.4,
+            "w": 2.9,
+            "h": 8.4
+          }
+        },
+        {
+          "class": "Two-wheeler (Motorcycle)",
+          "model_conf": 35,
+          "plate": "TN11AH4920",
+          "ocr_conf": 96.8,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 38.6,
+            "y": 63.2,
+            "w": 3.3,
+            "h": 11.3
+          }
+        }
+      ]
+    },
+    {
+      "t": 9.5,
+      "detections": [
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 43,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 34.5,
+            "y": 59.9,
+            "w": 4.0,
+            "h": 5.9
+          }
+        }
+      ]
+    },
+    {
+      "t": 10.0,
+      "detections": [
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 55,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 34.7,
+            "y": 60.8,
+            "w": 3.8,
+            "h": 5.8
+          }
+        }
+      ]
+    },
+    {
+      "t": 11.0,
+      "detections": [
+        {
+          "class": "Sedan (Pass-through)",
+          "model_conf": 43,
+          "plate": "TN03HA7712",
+          "ocr_conf": 94.6,
+          "is_blacklist": false,
+          "bbox": {
+            "x": 34.9,
+            "y": 63.4,
+            "w": 3.0,
+            "h": 5.0
+          }
+        }
+      ]
+    },
+    {
+      "t": 14.5,
+      "detections": [
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 39,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 32.4,
+            "y": 63.6,
+            "w": 3.6,
+            "h": 5.6
+          }
+        },
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 36,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 32.0,
+            "y": 63.6,
+            "w": 5.3,
+            "h": 6.8
+          }
+        }
+      ]
+    },
+    {
+      "t": 15.0,
+      "detections": [
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 35,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 31.4,
+            "y": 63.7,
+            "w": 4.1,
+            "h": 5.2
+          }
+        }
+      ]
+    },
+    {
+      "t": 15.5,
+      "detections": [
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 49,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 31.2,
+            "y": 63.5,
+            "w": 3.5,
+            "h": 5.2
+          }
+        }
+      ]
+    },
+    {
+      "t": 16.0,
+      "detections": [
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 78,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 30.6,
+            "y": 62.8,
+            "w": 3.5,
+            "h": 5.5
+          }
+        }
+      ]
+    },
+    {
+      "t": 16.5,
+      "detections": [
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 65,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 30.5,
+            "y": 62.6,
+            "w": 3.5,
+            "h": 4.9
+          }
+        }
+      ]
+    },
+    {
+      "t": 17.0,
+      "detections": [
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 67,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 31.6,
+            "y": 61.8,
+            "w": 3.6,
+            "h": 5.3
+          }
+        }
+      ]
+    },
+    {
+      "t": 17.5,
+      "detections": [
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 53,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 32.2,
+            "y": 62.1,
+            "w": 3.3,
+            "h": 5.3
+          }
+        }
+      ]
+    },
+    {
+      "t": 18.0,
+      "detections": [
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 52,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 32.2,
+            "y": 62.5,
+            "w": 3.2,
+            "h": 5.3
+          }
+        }
+      ]
+    },
+    {
+      "t": 18.5,
+      "detections": [
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 65,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 31.9,
+            "y": 63.2,
+            "w": 3.5,
+            "h": 5.2
+          }
+        }
+      ]
+    },
+    {
+      "t": 19.0,
+      "detections": [
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 37,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 31.6,
+            "y": 62.6,
+            "w": 3.2,
+            "h": 5.3
+          }
+        }
+      ]
+    },
+    {
+      "t": 19.5,
+      "detections": [
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 56,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 31.4,
+            "y": 59.7,
+            "w": 3.6,
+            "h": 5.5
+          }
+        }
+      ]
+    },
+    {
+      "t": 20.0,
+      "detections": [
+        {
+          "class": "SUV (Scorpio)",
+          "model_conf": 49,
+          "plate": "TN07BX8819",
+          "ocr_conf": 98.2,
+          "is_blacklist": true,
+          "bbox": {
+            "x": 31.4,
+            "y": 59.7,
+            "w": 3.3,
+            "h": 5.5
+          }
+        }
+      ]
+    }
+  ]
+}

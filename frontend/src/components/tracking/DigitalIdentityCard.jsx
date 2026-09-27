@@ -7,10 +7,10 @@ export default function DigitalIdentityCard() {
 
   if (!digitalIdentity) {
     return (
-      <div className="bg-surface-card border border-slate-800 rounded-lg p-4 flex flex-col items-center justify-center h-44 text-slate-400 font-mono text-xs">
-        <Car className="w-8 h-8 text-slate-700 mb-2 animate-pulse" />
-        <span>AWAITING VEHICLE PASS-THROUGH...</span>
-        <span className="text-[10px] text-slate-400 mt-1">CAMERA NODES ACTIVE</span>
+      <div className="bg-brand-paper border border-brand-black p-4 flex flex-col items-center justify-center h-44 text-brand-gray font-mono text-xs chamfer-card">
+        <Car className="w-8 h-8 text-brand-dark-gray mb-2 animate-pulse" />
+        <span className="uppercase font-bold tracking-widest text-[10px] text-brand-black">Awaiting Vehicle Pass-Through</span>
+        <span className="text-[9px] text-brand-gray mt-1">CAMERA NODES ACTIVE</span>
       </div>
     );
   }
@@ -19,40 +19,42 @@ export default function DigitalIdentityCard() {
   const isCommercial = digitalIdentity.plateType === 'commercial_yellow';
 
   const getVehicleIcon = (vClass) => {
-    if (vClass?.includes('Two-wheeler') || vClass?.includes('Bicycle')) return <Bike className="w-6 h-6 text-lime-hud" />;
-    if (vClass?.includes('Truck') || vClass?.includes('Bus') || vClass?.includes('LCV')) return <Truck className="w-6 h-6 text-cyan-hud" />;
-    return <Car className="w-6 h-6 text-slate-200" />;
+    if (vClass?.includes('Two-wheeler') || vClass?.includes('Bicycle')) return <Bike className="w-6 h-6 text-brand-acid" />;
+    if (vClass?.includes('Truck') || vClass?.includes('Bus') || vClass?.includes('LCV')) return <Truck className="w-6 h-6 text-brand-purple" />;
+    return <Car className="w-6 h-6 text-brand-black" />;
   };
 
   return (
     <div
-      className={`bg-surface-card border rounded-lg p-3.5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden ${
+      className={`bg-brand-paper border p-4 flex flex-col justify-between transition-all duration-300 relative overflow-hidden chamfer-card ${
         isBlacklist
-          ? 'border-crimson-alert shadow-hud-crimson bg-crimson-alert/5'
-          : 'border-slate-800 hover:border-slate-700'
+          ? 'border-brand-purple shadow-editorial'
+          : 'border-brand-black shadow-editorial hover:-translate-y-1 hover:-translate-x-1'
       }`}
     >
       {/* Top Identity Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-        <div className="flex items-center space-x-2">
-          {getVehicleIcon(digitalIdentity.vehicleClass)}
+      <div className="flex items-center justify-between pb-3 border-b border-brand-black/20">
+        <div className="flex items-center space-x-3">
+          <div className="bg-brand-black text-brand-paper p-1.5">
+            {getVehicleIcon(digitalIdentity.vehicleClass)}
+          </div>
           <div>
-            <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
-              DIGITAL VEHICLE IDENTITY
+            <div className="text-[9px] font-mono uppercase tracking-widest text-brand-gray font-bold">
+              DIGITAL IDENTITY
             </div>
-            <div className="text-xs font-bold text-slate-200">
+            <div className="text-xs font-bold text-brand-black uppercase">
               {digitalIdentity.vehicleClass} • {digitalIdentity.color}
             </div>
           </div>
         </div>
 
         {isBlacklist ? (
-          <span className="flex items-center gap-1 bg-crimson-alert/20 text-crimson-alert border border-crimson-alert/40 px-2 py-0.5 rounded text-[10px] font-mono font-bold animate-pulse">
+          <span className="flex items-center gap-1 bg-brand-purple text-brand-paper border border-brand-black px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-widest animate-pulse -rotate-2 shadow-editorial">
             <ShieldAlert className="w-3 h-3" />
             WANTED
           </span>
         ) : (
-          <span className="flex items-center gap-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-[10px] font-mono font-semibold">
+          <span className="flex items-center gap-1 bg-brand-black text-brand-acid border border-brand-black px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-widest rotate-1">
             <CheckCircle2 className="w-3 h-3" />
             VERIFIED
           </span>
@@ -60,43 +62,43 @@ export default function DigitalIdentityCard() {
       </div>
 
       {/* Center: License Plate Display */}
-      <div className="my-2.5 flex items-center justify-between">
+      <div className="my-4 flex items-center justify-between">
         <div
-          className={`px-3 py-1.5 rounded border-2 flex items-center space-x-2 font-mono font-bold text-base tracking-wider ${
+          className={`px-3 py-1.5 border-2 flex items-center space-x-2 font-mono font-bold text-lg tracking-wider transform -skew-x-6 ${
             isCommercial
-              ? 'bg-amber-400 text-black border-black'
-              : 'bg-white text-slate-900 border-slate-400'
+              ? 'bg-[#FFD700] text-black border-black'
+              : 'bg-white text-brand-black border-brand-black shadow-editorial'
           }`}
         >
-          <div className="flex flex-col items-center pr-1.5 border-r border-black/30 text-[8px] leading-tight">
+          <div className="flex flex-col items-center pr-2 border-r border-brand-black text-[9px] leading-tight">
             <span>IND</span>
           </div>
-          <span>{digitalIdentity.plate}</span>
+          <span className="pl-1">{digitalIdentity.plate}</span>
         </div>
 
-        <div className="text-right font-mono">
-          <div className="text-[10px] text-slate-400">OCR CONFIDENCE</div>
-          <div className="text-sm font-bold text-lime-hud">{digitalIdentity.confidence}%</div>
+        <div className="text-right font-mono border border-brand-black px-2 py-1 bg-brand-acid text-brand-black rotate-1">
+          <div className="text-[8px] uppercase tracking-widest font-bold">Confidence</div>
+          <div className="text-sm font-bold">{digitalIdentity.confidence}%</div>
         </div>
       </div>
 
       {/* Bottom: Location & Timestamp */}
-      <div className="grid grid-cols-2 gap-2 text-[10px] font-mono pt-2 border-t border-slate-800 text-slate-400">
+      <div className="grid grid-cols-2 gap-2 text-[9px] font-mono pt-3 border-t border-brand-black/20 text-brand-gray uppercase font-bold tracking-widest">
         <div className="flex items-center space-x-1.5 truncate">
-          <MapPin className="w-3 h-3 text-cyan-hud flex-shrink-0" />
+          <MapPin className="w-3 h-3 text-brand-black flex-shrink-0" />
           <span className="truncate">{digitalIdentity.cameraName}</span>
         </div>
         <div className="flex items-center justify-end space-x-1.5">
-          <Clock className="w-3 h-3 text-slate-400" />
+          <Clock className="w-3 h-3 text-brand-black" />
           <span>{digitalIdentity.timestamp}</span>
         </div>
       </div>
 
       {/* Blacklist FIR Details if flagged */}
       {isBlacklist && digitalIdentity.blacklistInfo && (
-        <div className="mt-2 pt-2 border-t border-crimson-alert/30 text-[10px] font-mono text-crimson-alert flex justify-between items-center bg-crimson-alert/10 p-1.5 rounded">
+        <div className="mt-3 pt-3 border-t border-brand-purple/30 text-[9px] font-mono text-brand-paper flex justify-between items-center bg-brand-purple p-2 chamfer-card font-bold uppercase tracking-widest">
           <span>{digitalIdentity.blacklistInfo.category}</span>
-          <strong className="underline">{digitalIdentity.blacklistInfo.fir_number}</strong>
+          <strong className="underline text-brand-acid">{digitalIdentity.blacklistInfo.fir_number}</strong>
         </div>
       )}
     </div>

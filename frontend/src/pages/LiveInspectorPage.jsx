@@ -97,20 +97,20 @@ export default function LiveInspectorPage() {
   return (
     <div className="space-y-4 max-w-6xl mx-auto font-mono text-xs">
       {/* Top Banner */}
-      <div className="bg-surface-card border border-slate-800 p-4 rounded-lg flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-md">
+      <div className="bg-brand-paper border border-brand-black p-5 chamfer-card shadow-editorial flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-2">
-            <span className="text-[10px] font-bold text-cyan-hud bg-cyan-hud/10 px-2 py-0.5 rounded border border-cyan-hud/30">
+          <div className="flex items-center space-x-3 mb-2">
+            <span className="text-[10px] font-bold text-brand-paper bg-brand-black px-2 py-1 shadow-editorial uppercase tracking-widest">
               [TAB 02] TEST SANDBOX
             </span>
-            <span className="text-lime-hud font-bold">UNSCRIPTED JUDGE INGESTION LAB</span>
+            <span className="text-brand-black font-bold uppercase tracking-widest text-[11px] md:text-sm">UNSCRIPTED JUDGE INGESTION LAB</span>
           </div>
-          <p className="text-slate-400 font-sans text-xs mt-1">
+          <p className="text-brand-gray font-bold text-xs mt-1 uppercase tracking-widest">
             Upload an arbitrary traffic image or select a benchmark test scenario to verify unscripted multi-stage AI inference in real time.
           </p>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           <input
             type="file"
             ref={fileInputRef}
@@ -120,15 +120,15 @@ export default function LiveInspectorPage() {
           />
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-3 py-2 rounded border border-slate-700 hover:border-slate-500 bg-slate-900 text-slate-200 text-xs font-mono font-bold flex items-center space-x-1.5 transition-all"
+            className="px-4 py-3 border-2 border-brand-black bg-white text-brand-black text-[10px] font-bold flex items-center space-x-2 transition-all chamfer-card shadow-editorial hover:bg-brand-acid uppercase tracking-widest"
           >
-            <Upload className="w-3.5 h-3.5 text-cyan-hud" />
+            <Upload className="w-4 h-4" />
             <span>UPLOAD MEDIA</span>
           </button>
           <button
             onClick={handleRunInference}
             disabled={isProcessing}
-            className="chamfer-btn bg-lime-hud hover:bg-lime-400 text-black px-4 py-2 font-bold flex items-center justify-center space-x-2 shadow-hud-lime transition-all disabled:opacity-50"
+            className="chamfer-btn bg-brand-acid text-brand-black px-6 py-3 border-2 border-brand-black font-bold flex items-center justify-center space-x-2 shadow-editorial hover:bg-brand-black hover:text-brand-acid transition-all disabled:opacity-50 uppercase tracking-widest"
           >
             {isProcessing ? (
               <>
@@ -137,7 +137,7 @@ export default function LiveInspectorPage() {
               </>
             ) : (
               <>
-                <Play className="w-4 h-4 fill-black" />
+                <Play className="w-4 h-4" />
                 <span>RUN EDGE INFERENCE</span>
               </>
             )}
@@ -146,7 +146,7 @@ export default function LiveInspectorPage() {
       </div>
 
       {/* Preset Selector Gallery */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {PRESETS.map((p) => {
           const isSelected = selectedPreset.id === p.id;
           return (
@@ -156,24 +156,26 @@ export default function LiveInspectorPage() {
                 setSelectedPreset(p);
                 setResult(p);
               }}
-              className={`p-3 rounded-lg border cursor-pointer transition-all ${
+              className={`p-4 border-2 cursor-pointer transition-all chamfer-card flex flex-col justify-between min-h-[140px] ${
                 isSelected
-                  ? 'bg-surface-card border-lime-hud shadow-hud-lime'
-                  : 'bg-surface-card/60 border-slate-800 hover:border-slate-700'
+                  ? 'bg-brand-acid border-brand-black shadow-editorial transform -translate-y-1'
+                  : 'bg-white border-brand-black shadow-[2px_2px_0px_#202020] hover:bg-brand-paper hover:-translate-y-0.5'
               }`}
             >
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-bold text-slate-200">{p.title}</span>
-                {p.blacklist && (
-                  <span className="text-[9px] bg-crimson-alert/20 text-crimson-alert border border-crimson-alert/30 px-1.5 py-0.2 rounded font-bold animate-pulse">
-                    HOTLIST
-                  </span>
-                )}
+              <div>
+                <div className="flex justify-between items-start mb-2">
+                  <span className="font-bold text-brand-black uppercase tracking-widest text-[11px] leading-tight pr-2">{p.title}</span>
+                  {p.blacklist && (
+                    <span className="text-[9px] bg-brand-purple text-brand-paper border border-brand-black px-2 py-0.5 font-bold shadow-editorial rotate-3 flex-shrink-0">
+                      HOTLIST
+                    </span>
+                  )}
+                </div>
+                <div className="text-[9px] text-brand-gray font-bold uppercase tracking-widest mb-3">{p.desc}</div>
               </div>
-              <div className="text-[11px] text-slate-400 font-sans">{p.desc}</div>
-              <div className="mt-2 text-lime-hud font-bold flex items-center justify-between">
-                <span>{p.plate}</span>
-                <span className="text-[10px] text-slate-500 font-normal font-sans">{p.vClass.split(' ')[0]}</span>
+              <div className="mt-auto font-bold flex items-center justify-between border-t border-brand-black/20 pt-3">
+                <span className={`text-[12px] px-2 py-0.5 border border-brand-black shadow-editorial ${isSelected ? 'bg-brand-black text-brand-acid' : 'bg-brand-paper text-brand-black'}`}>{p.plate}</span>
+                <span className="text-[9px] text-brand-dark-gray font-bold uppercase tracking-widest text-right">{p.vClass.split(' ')[0]}</span>
               </div>
             </div>
           );
@@ -182,20 +184,20 @@ export default function LiveInspectorPage() {
 
       {/* Drag & Drop Upload Zone / Image Preview */}
       {uploadedImage ? (
-        <div className="relative bg-surface-card border border-slate-700 rounded-lg p-3 overflow-hidden flex flex-col items-center">
-          <div className="relative max-h-64 rounded overflow-hidden border border-slate-800">
+        <div className="relative bg-brand-paper border border-brand-black rounded-none p-5 chamfer-card shadow-editorial overflow-hidden flex flex-col items-center">
+          <div className="relative max-h-64 border-2 border-brand-black overflow-hidden shadow-editorial bg-black">
             <img src={uploadedImage} alt="Uploaded Media" className="max-h-64 object-contain" />
-            <div className="absolute inset-0 surveillance-scanline opacity-30 pointer-events-none"></div>
+            <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.1)_2px,rgba(0,0,0,0.1)_4px)] pointer-events-none mix-blend-overlay"></div>
             {/* Simulated Bounding Box */}
-            <div className="absolute top-[35%] left-[30%] w-[38%] h-[35%] border-2 border-lime-hud shadow-hud-lime flex items-start justify-start p-1 pointer-events-none">
-              <span className="bg-lime-hud text-black text-[9px] font-bold px-1 rounded">
+            <div className="absolute top-[35%] left-[30%] w-[38%] h-[35%] border-2 border-brand-acid shadow-editorial flex items-start justify-start pointer-events-none">
+              <span className="bg-brand-acid text-brand-black text-[9px] font-bold px-2 py-0.5 border-r-2 border-b-2 border-brand-black shadow-editorial">
                 {result.plate} ({result.confOcr})
               </span>
             </div>
           </div>
           <button
             onClick={() => setUploadedImage(null)}
-            className="mt-2 text-[10px] text-slate-400 hover:text-slate-200 underline"
+            className="mt-4 text-[10px] text-brand-dark-gray font-bold hover:text-brand-black uppercase tracking-widest flex items-center gap-1 border-b-2 border-transparent hover:border-brand-black pb-0.5 transition-all"
           >
             Clear image and use benchmark presets
           </button>
@@ -203,88 +205,92 @@ export default function LiveInspectorPage() {
       ) : (
         <div
           onClick={() => fileInputRef.current?.click()}
-          className="bg-surface-card border border-dashed border-slate-700 rounded-lg p-6 text-center hover:border-lime-hud transition-colors cursor-pointer group"
+          className="bg-white border-2 border-dashed border-brand-black chamfer-card shadow-editorial p-8 text-center hover:bg-brand-acid transition-colors cursor-pointer flex flex-col items-center justify-center group min-h-[160px]"
         >
-          <Upload className="w-8 h-8 text-slate-500 group-hover:text-lime-hud mx-auto mb-2 transition-colors" />
-          <div className="text-slate-300 font-bold">DRAG & DROP OR CLICK TO UPLOAD TEST IMAGE / CCTV CLIP</div>
-          <div className="text-slate-500 text-[10px] mt-1 font-sans">
+          <Upload className="w-8 h-8 text-brand-black mb-3 group-hover:scale-110 transition-transform" />
+          <div className="text-brand-black font-bold uppercase tracking-widest text-[11px] mb-2">DRAG & DROP OR CLICK TO UPLOAD TEST IMAGE / CCTV CLIP</div>
+          <div className="text-brand-gray font-bold text-[9px] uppercase tracking-widest max-w-md">
             Supports JPEG, PNG, MP4 up to 50MB • Automatically processed by VehicleNet-Y26n + PaddleOCR Indian RTO Heuristics
           </div>
         </div>
       )}
 
       {/* 4 Numbered Modular Output Cards (Neo-Brutalist Layout) */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Card 01: VehicleNet-Y26n */}
-        <div className="chamfer-card bg-surface-card border border-slate-800 p-3.5 flex flex-col justify-between space-y-3">
-          <div>
-            <div className="flex items-center justify-between text-slate-400 text-[10px]">
-              <span className="font-bold text-lime-hud">[01] PERCEPTION</span>
+        <div className="chamfer-card bg-white border-2 border-brand-black p-5 flex flex-col justify-between space-y-4 shadow-editorial relative overflow-hidden group">
+          <div className="absolute -right-4 -top-4 text-[60px] font-black text-brand-paper opacity-50 group-hover:text-brand-acid transition-colors select-none pointer-events-none leading-none tracking-tighter">01</div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between text-brand-gray font-bold text-[9px] uppercase tracking-widest mb-1 border-b border-brand-black/20 pb-2">
+              <span className="text-brand-black bg-brand-acid px-1.5 py-0.5 shadow-editorial">PERCEPTION</span>
               <span>UVH-26 NANO</span>
             </div>
-            <div className="text-sm font-bold text-slate-100 mt-1">VEHICLE CLASSIFIER</div>
-            <div className="mt-3 p-2 bg-slate-950/80 rounded border border-slate-800 space-y-1 text-[11px]">
-              <div className="text-slate-400">CLASS: <strong className="text-slate-100">{result.vClass}</strong></div>
-              <div className="text-slate-400">COLOR: <strong className="text-slate-100">{result.vColor}</strong></div>
-              <div className="text-slate-400">CONFIDENCE: <strong className="text-lime-hud">{result.confVehicle}</strong></div>
+            <div className="text-[12px] font-bold text-brand-black uppercase tracking-widest">VEHICLE CLASSIFIER</div>
+            <div className="mt-4 p-3 bg-brand-paper border border-brand-black shadow-[inset_1px_1px_3px_rgba(0,0,0,0.1)] space-y-2 text-[10px] font-bold uppercase tracking-widest">
+              <div className="text-brand-gray flex justify-between gap-2"><span>CLASS:</span> <strong className="text-brand-black text-right truncate" title={result.vClass}>{result.vClass}</strong></div>
+              <div className="text-brand-gray flex justify-between"><span>COLOR:</span> <strong className="text-brand-black text-right">{result.vColor}</strong></div>
+              <div className="text-brand-gray flex justify-between items-center mt-1 border-t border-brand-black/10 pt-2"><span>CONF:</span> <strong className="text-brand-purple bg-brand-paper px-1 border border-brand-purple shadow-[1px_1px_0px_#8050E8]">{result.confVehicle}</strong></div>
             </div>
           </div>
-          <div className="text-[10px] text-slate-500">IISc Bengaluru AIM Group Dataset (14 Indian Classes)</div>
+          <div className="text-[9px] text-brand-gray font-bold uppercase tracking-widest relative z-10 border-t border-brand-black/20 pt-2 mt-2">IISc Bengaluru Dataset</div>
         </div>
 
         {/* Card 02: Plate Localization */}
-        <div className="chamfer-card bg-surface-card border border-slate-800 p-3.5 flex flex-col justify-between space-y-3">
-          <div>
-            <div className="flex items-center justify-between text-slate-400 text-[10px]">
-              <span className="font-bold text-cyan-hud">[02] LOCALIZATION</span>
+        <div className="chamfer-card bg-white border-2 border-brand-black p-5 flex flex-col justify-between space-y-4 shadow-editorial relative overflow-hidden group">
+          <div className="absolute -right-4 -top-4 text-[60px] font-black text-brand-paper opacity-50 group-hover:text-brand-purple transition-colors select-none pointer-events-none leading-none tracking-tighter">02</div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between text-brand-gray font-bold text-[9px] uppercase tracking-widest mb-1 border-b border-brand-black/20 pb-2">
+              <span className="text-brand-paper bg-brand-purple px-1.5 py-0.5 shadow-editorial">LOCALIZATION</span>
               <span>YOLOV8-PLATE</span>
             </div>
-            <div className="text-sm font-bold text-slate-100 mt-1">PLATE BOUNDING BOX</div>
-            <div className="mt-3 p-2 bg-slate-950/80 rounded border border-slate-800 space-y-1 text-[11px]">
-              <div className="text-slate-400">FORMAT: <strong className="text-slate-100">{result.twoRow ? '2-Row Square' : '1-Row HSRP'}</strong></div>
-              <div className="text-slate-400">SPLITTER: <strong className="text-cyan-hud">{result.twoRow ? 'ACTIVE (Horizontal)' : 'BYPASS'}</strong></div>
-              <div className="text-slate-400">BOX: <strong className="text-slate-300">[312, 140, 180, 120]</strong></div>
+            <div className="text-[12px] font-bold text-brand-black uppercase tracking-widest">PLATE BOUNDING BOX</div>
+            <div className="mt-4 p-3 bg-brand-paper border border-brand-black shadow-[inset_1px_1px_3px_rgba(0,0,0,0.1)] space-y-2 text-[10px] font-bold uppercase tracking-widest">
+              <div className="text-brand-gray flex justify-between"><span>FORMAT:</span> <strong className="text-brand-black text-right">{result.twoRow ? '2-Row' : '1-Row'}</strong></div>
+              <div className="text-brand-gray flex justify-between"><span>SPLITTER:</span> <strong className="text-brand-purple text-right">{result.twoRow ? 'ACTIVE' : 'BYPASS'}</strong></div>
+              <div className="text-brand-gray flex justify-between items-center mt-1 border-t border-brand-black/10 pt-2"><span>BOX:</span> <strong className="text-brand-black text-right bg-white px-1 border border-brand-black shadow-[1px_1px_0px_#202020] text-[9px]">[312, 140, 180, 120]</strong></div>
             </div>
           </div>
-          <div className="text-[10px] text-slate-500">Adaptive Bilateral Filtering applied</div>
+          <div className="text-[9px] text-brand-gray font-bold uppercase tracking-widest relative z-10 border-t border-brand-black/20 pt-2 mt-2">Adaptive Bilateral Filtering</div>
         </div>
 
         {/* Card 03: PaddleOCR */}
-        <div className="chamfer-card bg-surface-card border border-slate-800 p-3.5 flex flex-col justify-between space-y-3">
-          <div>
-            <div className="flex items-center justify-between text-slate-400 text-[10px]">
-              <span className="font-bold text-purple-400">[03] RECOGNITION</span>
+        <div className="chamfer-card bg-white border-2 border-brand-black p-5 flex flex-col justify-between space-y-4 shadow-editorial relative overflow-hidden group">
+          <div className="absolute -right-4 -top-4 text-[60px] font-black text-brand-paper opacity-50 group-hover:text-brand-black transition-colors select-none pointer-events-none leading-none tracking-tighter">03</div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between text-brand-gray font-bold text-[9px] uppercase tracking-widest mb-1 border-b border-brand-black/20 pb-2">
+              <span className="text-brand-paper bg-brand-black px-1.5 py-0.5 shadow-editorial">RECOGNITION</span>
               <span>PADDLEOCR V4</span>
             </div>
-            <div className="text-sm font-bold text-slate-100 mt-1">TEXT PARSER</div>
-            <div className="mt-3 p-2 bg-slate-950/80 rounded border border-slate-800 space-y-1 text-[11px]">
-              <div className="text-slate-400">RAW: <strong className="text-slate-300">{result.plate}</strong></div>
-              <div className="text-slate-400">OCR CONF: <strong className="text-lime-hud">{result.confOcr}</strong></div>
-              <div className="text-slate-400">GRAMMAR: <strong className="text-emerald-400">PASSED</strong></div>
+            <div className="text-[12px] font-bold text-brand-black uppercase tracking-widest">TEXT PARSER</div>
+            <div className="mt-4 p-3 bg-brand-paper border border-brand-black shadow-[inset_1px_1px_3px_rgba(0,0,0,0.1)] space-y-2 text-[10px] font-bold uppercase tracking-widest">
+              <div className="text-brand-gray flex justify-between items-center"><span>RAW:</span> <strong className="text-brand-acid bg-brand-black px-1.5 py-0.5 border border-brand-black shadow-[1px_1px_0px_#C8E84D] text-[11px]">{result.plate}</strong></div>
+              <div className="text-brand-gray flex justify-between mt-2 pt-2 border-t border-brand-black/10"><span>CONF:</span> <strong className="text-brand-purple">{result.confOcr}</strong></div>
+              <div className="text-brand-gray flex justify-between"><span>GRAMMAR:</span> <strong className="text-brand-black bg-brand-acid px-1 border border-brand-black shadow-[1px_1px_0px_#202020]">PASSED</strong></div>
             </div>
           </div>
-          <div className="text-[10px] text-slate-500">Positional RTO syntax disambiguation (0/O, 1/I, 8/B)</div>
+          <div className="text-[9px] text-brand-gray font-bold uppercase tracking-widest relative z-10 border-t border-brand-black/20 pt-2 mt-2">RTO syntax disambiguation</div>
         </div>
 
         {/* Card 04: Digital Identity */}
-        <div className="chamfer-card bg-surface-card border border-slate-800 p-3.5 flex flex-col justify-between space-y-3">
-          <div>
-            <div className="flex items-center justify-between text-slate-400 text-[10px]">
-              <span className="font-bold text-emerald-400">[04] VERIFICATION</span>
+        <div className="chamfer-card bg-white border-2 border-brand-black p-5 flex flex-col justify-between space-y-4 shadow-editorial relative overflow-hidden group">
+          <div className="absolute -right-4 -top-4 text-[60px] font-black text-brand-paper opacity-50 group-hover:text-brand-acid transition-colors select-none pointer-events-none leading-none tracking-tighter">04</div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between text-brand-gray font-bold text-[9px] uppercase tracking-widest mb-1 border-b border-brand-black/20 pb-2">
+              <span className="text-brand-black bg-brand-paper border border-brand-black px-1.5 py-0.5 shadow-editorial">VERIFICATION</span>
               <span>VAHAN RTO</span>
             </div>
-            <div className="text-sm font-bold text-slate-100 mt-1">DIGITAL FOOTPRINT</div>
-            <div className="mt-3 p-2 bg-slate-950/80 rounded border border-slate-800 space-y-1 text-[11px]">
-              <div className="text-slate-400">STATE: <strong className="text-slate-100">{result.state || 'Tamil Nadu (TN)'}</strong></div>
-              <div className="text-slate-400 truncate">RTO: <strong className="text-slate-300 text-[10px]">{result.rto}</strong></div>
-              <div className="text-slate-400">STATUS: {result.blacklist ? (
-                <strong className="text-crimson-alert">WANTED / STOLEN</strong>
+            <div className="text-[12px] font-bold text-brand-black uppercase tracking-widest">DIGITAL FOOTPRINT</div>
+            <div className="mt-4 p-3 bg-brand-paper border border-brand-black shadow-[inset_1px_1px_3px_rgba(0,0,0,0.1)] space-y-2 text-[10px] font-bold uppercase tracking-widest">
+              <div className="text-brand-gray flex justify-between"><span>STATE:</span> <strong className="text-brand-black text-right">{result.state || 'TN'}</strong></div>
+              <div className="text-brand-gray flex flex-col pt-1 border-t border-brand-black/10"><span>RTO:</span> <strong className="text-brand-dark-gray mt-0.5 leading-tight text-[9px]">{result.rto}</strong></div>
+              <div className="text-brand-gray flex justify-between items-center pt-2 mt-1 border-t border-brand-black/10"><span>STATUS:</span> {result.blacklist ? (
+                <strong className="text-brand-paper bg-brand-purple px-1.5 py-0.5 border border-brand-black shadow-[1px_1px_0px_#202020] rotate-2">WANTED</strong>
               ) : (
-                <strong className="text-emerald-400">CLEARED</strong>
+                <strong className="text-brand-black bg-brand-acid px-1.5 py-0.5 border border-brand-black shadow-[1px_1px_0px_#202020]">CLEARED</strong>
               )}</div>
             </div>
           </div>
-          <div className="text-[10px] text-slate-500">Persisted in Urban Spatiotemporal Graph</div>
+          <div className="text-[9px] text-brand-gray font-bold uppercase tracking-widest relative z-10 border-t border-brand-black/20 pt-2 mt-2">Urban Spatiotemporal Graph</div>
         </div>
       </div>
     </div>
