@@ -17,52 +17,52 @@ export default function SystemTicker() {
   }, []);
 
   return (
-    <header className="h-11 bg-obsidian border-b border-slate-800/80 px-4 flex items-center justify-between text-xs font-mono select-none">
+    <header className="h-10 bg-brand-black border-b border-brand-dark-gray/30 px-4 flex items-center justify-between text-xs font-mono select-none">
       {/* Left: Branding & Status */}
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-lime-hud animate-pulse shadow-hud-lime"></span>
-          <span className="font-display font-bold tracking-wider text-slate-100 text-sm">
+          <span className="w-2 h-2 rounded-full bg-brand-acid animate-pulse"></span>
+          <span className="font-display font-bold tracking-wider text-brand-paper text-xs uppercase">
             PROJECT-MELV
           </span>
-          <span className="bg-lime-hud/10 text-lime-hud px-1.5 py-0.5 rounded text-[10px] font-semibold border border-lime-hud/30">
+          <span className="bg-brand-acid/15 text-brand-acid px-1.5 py-0.2 rounded-sm text-[9px] font-bold border border-brand-acid/30">
             SIH-26127
           </span>
         </div>
 
-        <div className="hidden lg:flex items-center space-x-3 text-slate-400 pl-4 border-l border-slate-800">
+        <div className="hidden lg:flex items-center space-x-4 text-brand-gray text-[10px] pl-4 border-l border-brand-dark-gray/40">
           <div className="flex items-center space-x-1.5">
-            <Activity className="w-3.5 h-3.5 text-cyan-hud" />
-            <span>AI ENGINE: <strong className="text-slate-200">ONLINE (14ms)</strong></span>
+            <Activity className="w-3 h-3 text-brand-teal" />
+            <span>AI ENGINE: <strong className="text-brand-paper">ONLINE (14ms)</strong></span>
           </div>
           <div className="flex items-center space-x-1.5">
-            <Wifi className="w-3.5 h-3.5 text-emerald-400" />
-            <span>NODES: <strong className="text-slate-200">8 / 8 MESH</strong></span>
+            <Wifi className="w-3 h-3 text-brand-acid" />
+            <span>NODES: <strong className="text-brand-paper">8 / 8 MESH</strong></span>
           </div>
           <div className="flex items-center space-x-1.5">
-            <HardDrive className="w-3.5 h-3.5 text-purple-400" />
-            <span>BANDWIDTH REDUCTION: <strong className="text-lime-hud">99.82%</strong></span>
+            <HardDrive className="w-3 h-3 text-brand-purple" />
+            <span>BANDWIDTH REDUCTION: <strong className="text-brand-acid">99.82%</strong></span>
           </div>
         </div>
       </div>
 
       {/* Center: Playback / Simulation Controls */}
-      <div className="flex items-center space-x-2 bg-surface-card px-2.5 py-1 rounded border border-slate-800">
+      <div className="flex items-center space-x-2 bg-brand-dark-gray/40 px-2 py-0.5 rounded border border-brand-dark-gray/50">
         <button
           onClick={() => setIsPlaying(!isPlaying)}
-          className="p-1 hover:text-lime-hud transition-colors"
+          className="p-1 hover:text-brand-acid transition-colors"
           title={isPlaying ? "Pause Simulation" : "Resume Simulation"}
         >
-          {isPlaying ? <Pause className="w-3.5 h-3.5 text-amber-hazard" /> : <Play className="w-3.5 h-3.5 text-lime-hud" />}
+          {isPlaying ? <Pause className="w-3.5 h-3.5 text-amber-400" /> : <Play className="w-3.5 h-3.5 text-brand-acid" />}
         </button>
         <button
           onClick={() => setCurrentTime(0)}
-          className="p-1 hover:text-cyan-hud transition-colors"
+          className="p-1 hover:text-brand-teal transition-colors"
           title="Reset Simulation Cycle"
         >
-          <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+          <RotateCcw className="w-3.5 h-3.5 text-brand-gray" />
         </button>
-        <div className="text-[11px] text-slate-300 font-semibold w-16 text-center">
+        <div className="text-[10px] text-brand-paper font-semibold w-16 text-center">
           T+ {currentTime.toFixed(1)}s
         </div>
       </div>
@@ -70,13 +70,13 @@ export default function SystemTicker() {
       {/* Right: Map Toggle & System Clock */}
       <div className="flex items-center space-x-4">
         {/* 3D / 2D Map Toggle */}
-        <div className="flex items-center bg-surface-card p-0.5 rounded border border-slate-800">
+        <div className="flex items-center bg-brand-dark-gray/40 p-0.5 rounded border border-brand-dark-gray/50">
           <button
             onClick={() => setMapMode('3d')}
-            className={`flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+            className={`flex items-center space-x-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase transition-all ${
               mapMode === '3d'
-                ? 'bg-lime-hud text-black shadow-hud-lime'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-brand-acid text-brand-black shadow-editorial'
+                : 'text-brand-gray hover:text-brand-paper'
             }`}
           >
             <Box className="w-3 h-3" />
@@ -84,10 +84,10 @@ export default function SystemTicker() {
           </button>
           <button
             onClick={() => setMapMode('2d')}
-            className={`flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+            className={`flex items-center space-x-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase transition-all ${
               mapMode === '2d'
-                ? 'bg-cyan-hud text-black shadow-hud-cyan'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-brand-purple text-brand-paper shadow-editorial'
+                : 'text-brand-gray hover:text-brand-paper'
             }`}
           >
             <Layers className="w-3 h-3" />
@@ -96,13 +96,13 @@ export default function SystemTicker() {
         </div>
 
         {/* Watchlist Counter */}
-        <div className="hidden sm:flex items-center space-x-1.5 text-crimson-alert bg-crimson-alert/10 px-2 py-0.5 rounded border border-crimson-alert/30">
-          <ShieldAlert className="w-3.5 h-3.5" />
-          <span>HOTLIST: <strong>{blacklist.length} TARGETS</strong></span>
+        <div className="hidden sm:flex items-center space-x-1.5 text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/30 text-[9px]">
+          <ShieldAlert className="w-3 h-3" />
+          <span>HOTLIST: <strong className="text-red-300">{blacklist.length} TARGETS</strong></span>
         </div>
 
         {/* Real-time Clock */}
-        <div className="text-slate-300 font-bold tracking-wider">
+        <div className="text-brand-gray text-[10px] font-bold tracking-wider">
           {clock}
         </div>
       </div>

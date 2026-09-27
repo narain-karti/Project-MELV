@@ -13,6 +13,7 @@ import {
   Cell
 } from 'recharts';
 import { BarChart3, TrendingUp, AlertTriangle } from 'lucide-react';
+import CityDigitalTwin3D from '../components/analytics/CityDigitalTwin3D';
 
 export default function TrafficAnalyticsPage() {
   const [data, setData] = useState(analyticsData);
@@ -47,12 +48,22 @@ export default function TrafficAnalyticsPage() {
       <div className="bg-brand-paper border border-brand-black p-5 chamfer-card shadow-editorial flex flex-col md:flex-row items-center justify-between">
         <div className="flex items-center space-x-3 mb-2 md:mb-0">
           <BarChart3 className="w-6 h-6 text-brand-black" />
-          <span className="font-bold text-brand-black uppercase tracking-widest text-[11px] md:text-sm">MACRO URBAN TRAFFIC ANALYTICS</span>
+          <div>
+            <span className="font-bold text-brand-black uppercase tracking-widest text-[11px] md:text-sm block">
+              MACRO URBAN TRAFFIC ANALYTICS & DIGITAL TWIN
+            </span>
+            <span className="text-[9px] text-brand-gray font-sans block mt-0.5">
+              SIH Problem Statement 26127: City-Wide ANPR Aggregation & Intelligent Traffic Flow Optimization
+            </span>
+          </div>
         </div>
         <div className="text-[10px] text-brand-gray font-bold tracking-widest uppercase">
           DAILY PASS-THROUGHS: <strong className="text-brand-acid bg-brand-black px-2 py-1 ml-1 shadow-editorial">{Number(daily_volume).toLocaleString()} VEHICLES</strong>
         </div>
       </div>
+
+      {/* 3D City Digital Twin & Adaptive Traffic Signal Controller */}
+      <CityDigitalTwin3D />
 
       {/* Grid: Hourly Density Curves + Modal Split */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

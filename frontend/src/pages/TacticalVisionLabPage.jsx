@@ -33,6 +33,7 @@ import {
 import bytetrackData from '../data/bytetrack_anpr_demo.json';
 import trafficData from '../data/traffic_analysis_data.json';
 import IntersectionDigitalTwin3D from '../components/tracking/IntersectionDigitalTwin3D';
+import { ActionModal } from '../App';
 
 export default function TacticalVisionLabPage() {
   const { isPlaying, setIsPlaying, setDigitalIdentity, setConsoleLogs, setNotifications } = useTracking();
@@ -40,6 +41,7 @@ export default function TacticalVisionLabPage() {
   const [streamMode, setStreamMode] = useState('baked'); // 'baked' (30 FPS hardware accelerated) or 'live' (FastAPI RTSP)
   const [videoTime, setVideoTime] = useState(0);
   const [activeTracks, setActiveTracks] = useState([]);
+  const [actionModal, setActionModal] = useState({ isOpen: false, title: '', message: '', severity: 'info' });
   
   // Backend Telemetry State (From FastAPI Master Server on :8000)
   const [backendOnline, setBackendOnline] = useState(true);
@@ -465,7 +467,12 @@ export default function TacticalVisionLabPage() {
                         ...prev
                       ]);
                     }
-                    alert('⚡ EMERGENCY GREEN CORRIDOR ACTIVATED:\nRoundabout entry metering signals throttled on North & East approaches. West Expressway granted continuous right-of-way transit.');
+                    setActionModal({
+                      isOpen: true,
+                      title: 'EMERGENCY GREEN CORRIDOR ACTIVATED',
+                      message: 'Roundabout entry metering signals throttled on North & East approaches. West Expressway granted continuous right-of-way transit.',
+                      severity: 'critical'
+                    });
                   }}
                   className="w-full bg-brand-acid text-brand-black font-bold uppercase tracking-widest text-[10px] py-2.5 border border-brand-black shadow-editorial hover:bg-brand-paper transition-all"
                 >
@@ -628,7 +635,12 @@ export default function TacticalVisionLabPage() {
                         ...prev
                       ]);
                     }
-                    alert('🚨 TACTICAL DISPATCH ISSUED:\nKanathur Intercept Patrol Unit K-04 notified to block East Junction exit onto Reddykuppam Road.');
+                    setActionModal({
+                      isOpen: true,
+                      title: 'TACTICAL DISPATCH ISSUED',
+                      message: 'Kanathur Intercept Patrol Unit K-04 notified to block East Junction exit onto Reddykuppam Road.',
+                      severity: 'critical'
+                    });
                   }}
                   className="w-full bg-brand-acid text-brand-black font-bold uppercase tracking-widest text-[10px] py-2.5 border border-brand-black shadow-editorial hover:bg-brand-paper transition-all"
                 >
@@ -640,6 +652,13 @@ export default function TacticalVisionLabPage() {
 
         </div>
       </div>
+      <ActionModal
+        isOpen={actionModal.isOpen}
+        onClose={() => setActionModal(prev => ({ ...prev, isOpen: false }))}
+        title={actionModal.title}
+        message={actionModal.message}
+        severity={actionModal.severity}
+      />
     </div>
   );
 }
