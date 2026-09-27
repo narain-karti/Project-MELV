@@ -8,7 +8,7 @@ const TrackingContext = createContext(null);
 export const CYCLE_DURATION = 20.2; // Calibrated to 20.22s user CCTV footage length
 
 export function TrackingProvider({ children }) {
-  const [activeTab, setActiveTab] = useState('live_tracking');
+  const [activeTab, setActiveTab] = useState('home');
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [mapMode, setMapMode] = useState('2d'); // '2d' (Leaflet) or '3d' (Digital Twin)

@@ -1,49 +1,81 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-obsidian text-slate-100 font-sans antialiased overflow-x-hidden;
+    background-color: var(--brand-black, #202020);
+    color: var(--brand-paper, #E5E5E6);
+    @apply font-sans antialiased overflow-x-hidden;
   }
 }
 
-/* Neo-Brutalist Chamfer Cut-Corner Polygons */
+:root {
+  --brand-black: #202020;
+  --brand-paper: #E5E5E6;
+  --brand-acid: #C8E84D;
+  --brand-purple: #8050E8;
+  --brand-gray: #777777;
+  --brand-dark-gray: #333333;
+}
+
+/* Subtle atmospheric background */
+.atmospheric-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to bottom,
+    rgba(135, 178, 204, 0.08) 0%,
+    rgba(32, 32, 32, 0) 40%,
+    rgba(200, 232, 77, 0.05) 100%
+  );
+  pointer-events: none;
+}
+
+/* Typography styles */
+.editorial-headline {
+  font-family: 'Space Grotesk', sans-serif;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+}
+
+.editorial-number {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+}
+
+/* Shapes and Geometry */
+.chamfer-bottom {
+  clip-path: polygon(
+    0 0, 
+    100% 0, 
+    100% calc(100% - 40px), 
+    calc(100% - 40px) 100%, 
+    0 100%
+  );
+}
+
 .chamfer-card {
   clip-path: polygon(
     0 0,
     calc(100% - 16px) 0,
     100% 16px,
     100% 100%,
-    16px 100%,
-    0 calc(100% - 16px)
-  );
-}
-
-.chamfer-tr {
-  clip-path: polygon(
-    0 0,
-    calc(100% - 18px) 0,
-    100% 18px,
-    100% 100%,
     0 100%
   );
 }
 
-.chamfer-btn {
+.starburst-badge {
   clip-path: polygon(
-    6px 0,
-    100% 0,
-    100% calc(100% - 6px),
-    calc(100% - 6px) 100%,
-    0 100%,
-    0 6px
+    50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
   );
 }
 
-/* Surveillance HUD Scanline Shaders */
+/* Old utilities kept for compatibility with existing components */
 .surveillance-scanline {
   background: linear-gradient(
     rgba(18, 16, 16, 0) 50%,
@@ -58,34 +90,17 @@
   background-size: 100% 3px, 6px 100%;
 }
 
-/* Custom Scrollbar for Terminal Feeds */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #0A0D12;
+  background: var(--brand-black);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
+  background: var(--brand-dark-gray);
   border-radius: 2px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #D4FF32;
-}
-
-/* Monospace Ticker & Glows */
-.hud-border-lime {
-  border: 1px solid rgba(212, 255, 50, 0.35);
-}
-
-.hud-border-crimson {
-  border: 1px solid rgba(255, 59, 48, 0.45);
-}
-
-.hud-border-subtle {
-  border: 1px solid rgba(51, 65, 85, 0.5);
+  background: var(--brand-acid);
 }

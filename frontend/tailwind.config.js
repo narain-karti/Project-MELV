@@ -7,25 +7,42 @@ export default {
   theme: {
     extend: {
       colors: {
-        obsidian: "#0A0D12",
-        "surface-dark": "#0F172A",
-        "surface-card": "#131C2E",
-        "surface-card-hover": "#1A253C",
-        "lime-hud": "#D4FF32",
-        "lime-hud-dim": "rgba(212, 255, 50, 0.15)",
+        'brand-black': '#202020',
+        'brand-paper': '#E5E5E6',
+        'brand-acid': '#C8E84D',
+        'brand-purple': '#8050E8',
+        'brand-gray': '#777777',
+        'brand-dark-gray': '#333333',
+        // Fallbacks for existing variables used in components so they don't break entirely
+        obsidian: "#202020",
+        "surface-dark": "#2a2a2a",
+        "surface-card": "#E5E5E6", 
+        "surface-card-hover": "#d1d1d1",
+        "lime-hud": "#C8E84D",
+        "lime-hud-dim": "rgba(200, 232, 77, 0.15)",
         "crimson-alert": "#FF3B30",
         "amber-hazard": "#F59E0B",
-        "cyan-hud": "#00F2FE",
+        "cyan-hud": "#8050E8", // Mapped to purple
       },
       fontFamily: {
-        mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
-        display: ['"Syne"', '"Outfit"', 'sans-serif'],
+        display: ['"Space Grotesk"', 'sans-serif'],
         sans: ['"Inter"', 'system-ui', 'sans-serif'],
+        mono: ['"Space Grotesk"', 'monospace'], // using space grotesk for mono elements to keep it cohesive
       },
       boxShadow: {
-        'hud-lime': '0 0 15px rgba(212, 255, 50, 0.3)',
-        'hud-crimson': '0 0 20px rgba(255, 59, 48, 0.4)',
-        'hud-cyan': '0 0 15px rgba(0, 242, 254, 0.3)',
+        'hud-lime': 'none',
+        'hud-crimson': 'none',
+        'hud-cyan': 'none',
+        'editorial': '4px 4px 0px 0px rgba(32,32,32,1)',
+      },
+      animation: {
+        'fade-up': 'fadeUp 0.8s ease-out forwards',
+      },
+      keyframes: {
+        fadeUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        }
       }
     },
   },
