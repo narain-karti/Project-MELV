@@ -7,22 +7,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        'brand-black': '#202020',
-        'brand-paper': '#E5E5E6',
-        'brand-acid': '#C8E84D',
-        'brand-purple': '#8050E8',
-        'brand-gray': '#777777',
-        'brand-dark-gray': '#333333',
+        // SIH26127 semantic tokens — government-grade command center
+        'brand-black': '#171717',
+        'brand-panel': '#E9E9E6',
+        'brand-paper': '#E9E9E6',
+        'brand-dark': '#111111',
+        'brand-acid': '#C6F135',
+        'brand-purple': '#8057FF',
+        'brand-alert': '#FF3B30',
+        'brand-teal': '#00C2FF',
+        'brand-gray': '#8A8A86',
+        'brand-dark-gray': '#2A2A2A',
         // Fallbacks for existing variables used in components so they don't break entirely
-        obsidian: "#202020",
-        "surface-dark": "#2a2a2a",
-        "surface-card": "#E5E5E6", 
+        obsidian: "#171717",
+        "surface-dark": "#111111",
+        "surface-card": "#E9E9E6", 
         "surface-card-hover": "#d1d1d1",
-        "lime-hud": "#C8E84D",
-        "lime-hud-dim": "rgba(200, 232, 77, 0.15)",
+        "lime-hud": "#C6F135",
+        "lime-hud-dim": "rgba(198, 241, 53, 0.12)",
         "crimson-alert": "#FF3B30",
         "amber-hazard": "#F59E0B",
-        "cyan-hud": "#8050E8", // Mapped to purple
+        "cyan-hud": "#00C2FF",
       },
       fontFamily: {
         display: ['"Space Grotesk"', 'sans-serif'],

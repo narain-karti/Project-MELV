@@ -29,6 +29,86 @@ export function TrackingProvider({ children }) {
 
   // Notifications Stack
   const [notifications, setNotifications] = useState([]);
+  
+  // Real-time Master Backend Connection State (FastAPI :8000)
+  const [backendOnline, setBackendOnline] = useState(true);
+  const [backendTelemetry, setBackendTelemetry] = useState(null);
+  const lastProcessedPlateRef = useRef(null);
+
+  // Poll Master Backend (:8000) for real-time OpenCV / YOLO / ANPR stream telemetry
+  useEffect(() => {
+    let active = true;
+    const pollBackend = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/api/telemetry?camera=CAM-01');
+        if (res.ok) {
+          const data = await res.json();
+          if (active) {
+            setBackendOnline(true);
+            setBackendTelemetry(data);
+
+            if (data.recent_scanned_plates && data.recent_scanned_plates.length > 0) {
+              const latestPlate = data.recent_scanned_plates[data.recent_scanned_plates.length - 1];
+              if (latestPlate && latestPlate.plate !== lastProcessedPlateRef.current) {
+                lastProcessedPlateRef.current = latestPlate.plate;
+
+                setDigitalIdentity({
+                  plate: latestPlate.plate,
+                  plateType: 'standard_private',
+                  vehicleClass: latestPlate.is_alert ? 'Wanted Target' : `Vehicle Track #${latestPlate.tracker_id}`,
+                  color: 'Extracted From Feed',
+                  confidence: (latestPlate.conf * 100).toFixed(1),
+                  timestamp: latestPlate.timestamp || new Date().toLocaleTimeString('en-IN') + ' IST',
+                  cameraName: 'CLV Nagar 1st St - West Gate (ECR)',
+                  cameraId: 'CAM-01',
+                  isBlacklist: latestPlate.is_alert,
+                  blacklistInfo: latestPlate.is_alert ? {
+                    category: 'Active Pursuit / Blacklist',
+                    fir_number: 'FIR-2026-CHN-KAN-0492',
+                    severity: 'CRITICAL'
+                  } : null
+                });
+
+                setConsoleLogs(prev => [
+                  {
+                    id: Date.now(),
+                    time: latestPlate.timestamp?.split(' ')[0] || new Date().toLocaleTimeString('en-IN'),
+                    text: `[CAM-01 LIVE] DETECT "${latestPlate.plate}" [Track #${latestPlate.tracker_id}] CONF: ${(latestPlate.conf * 100).toFixed(1)}%`,
+                    type: latestPlate.is_alert ? 'critical' : 'normal'
+                  },
+                  ...prev.slice(0, 40)
+                ]);
+
+                if (latestPlate.is_alert) {
+                  setNotifications(prev => [
+                    {
+                      id: Date.now(),
+                      title: '⚠ WANTED TARGET IDENTIFIED',
+                      desc: `Hotlist Match: ${latestPlate.plate} at CAM-01`,
+                      severity: 'critical',
+                      timestamp: latestPlate.timestamp
+                    },
+                    ...prev.slice(0, 15)
+                  ]);
+                }
+              }
+            }
+          }
+        } else {
+          if (active) setBackendOnline(false);
+        }
+      } catch (err) {
+        if (active) setBackendOnline(false);
+      }
+    };
+
+    pollBackend();
+    const interval = setInterval(pollBackend, 1200);
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   // Internal clock ticker
   useEffect(() => {
@@ -168,6 +248,8 @@ export function TrackingProvider({ children }) {
         setConsoleLogs,
         notifications,
         setNotifications,
+        backendOnline,
+        backendTelemetry,
         cameras: camerasData,
         blacklist: blacklistData
       }}

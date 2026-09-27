@@ -62,17 +62,47 @@ export default function LiveInspectorPage() {
     }, 1100);
   };
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (uploadEvent) => {
+    reader.onload = async (uploadEvent) => {
       setUploadedImage(uploadEvent.target.result);
       setIsProcessing(true);
-      setTimeout(() => {
-        // Dynamic simulated recognition for uploaded media
-        const detectedObj = {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch('http://localhost:8000/api/detect', {
+          method: 'POST',
+          body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const detectedObj = {
+            id: 'custom_upload',
+            title: 'Live YOLO & ANPR Inference',
+            desc: `Processed via Dual YOLOv8 + EasyOCR (${data.latency_ms}ms)`,
+            plate: data.plate_number,
+            vClass: data.vehicle_class,
+            vColor: data.vehicle_color || 'Detected in Scene',
+            confVehicle: `${(data.confidence_vehicle * 100).toFixed(1)}%`,
+            confOcr: `${(data.confidence_ocr * 100).toFixed(1)}%`,
+            state: data.state_name ? `${data.state_name} (${data.state_code})` : 'Indian RTO',
+            rto: data.is_valid_rto ? 'RTO Grammar Verified' : 'Standard Plate',
+            twoRow: data.is_two_row,
+            blacklist: data.is_blacklist,
+            fir: data.is_blacklist ? 'CCTNS National Hotlist Flag' : undefined,
+            bbox: data.bounding_box
+          };
+          setSelectedPreset(detectedObj);
+          setResult(detectedObj);
+        } else {
+          throw new Error('Inference server returned status ' + res.status);
+        }
+      } catch (err) {
+        console.warn('Real-time backend inference unavailable, falling back:', err);
+        const fallbackObj = {
           id: 'custom_upload',
           title: 'Custom Uploaded Media',
           desc: file.name,
@@ -86,10 +116,11 @@ export default function LiveInspectorPage() {
           twoRow: true,
           blacklist: false
         };
-        setSelectedPreset(detectedObj);
-        setResult(detectedObj);
+        setSelectedPreset(fallbackObj);
+        setResult(fallbackObj);
+      } finally {
         setIsProcessing(false);
-      }, 1400);
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -247,7 +278,7 @@ export default function LiveInspectorPage() {
             <div className="mt-4 p-3 bg-brand-paper border border-brand-black shadow-[inset_1px_1px_3px_rgba(0,0,0,0.1)] space-y-2 text-[10px] font-bold uppercase tracking-widest">
               <div className="text-brand-gray flex justify-between"><span>FORMAT:</span> <strong className="text-brand-black text-right">{result.twoRow ? '2-Row' : '1-Row'}</strong></div>
               <div className="text-brand-gray flex justify-between"><span>SPLITTER:</span> <strong className="text-brand-purple text-right">{result.twoRow ? 'ACTIVE' : 'BYPASS'}</strong></div>
-              <div className="text-brand-gray flex justify-between items-center mt-1 border-t border-brand-black/10 pt-2"><span>BOX:</span> <strong className="text-brand-black text-right bg-white px-1 border border-brand-black shadow-[1px_1px_0px_#202020] text-[9px]">[312, 140, 180, 120]</strong></div>
+              <div className="text-brand-gray flex justify-between items-center mt-1 border-t border-brand-black/10 pt-2"><span>BOX:</span> <strong className="text-brand-black text-right bg-white px-1 border border-brand-black shadow-[1px_1px_0px_#202020] text-[9px]">{result.bbox ? `[${result.bbox.x}, ${result.bbox.y}, ${result.bbox.w}, ${result.bbox.h}]` : '[312, 140, 180, 120]'}</strong></div>
             </div>
           </div>
           <div className="text-[9px] text-brand-gray font-bold uppercase tracking-widest relative z-10 border-t border-brand-black/20 pt-2 mt-2">Adaptive Bilateral Filtering</div>

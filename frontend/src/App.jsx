@@ -12,7 +12,7 @@ import TacticalVisionLabPage from './pages/TacticalVisionLabPage';
 import { ArrowLeft } from 'lucide-react';
 
 function InternalTopNav() {
-  const { setActiveTab, activeTab } = useTracking();
+  const { setActiveTab, activeTab, backendOnline } = useTracking();
   return (
     <header className="flex justify-between items-center w-full px-6 py-4 border-b border-brand-dark-gray/30 bg-brand-black z-20 select-none">
       <div className="flex items-center gap-6">
@@ -31,8 +31,9 @@ function InternalTopNav() {
         <button className={`hover:text-brand-paper transition-colors ${activeTab === 'traffic_analytics' ? 'text-brand-acid' : ''}`} onClick={() => setActiveTab('traffic_analytics')}>[04] Analytics</button>
         <button className={`hover:text-brand-paper transition-colors ${activeTab === 'alerts' ? 'text-brand-acid' : ''}`} onClick={() => setActiveTab('alerts')}>[05] Alerts</button>
       </nav>
-      <div className="text-[9px] font-mono font-bold px-2 py-1 border border-brand-dark-gray text-brand-gray rounded-sm">
-        C4i [v2.0]
+      <div className="flex items-center gap-2 text-[9px] font-mono font-bold px-2.5 py-1 border border-brand-dark-gray text-brand-gray rounded-sm">
+        <span className={`w-1.5 h-1.5 rounded-full ${backendOnline ? 'bg-brand-acid animate-pulse' : 'bg-red-500'}`}></span>
+        <span>ENGINE :8000 [{backendOnline ? 'ACTIVE' : 'OFFLINE'}]</span>
       </div>
     </header>
   );

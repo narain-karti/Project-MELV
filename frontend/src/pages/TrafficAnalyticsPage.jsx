@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import analyticsData from '../data/synthetic_analytics.json';
 import {
   ResponsiveContainer,
@@ -15,10 +15,34 @@ import {
 import { BarChart3, TrendingUp, AlertTriangle } from 'lucide-react';
 
 export default function TrafficAnalyticsPage() {
-  const { hourly_volume, modal_split, od_matrix, corridor_hotspots } = analyticsData;
+  const [data, setData] = useState(analyticsData);
+
+  useEffect(() => {
+    fetch('http://localhost:8000/api/analytics')
+      .then(res => res.ok ? res.json() : null)
+      .then(json => {
+        if (json) {
+          setData(prev => ({
+            ...prev,
+            daily_volume: json.daily_volume ?? prev.daily_volume,
+            hourly_volume: json.hourly_volume ?? prev.hourly_volume,
+            modal_split: json.modal_split ?? prev.modal_split,
+            od_matrix: json.od_matrix ?? prev.od_matrix,
+            corridor_hotspots: json.corridor_hotspots ?? prev.corridor_hotspots
+          }));
+        }
+      })
+      .catch(err => console.warn('Backend analytics endpoint fallback:', err));
+  }, []);
+
+  const hourly_volume = data?.hourly_volume || [];
+  const modal_split = data?.modal_split || [];
+  const od_matrix = data?.od_matrix || [];
+  const corridor_hotspots = data?.corridor_hotspots || [];
+  const daily_volume = data?.daily_volume || 842190;
 
   return (
-    <div className="space-y-4 max-w-6xl mx-auto font-mono text-xs">
+    <div className="space-y-4 max-w-6xl mx-auto font-mono text-xs select-none">
       {/* Top Title Banner */}
       <div className="bg-brand-paper border border-brand-black p-5 chamfer-card shadow-editorial flex flex-col md:flex-row items-center justify-between">
         <div className="flex items-center space-x-3 mb-2 md:mb-0">
@@ -26,7 +50,7 @@ export default function TrafficAnalyticsPage() {
           <span className="font-bold text-brand-black uppercase tracking-widest text-[11px] md:text-sm">MACRO URBAN TRAFFIC ANALYTICS</span>
         </div>
         <div className="text-[10px] text-brand-gray font-bold tracking-widest uppercase">
-          DAILY PASS-THROUGHS: <strong className="text-brand-acid bg-brand-black px-2 py-1 ml-1 shadow-editorial">842,190 VEHICLES</strong>
+          DAILY PASS-THROUGHS: <strong className="text-brand-acid bg-brand-black px-2 py-1 ml-1 shadow-editorial">{Number(daily_volume).toLocaleString()} VEHICLES</strong>
         </div>
       </div>
 
@@ -42,8 +66,8 @@ export default function TrafficAnalyticsPage() {
             <span className="text-[9px] bg-brand-black text-brand-acid px-2 py-1 uppercase tracking-widest font-bold shadow-editorial">LIVE TELEMETRY</span>
           </div>
 
-          <div className="h-56 w-full pt-2">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-56 w-full pt-2 min-h-[224px]">
+            <ResponsiveContainer width="100%" height={220}>
               <LineChart data={hourly_volume}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#202020" strokeOpacity={0.1} />
                 <XAxis dataKey="hour" stroke="#777777" tick={{ fontSize: 9, fill: '#777777', fontWeight: 'bold' }} />
@@ -82,8 +106,8 @@ export default function TrafficAnalyticsPage() {
             <div className="text-[9px] text-brand-gray font-sans mt-1">From VehicleNet-Y26n 14 classes</div>
           </div>
 
-          <div className="h-44 w-full flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-44 w-full flex items-center justify-center min-h-[176px]">
+            <ResponsiveContainer width="100%" height={176}>
               <PieChart>
                 <Pie
                   data={modal_split}
@@ -98,7 +122,7 @@ export default function TrafficAnalyticsPage() {
                   strokeWidth={2}
                 >
                   {modal_split.map((entry, index) => {
-                    const customColor = entry.name === 'Two-Wheeler' ? '#C8E84D' : entry.name === 'Commercial' ? '#8050E8' : entry.name === 'Car' ? '#202020' : '#777777';
+                    const customColor = entry.color || (entry.name?.includes('Two') ? '#C8E84D' : entry.name?.includes('Commercial') ? '#8050E8' : entry.name?.includes('Car') ? '#202020' : '#777777');
                     return <Cell key={`cell-${index}`} fill={customColor} />;
                   })}
                 </Pie>
@@ -111,7 +135,7 @@ export default function TrafficAnalyticsPage() {
 
           <div className="grid grid-cols-2 gap-2 text-[9px] text-brand-black pt-3 border-t border-brand-black/20 uppercase tracking-widest font-bold">
             {modal_split.slice(0, 4).map((m) => {
-              const customColor = m.name === 'Two-Wheeler' ? '#C8E84D' : m.name === 'Commercial' ? '#8050E8' : m.name === 'Car' ? '#202020' : '#777777';
+              const customColor = m.color || (m.name?.includes('Two') ? '#C8E84D' : m.name?.includes('Commercial') ? '#8050E8' : m.name?.includes('Car') ? '#202020' : '#777777');
               return (
                 <div key={m.name} className="flex items-center space-x-1.5">
                   <span className="w-2.5 h-2.5 bg-brand-black shadow-editorial transform -rotate-3 border border-brand-black" style={{ backgroundColor: customColor }}></span>
@@ -139,14 +163,18 @@ export default function TrafficAnalyticsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-brand-black/20">
-                {od_matrix.map((row, i) => (
-                  <tr key={i} className="hover:bg-brand-acid/30 transition-colors">
-                    <td className="py-2.5 text-brand-black font-bold">{row.origin}</td>
-                    <td className="py-2.5 text-brand-black font-bold">{row.destination}</td>
-                    <td className="py-2.5 text-right font-bold text-brand-black bg-white/50">{row.trips.toLocaleString()}</td>
-                    <td className="py-2.5 text-right text-brand-dark-gray">{row.avg_time_mins} mins</td>
-                  </tr>
-                ))}
+                {od_matrix.map((row, i) => {
+                  const trips = row.trips ?? row.transit_count ?? 0;
+                  const duration = row.avg_time_mins ?? (row.avg_transit_sec ? (row.avg_transit_sec / 60).toFixed(1) : '—');
+                  return (
+                    <tr key={i} className="hover:bg-brand-acid/30 transition-colors">
+                      <td className="py-2.5 text-brand-black font-bold">{row.origin}</td>
+                      <td className="py-2.5 text-brand-black font-bold">{row.destination}</td>
+                      <td className="py-2.5 text-right font-bold text-brand-black bg-white/50">{Number(trips).toLocaleString()}</td>
+                      <td className="py-2.5 text-right text-brand-dark-gray">{duration} mins</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

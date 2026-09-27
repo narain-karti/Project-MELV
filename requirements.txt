@@ -1,0 +1,7 @@
+ultralytics
+supervision
+easyocr
+opencv-python
+numpy
+streamlit
+torch

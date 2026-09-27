@@ -10,12 +10,13 @@ export default function AlertsManagementPage() {
   const [newCategory, setNewCategory] = useState('Stolen Vehicle');
   const [dossierDownloaded, setDossierDownloaded] = useState(false);
 
-  const handleAddTarget = (e) => {
+  const handleAddTarget = async (e) => {
     e.preventDefault();
-    if (!newPlate.trim()) return;
+    const cleanPlate = newPlate.trim().toUpperCase();
+    if (!cleanPlate) return;
 
     const newTarget = {
-      plate_number: newPlate.trim().toUpperCase(),
+      plate_number: cleanPlate,
       vehicle_desc: newDesc.trim() || 'Suspect Vehicle',
       category: newCategory,
       severity: 'CRITICAL',
@@ -28,6 +29,16 @@ export default function AlertsManagementPage() {
     setWatchlist([newTarget, ...watchlist]);
     setNewPlate('');
     setNewDesc('');
+
+    try {
+      await fetch('http://localhost:8000/api/alerts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plate: cleanPlate, reason: newCategory })
+      });
+    } catch (err) {
+      console.warn('Backend alert update fallback:', err);
+    }
   };
 
   const handleExportDossier = () => {

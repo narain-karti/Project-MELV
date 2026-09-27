@@ -25,3 +25,5 @@ Thumbs.db
 
 # Raw capture temp duplicates
 WhatsApp Video*.mp4
+*.mov
+backend/data/

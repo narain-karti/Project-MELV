@@ -5,35 +5,68 @@ import videoDetectionsData from '../../data/video_detections.json';
 
 export default function VideoSurveillance() {
   const { currentTime, isPlaying, setDigitalIdentity } = useTracking();
+  const [isLiveStream, setIsLiveStream] = useState(false);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {/* Camera Feed 01: Upstream (West Gate ECR) */}
-      <CameraPanel
-        cameraId="CAM-01"
-        cameraName="CLV Nagar 1st St - West Gate (ECR)"
-        fps="29.9"
-        videoSrc="/videos/cam_01_upstream.mp4"
-        globalTime={currentTime}
-        isPlaying={isPlaying}
-        setDigitalIdentity={setDigitalIdentity}
-      />
+    <div className="space-y-2">
+      {/* Stream Mode Switcher */}
+      <div className="flex items-center justify-between bg-brand-paper border border-brand-black px-3 py-1.5 chamfer-card shadow-editorial text-[9px] font-mono font-bold uppercase">
+        <div className="flex items-center space-x-2">
+          <span className="w-2 h-2 rounded-full bg-brand-acid animate-ping"></span>
+          <span className="text-brand-black tracking-widest">DUAL CCTV CORRIDOR SURVEILLANCE</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setIsLiveStream(false)}
+            className={`px-2 py-0.5 border border-brand-black transition-all flex items-center gap-1 ${
+              !isLiveStream ? 'bg-brand-acid text-brand-black font-bold' : 'bg-white text-brand-gray hover:text-brand-black'
+            }`}
+          >
+            <Radio className="w-3 h-3 text-brand-black animate-pulse" />
+            <span>30 FPS AI BAKE (SMOOTH LOOP)</span>
+          </button>
+          <button
+            onClick={() => setIsLiveStream(true)}
+            className={`px-2 py-0.5 border border-brand-black transition-all flex items-center gap-1 ${
+              isLiveStream ? 'bg-brand-acid text-brand-black font-bold' : 'bg-white text-brand-gray hover:text-brand-black'
+            }`}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping"></span>
+            <span>LIVE RTSP MESH (:8000)</span>
+          </button>
+        </div>
+      </div>
 
-      {/* Camera Feed 02: Downstream (East Junction) */}
-      <CameraPanel
-        cameraId="CAM-02"
-        cameraName="CLV Nagar 1st St - East Junction"
-        fps="29.9"
-        videoSrc="/videos/cam_02_downstream.mp4"
-        globalTime={currentTime}
-        isPlaying={isPlaying}
-        setDigitalIdentity={setDigitalIdentity}
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* Camera Feed 01: Upstream (West Gate ECR) */}
+        <CameraPanel
+          cameraId="CAM-01"
+          cameraName="CLV Nagar 1st St - West Gate (ECR)"
+          fps="29.9"
+          videoSrc="/videos/cam_01_annotated.mp4"
+          globalTime={currentTime}
+          isPlaying={isPlaying}
+          setDigitalIdentity={setDigitalIdentity}
+          isLiveStream={isLiveStream}
+        />
+
+        {/* Camera Feed 02: Downstream (East Junction) */}
+        <CameraPanel
+          cameraId="CAM-02"
+          cameraName="CLV Nagar 1st St - East Junction"
+          fps="29.9"
+          videoSrc="/videos/cam_02_annotated.mp4"
+          globalTime={currentTime}
+          isPlaying={isPlaying}
+          setDigitalIdentity={setDigitalIdentity}
+          isLiveStream={isLiveStream}
+        />
+      </div>
     </div>
   );
 }
 
-function CameraPanel({ cameraId, cameraName, fps, videoSrc, globalTime, isPlaying, setDigitalIdentity }) {
+function CameraPanel({ cameraId, cameraName, fps, videoSrc, globalTime, isPlaying, setDigitalIdentity, isLiveStream }) {
   const videoRef = useRef(null);
   const animFrameRef = useRef(null);
   const [currentVideoTime, setCurrentVideoTime] = useState(0);
@@ -133,82 +166,32 @@ function CameraPanel({ cameraId, cameraName, fps, videoSrc, globalTime, isPlayin
     <div className="relative bg-brand-paper border-2 border-brand-black chamfer-card overflow-hidden h-[270px] flex flex-col justify-between group shadow-editorial select-none">
       {/* Video Viewport Container */}
       <div className="absolute inset-0 bg-brand-black flex items-center justify-center overflow-hidden">
-        <video
-          ref={videoRef}
-          src={videoSrc}
-          autoPlay
-          loop
-          muted
-          playsInline
-          onTimeUpdate={handleTimeUpdate}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-
-        {/* Live Multi-Vehicle Object Detection & ANPR Bounding Box Overlays */}
-        {detections.map((det, index) => {
-          const isBlacklist = det.is_blacklist;
-          return (
-            <div
-              key={`${det.plate}-${index}`}
-              className="absolute transition-all duration-150 pointer-events-none z-20"
-              style={{
-                left: `${det.bbox.x}%`,
-                top: `${det.bbox.y}%`,
-                width: `${det.bbox.w}%`,
-                height: `${det.bbox.h}%`,
-              }}
-            >
-              {/* Tactical Box Frame */}
-              <div
-                className={`w-full h-full relative border-2 ${
-                  isBlacklist
-                    ? 'border-brand-purple shadow-[0_0_12px_rgba(128,80,232,0.8)]'
-                    : 'border-brand-acid shadow-[0_0_10px_rgba(200,232,77,0.7)]'
-                }`}
-              >
-                {/* 4 Neo-Brutalist Corner Brackets */}
-                <div className={`absolute -top-1.5 -left-1.5 w-3 h-3 border-t-[3px] border-l-[3px] ${isBlacklist ? 'border-brand-purple' : 'border-brand-acid'}`}></div>
-                <div className={`absolute -top-1.5 -right-1.5 w-3 h-3 border-t-[3px] border-r-[3px] ${isBlacklist ? 'border-brand-purple' : 'border-brand-acid'}`}></div>
-                <div className={`absolute -bottom-1.5 -left-1.5 w-3 h-3 border-b-[3px] border-l-[3px] ${isBlacklist ? 'border-brand-purple' : 'border-brand-acid'}`}></div>
-                <div className={`absolute -bottom-1.5 -right-1.5 w-3 h-3 border-b-[3px] border-r-[3px] ${isBlacklist ? 'border-brand-purple' : 'border-brand-acid'}`}></div>
-
-                {/* Center Targeting Reticle Crosshair */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className={`w-1.5 h-1.5 rounded-full ${isBlacklist ? 'bg-brand-purple animate-ping' : 'bg-brand-acid animate-pulse'}`}></div>
-                </div>
-
-                {/* Floating Top Chip: ANPR Plate Extraction */}
-                <div
-                  className={`absolute -top-7 left-0 whitespace-nowrap px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-widest border border-brand-black shadow-[2px_2px_0px_#202020] flex items-center gap-1.5 ${
-                    isBlacklist
-                      ? 'bg-brand-purple text-brand-paper animate-pulse'
-                      : 'bg-brand-acid text-brand-black'
-                  }`}
-                >
-                  <span>{det.plate}</span>
-                  <span className="opacity-75 text-[9px]">[{det.ocr_conf}%]</span>
-                  {isBlacklist ? (
-                    <span className="bg-brand-black text-brand-paper px-1 py-0.2 text-[8px] tracking-tighter">
-                      WANTED
-                    </span>
-                  ) : (
-                    <span className="bg-brand-black text-brand-acid px-1 py-0.2 text-[8px] tracking-tighter">
-                      HSRP
-                    </span>
-                  )}
-                </div>
-
-                {/* Floating Bottom Chip: Model Class & Confidence */}
-                <div className="absolute -bottom-5 left-0 whitespace-nowrap bg-brand-black text-brand-paper px-1.5 py-0.5 text-[8.5px] font-mono font-bold uppercase tracking-wider shadow-editorial border border-brand-black/40 flex items-center gap-1">
-                  <span className="text-brand-acid">YOLOv8</span>
-                  <span className="text-brand-gray">•</span>
-                  <span>{det.class}</span>
-                  <span className="text-brand-acid">[{det.model_conf}%]</span>
-                </div>
-              </div>
+        {isLiveStream ? (
+          <div className="relative w-full h-full bg-black flex items-center justify-center">
+            <img
+              src={`http://localhost:8000/api/stream/cctv?camera=${cameraId}`}
+              alt={cameraName}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute top-2 right-2 bg-brand-black/90 border border-brand-acid text-brand-acid px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest shadow-editorial flex items-center gap-1 z-30">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-acid animate-ping"></span>
+              <span>LIVE OPENCV BAKE</span>
             </div>
-          );
-        })}
+          </div>
+        ) : (
+          <>
+            <video
+              ref={videoRef}
+              src={videoSrc}
+              autoPlay
+              loop
+              muted
+              playsInline
+              onTimeUpdate={handleTimeUpdate}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </>
+        )}
       </div>
 
       {/* Top HUD Bar */}

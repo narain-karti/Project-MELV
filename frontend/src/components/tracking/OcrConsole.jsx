@@ -4,10 +4,12 @@ import { Terminal, ShieldAlert } from 'lucide-react';
 
 export default function OcrConsole() {
   const { consoleLogs } = useTracking();
-  const bottomRef = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
   }, [consoleLogs]);
 
   return (
@@ -27,7 +29,7 @@ export default function OcrConsole() {
       </div>
 
       {/* Terminal Content */}
-      <div className="flex-1 p-3 overflow-y-auto space-y-1.5 bg-brand-black text-[10px] uppercase tracking-wider">
+      <div ref={containerRef} className="flex-1 p-3 overflow-y-auto space-y-1.5 bg-brand-black text-[10px] uppercase tracking-wider">
         {consoleLogs.map((log) => {
           const isCritical = log.type === 'critical';
           const isSuccess = log.type === 'success';
@@ -51,7 +53,6 @@ export default function OcrConsole() {
             </div>
           );
         })}
-        <div ref={bottomRef} />
       </div>
     </div>
   );
