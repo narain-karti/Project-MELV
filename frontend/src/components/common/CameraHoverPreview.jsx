@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef } from 'react';
 import { Camera, Radio, Eye } from 'lucide-react';
 import { getApiUrl } from '../../utils/apiConfig';
 

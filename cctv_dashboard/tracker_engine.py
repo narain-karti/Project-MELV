@@ -24,28 +24,35 @@ from .anpr_engine import ANPREngine, HistoricalVehicleRegistry
 
 
 class TrafficVisionEngine:
-    def __init__(self, vehicle_weights: str = None, plate_weights: str = None):
+    def __init__(self, vehicle_weights: str = None, plate_weights: str = None, shared_engine: 'TrafficVisionEngine' = None):
         """
         Initializes the dual YOLO models, ByteTrack tracker,
         Supervision annotators, and ANPR recognition engine.
         """
-        v_weights = vehicle_weights or VEHICLE_MODEL_PATH
-        p_weights = plate_weights or LICENSE_PLATE_MODEL_PATH
+        if shared_engine is not None:
+            self.vehicle_model = shared_engine.vehicle_model
+            self.plate_model = shared_engine.plate_model
+            self.anpr = shared_engine.anpr
+        else:
+            v_weights = vehicle_weights or VEHICLE_MODEL_PATH
+            p_weights = plate_weights or LICENSE_PLATE_MODEL_PATH
 
-        try:
-            print(f"[VisionEngine] Loading vehicle model: {v_weights}...")
-            self.vehicle_model = YOLO(v_weights)
-        except Exception as e:
-            print(f"[VisionEngine WARNING] Could not load YOLO vehicle model ({e}). Using mock/fallback detector.")
-            self.vehicle_model = None
+            try:
+                print(f"[VisionEngine] Loading vehicle model: {v_weights}...")
+                self.vehicle_model = YOLO(v_weights)
+            except Exception as e:
+                print(f"[VisionEngine WARNING] Could not load YOLO vehicle model ({e}). Using mock/fallback detector.")
+                self.vehicle_model = None
 
-        try:
-            print(f"[VisionEngine] Loading license plate model: {p_weights}...")
-            self.plate_model = YOLO(p_weights)
-        except Exception as e:
-            print(f"[VisionEngine WARNING] Could not load YOLO plate model ({e}). Using mock/fallback detector.")
-            self.plate_model = None
+            try:
+                print(f"[VisionEngine] Loading license plate model: {p_weights}...")
+                self.plate_model = YOLO(p_weights)
+            except Exception as e:
+                print(f"[VisionEngine WARNING] Could not load YOLO plate model ({e}). Using mock/fallback detector.")
+                self.plate_model = None
 
+            print("[VisionEngine] Initializing ANPR OCR Engine...")
+            self.anpr = ANPREngine()
 
         print("[VisionEngine] Initializing Supervision ByteTrack & TraceAnnotator...")
         self.byte_tracker = sv.ByteTrack(
@@ -60,8 +67,6 @@ class TrafficVisionEngine:
             position=sv.Position.CENTER
         )
 
-        print("[VisionEngine] Initializing ANPR OCR Engine...")
-        self.anpr = ANPREngine()
         self.registry = HistoricalVehicleRegistry(BLACKLIST_PLATES)
 
         # Polygon Counting Zones (initialized on first frame with known dimensions)

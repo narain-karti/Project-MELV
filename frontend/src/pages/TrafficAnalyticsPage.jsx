@@ -18,24 +18,33 @@ import { getApiUrl } from '../utils/apiConfig';
 
 export default function TrafficAnalyticsPage() {
   const [data, setData] = useState(analyticsData);
+  const [liveMetrics, setLiveMetrics] = useState(null);
 
   useEffect(() => {
-    fetch(getApiUrl('/api/analytics'))
+    const fetchAnalytics = () => {
+      fetch(getApiUrl('/api/analytics'))
+        .then(res => res.ok ? res.json() : null)
+        .then(json => {
+          if (json) {
+            setData(prev => ({
+              ...prev,
+              daily_volume: json.daily_volume ?? prev.daily_volume,
+              hourly_volume: json.hourly_volume ?? prev.hourly_volume,
+              modal_split: json.modal_split ?? prev.modal_split,
+              od_matrix: json.od_matrix ?? prev.od_matrix,
+              corridor_hotspots: json.corridor_hotspots ?? prev.corridor_hotspots
+            }));
+            if (json.live_metrics) {
+              setLiveMetrics(json.live_metrics);
+            }
+          }
+        })
+        .catch(err => console.warn('Backend analytics endpoint fallback:', err));
+    };
 
-      .then(res => res.ok ? res.json() : null)
-      .then(json => {
-        if (json) {
-          setData(prev => ({
-            ...prev,
-            daily_volume: json.daily_volume ?? prev.daily_volume,
-            hourly_volume: json.hourly_volume ?? prev.hourly_volume,
-            modal_split: json.modal_split ?? prev.modal_split,
-            od_matrix: json.od_matrix ?? prev.od_matrix,
-            corridor_hotspots: json.corridor_hotspots ?? prev.corridor_hotspots
-          }));
-        }
-      })
-      .catch(err => console.warn('Backend analytics endpoint fallback:', err));
+    fetchAnalytics();
+    const interval = setInterval(fetchAnalytics, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   const hourly_volume = data?.hourly_volume || [];
@@ -63,6 +72,35 @@ export default function TrafficAnalyticsPage() {
           DAILY PASS-THROUGHS: <strong className="text-brand-acid bg-brand-black px-2 py-1 ml-1 shadow-editorial">{Number(daily_volume).toLocaleString()} VEHICLES</strong>
         </div>
       </div>
+
+      {/* Live Edge Telemetry Strip */}
+      {liveMetrics && (
+        <div className="bg-brand-black border border-brand-dark-gray p-3.5 chamfer-card shadow-editorial grid grid-cols-2 sm:grid-cols-5 gap-3 text-brand-paper">
+          <div className="border-r border-brand-dark-gray/40 pr-2">
+            <span className="text-[8.5px] text-brand-gray uppercase tracking-widest block font-bold">Unique Tracked</span>
+            <span className="text-base font-bold text-brand-acid font-mono">{liveMetrics.unique_vehicles_counted || 0}</span>
+          </div>
+          <div className="border-r border-brand-dark-gray/40 pr-2">
+            <span className="text-[8.5px] text-brand-gray uppercase tracking-widest block font-bold">Inflow Rate</span>
+            <span className="text-base font-bold text-emerald-400 font-mono">+{liveMetrics.total_inflow || 0} veh</span>
+          </div>
+          <div className="border-r border-brand-dark-gray/40 pr-2">
+            <span className="text-[8.5px] text-brand-gray uppercase tracking-widest block font-bold">Outflow Rate</span>
+            <span className="text-base font-bold text-sky-400 font-mono">{liveMetrics.total_outflow || 0} veh</span>
+          </div>
+          <div className="border-r border-brand-dark-gray/40 pr-2">
+            <span className="text-[8.5px] text-brand-gray uppercase tracking-widest block font-bold">ANPR Plates</span>
+            <span className="text-base font-bold text-amber-400 font-mono">{liveMetrics.total_plates_scanned || 0}</span>
+          </div>
+          <div>
+            <span className="text-[8.5px] text-brand-gray uppercase tracking-widest block font-bold">Live AI Cameras</span>
+            <span className="text-base font-bold text-white font-mono flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-brand-acid animate-ping"></span>
+              {liveMetrics.active_cameras || 2} Online
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* 3D City Digital Twin & Adaptive Traffic Signal Controller */}
       <CityDigitalTwin3D />

@@ -16,6 +16,7 @@ import {
   Info
 } from 'lucide-react';
 import trafficData from '../../data/traffic_analysis_data.json';
+import { projectPoint } from '../../utils/isoProject';
 
 export default function IntersectionDigitalTwin3D({ currentTime = 0, isPlaying = true }) {
   const canvasRef = useRef(null);
@@ -47,29 +48,8 @@ export default function IntersectionDigitalTwin3D({ currentTime = 0, isPlaying =
     resize();
     window.addEventListener('resize', resize);
 
-    // 3D Projection transformation
-    const project = (x, y, z, w, h) => {
-      const cx = w / 2;
-      const cy = h / 2;
-
-      if (viewMode === 'iso') {
-        // Isometric 3D angle (30 deg skew)
-        const cosAngle = Math.cos(Math.PI / 6);
-        const sinAngle = Math.sin(Math.PI / 6);
-        const scale = Math.min(w, h) / 220;
-
-        const screenX = cx + (x - y) * cosAngle * scale;
-        const screenY = cy + (x + y) * sinAngle * scale * 0.65 - (z * scale * 0.9);
-        return { x: screenX, y: screenY };
-      } else {
-        // 2D Orthographic Top-Down Blueprint
-        const scale = Math.min(w, h) / 210;
-        return {
-          x: cx + x * scale,
-          y: cy + y * scale
-        };
-      }
-    };
+    // 3D Projection transformation using shared utility
+    const project = (x, y, z, w, h) => projectPoint(viewMode, x, y, z, w, h);
 
     let tick = 0;
 

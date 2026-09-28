@@ -12,10 +12,16 @@ __pycache__/
 venv/
 env/
 .env
+.venv/
 
-# Large model weights (downloaded via script)
-*.pt
+# Large model weights (track small ones, ignore >200MB)
 *.onnx
+yolov8n.pt
+
+# Databases
+*.db
+*.sqlite
+melv_detections.db
 
 # IDE & OS
 .vscode/
@@ -23,7 +29,11 @@ env/
 .DS_Store
 Thumbs.db
 
-# Raw capture temp duplicates
+# Raw capture temp duplicates & large videos (>50MB)
 WhatsApp Video*.mp4
 *.mov
+*1920_1080_60fps.mp4
 backend/data/
+frontend/public/videos/sandbox_default.mp4
+
+

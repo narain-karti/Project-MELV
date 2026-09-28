@@ -21,11 +21,12 @@ export function TrackingProvider({ children }) {
   const [digitalIdentity, setDigitalIdentity] = useState(null);
   const [activeTrajectory, setActiveTrajectory] = useState(null);
   const [interceptAlert, setInterceptAlert] = useState(null);
+  const [userRole, setUserRole] = useState('TACTICAL_DISPATCH'); // 'TACTICAL_DISPATCH', 'FIELD_OFFICER', 'COMMAND_ADMIN'
   
   // Audit Logs (monospaced terminal stream)
   const [consoleLogs, setConsoleLogs] = useState([
     { id: 1, time: '10:14:00', text: 'SYSTEM INGEST ONLINE :: KANATHUR MESH (2 REAL CAMERAS + 6 EDGE NODES)', type: 'info' },
-    { id: 2, time: '10:14:01', text: 'EDGE AI ENGINE :: Perception365/VehicleNet-Y26n [14 INDIAN CLASSES] ACTIVE', type: 'success' },
+    { id: 2, time: '10:14:01', text: 'EDGE AI ENGINE :: YOLOv8n [COCO 4-CLASS] + EasyOCR + ByteTrack ACTIVE', type: 'success' },
     { id: 3, time: '10:14:02', text: 'GEODESIC MESH :: CLV NAGAR 1ST STREET (CHENNAI 603112) CALIBRATED', type: 'info' }
   ]);
 
@@ -253,6 +254,8 @@ export function TrackingProvider({ children }) {
         setNotifications,
         backendOnline,
         backendTelemetry,
+        userRole,
+        setUserRole,
         cameras: camerasData,
         blacklist: blacklistData
       }}

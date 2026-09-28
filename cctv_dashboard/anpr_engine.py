@@ -96,7 +96,9 @@ class ANPREngine:
         """
         Preprocesses cropped license plate sub-image:
         1. Grayscale conversion
-        2. Binary inverse thresholding (cv2.threshold with THRESH_BINARY_INV)
+        2. Bilateral filter (dust/streak suppression while preserving edges)
+        3. CLAHE contrast enhancement
+        4. Binary inverse thresholding (Otsu-adaptive)
         Forces dark characters onto a stark white background.
         """
         if plate_crop is None or plate_crop.size == 0:
@@ -114,8 +116,15 @@ class ANPREngine:
             scale = max(32 / max(h, 1), 90 / max(w, 1))
             gray = cv2.resize(gray, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_CUBIC)
 
-        # Apply binary inverse thresholding (cv2.THRESH_BINARY_INV + Otsu)
-        _, thresh = cv2.threshold(gray, 64, 255, cv2.THRESH_BINARY_INV)
+        # Bilateral filter removes noise while keeping edges sharp
+        filtered = cv2.bilateralFilter(gray, d=9, sigmaColor=75, sigmaSpace=75)
+
+        # Contrast enhancement via CLAHE
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        enhanced = clahe.apply(filtered)
+
+        # Apply binary inverse thresholding with Otsu's adaptive threshold
+        _, thresh = cv2.threshold(enhanced, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
         return thresh
 
