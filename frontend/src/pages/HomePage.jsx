@@ -198,12 +198,26 @@ export default function HomePage() {
             <a href="#benchmarks" className="hover:text-brand-paper transition-colors">Benchmarks</a>
             <a href="#demo" className="hover:text-brand-paper transition-colors">Demo</a>
           </nav>
-          <Link
-            to="/vision-lab"
-            className="bg-brand-acid text-brand-black font-bold text-[10px] uppercase tracking-widest px-4 py-2 border border-brand-black shadow-editorial hover:bg-brand-paper transition-all font-mono"
-          >
-            ★ Live Demo
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/trajectory"
+              className="hidden sm:inline-block bg-brand-dark-gray text-brand-paper font-bold text-[10px] uppercase tracking-widest px-3 py-2 border border-brand-dark-gray hover:text-brand-acid transition-all font-mono"
+            >
+              [01] Trajectory
+            </Link>
+            <Link
+              to="/query"
+              className="hidden sm:inline-block bg-brand-dark-gray text-brand-paper font-bold text-[10px] uppercase tracking-widest px-3 py-2 border border-brand-dark-gray hover:text-brand-acid transition-all font-mono"
+            >
+              [03] Query
+            </Link>
+            <Link
+              to="/vision-lab"
+              className="bg-brand-acid text-brand-black font-bold text-[10px] uppercase tracking-widest px-4 py-2 border border-brand-black shadow-editorial hover:bg-brand-paper transition-all font-mono"
+            >
+              ★ Live Demo
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -247,18 +261,30 @@ export default function HomePage() {
             Bridging isolated CCTV silos into a cohesive spatial-temporal intelligence grid.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="mt-10 flex flex-wrap gap-4 justify-center">
             <Link
-              to="/vision-lab"
+              to="/trajectory"
               className="bg-brand-acid text-brand-black font-bold text-xs uppercase tracking-widest px-8 py-4 -rotate-1 hover:rotate-0 hover:translate-y-[-4px] transition-all duration-300 shadow-editorial border-2 border-brand-black flex items-center justify-center gap-2"
             >
-              <Play className="w-4 h-4" /> Launch Vision Lab Demo
+              <Radio className="w-4 h-4" /> [01] Live Trajectory
+            </Link>
+            <Link
+              to="/query"
+              className="bg-brand-paper text-brand-black font-bold text-xs uppercase tracking-widest px-8 py-4 hover:translate-y-[-4px] transition-all duration-300 shadow-editorial border-2 border-brand-black flex items-center justify-center gap-2"
+            >
+              <Gauge className="w-4 h-4" /> [03] Trajectory Query
+            </Link>
+            <Link
+              to="/vision-lab"
+              className="bg-brand-black text-brand-acid font-bold text-xs uppercase tracking-widest px-8 py-4 rotate-1 hover:rotate-0 hover:translate-y-[-4px] transition-all duration-300 shadow-editorial border-2 border-brand-acid/50 flex items-center justify-center gap-2"
+            >
+              <Play className="w-4 h-4" /> Vision Lab
             </Link>
             <Link
               to="/architecture"
-              className="bg-brand-black text-brand-paper font-bold text-xs uppercase tracking-widest px-8 py-4 rotate-1 hover:rotate-0 hover:translate-y-[-4px] transition-all duration-300 shadow-editorial border-2 border-brand-paper/30"
+              className="bg-brand-dark-gray text-brand-paper font-bold text-xs uppercase tracking-widest px-6 py-4 hover:translate-y-[-4px] transition-all duration-300 shadow-editorial border border-brand-dark-gray flex items-center justify-center gap-2"
             >
-              View Architecture
+              Architecture
             </Link>
           </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation, Link, Navigate, Outlet } from 'react-router-dom';
 import { TrackingProvider, useTracking } from './context/TrackingContext';
 import SystemTicker from './components/common/SystemTicker';
 import HomePage from './pages/HomePage';
@@ -183,17 +183,7 @@ function InternalLayout() {
       <InternalTopNav />
       <SystemTicker />
       <main className="flex-1 p-4 overflow-y-auto bg-brand-black">
-        <Routes>
-          <Route path="/vision-lab" element={<TacticalVisionLabPage />} />
-          <Route path="/trajectory" element={<LiveTrackingPage />} />
-          <Route path="/sandbox" element={<LiveInspectorPage />} />
-          <Route path="/query" element={<TrajectoryQueryPage />} />
-          <Route path="/analytics" element={<TrafficAnalyticsPage />} />
-          <Route path="/alerts" element={<AlertsManagementPage />} />
-          <Route path="/edge-network" element={<EdgeNetworkPage />} />
-          <Route path="/architecture" element={<ArchitecturePage />} />
-          <Route path="*" element={<Navigate to="/vision-lab" replace />} />
-        </Routes>
+        <Outlet />
       </main>
     </div>
   );
@@ -205,7 +195,17 @@ function AppContent() {
       <RouteSync />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/*" element={<InternalLayout />} />
+        <Route element={<InternalLayout />}>
+          <Route path="/vision-lab" element={<TacticalVisionLabPage />} />
+          <Route path="/trajectory" element={<LiveTrackingPage />} />
+          <Route path="/sandbox" element={<LiveInspectorPage />} />
+          <Route path="/query" element={<TrajectoryQueryPage />} />
+          <Route path="/analytics" element={<TrafficAnalyticsPage />} />
+          <Route path="/alerts" element={<AlertsManagementPage />} />
+          <Route path="/edge-network" element={<EdgeNetworkPage />} />
+          <Route path="/architecture" element={<ArchitecturePage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/vision-lab" replace />} />
       </Routes>
     </>
   );

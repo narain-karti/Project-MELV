@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { useTracking } from '../../context/TrackingContext';
 import CameraHoverPreview from '../common/CameraHoverPreview';
 
@@ -15,6 +16,7 @@ const CLV_NAGAR_WAYPOINTS = [
 
 
 export default function Leaflet2D() {
+  const { cameras = [], activeTrajectory, currentTime = 0 } = useTracking();
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const polylineRef = useRef(null);
