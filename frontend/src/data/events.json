@@ -31,9 +31,9 @@
     "trajectory_link": {
       "origin_cam": "CAM-02",
       "dest_cam": "CAM-01",
-      "distance_km": 0.30,
+      "distance_km": 0.078,
       "elapsed_seconds": 7.3,
-      "computed_speed_kmh": 38.6,
+      "computed_speed_kmh": 38.5,
       "speed_limit_kmh": 40.0,
       "status": "NORMAL",
       "street": "CLV Nagar 1st Street, Kanathur, Chennai"

@@ -181,30 +181,27 @@ export default function HomePage() {
       <div className="atmospheric-bg"></div>
 
       {/* ============================================
-          SECTION 0: STICKY TOP NAV
+          SECTION 0: DETACHED FLOATING TOP NAV
           ============================================ */}
-      <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-        style={{ backgroundColor: scrollY > 80 ? 'rgba(32,32,32,0.95)' : 'transparent', backdropFilter: scrollY > 80 ? 'blur(12px)' : 'none' }}
-      >
-        <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-          <div className="text-[11px] font-bold tracking-widest uppercase font-mono text-brand-paper">
-            Project-MELV <br className="sm:hidden" /><span className="text-brand-acid">SIH 26127</span>
+      <header className="fixed top-2.5 left-2.5 right-2.5 md:top-3 md:left-4 md:right-4 z-50 transition-all duration-300 rounded-xl bg-white border-2 border-brand-black shadow-[3px_3px_0px_#141414] px-3 py-2 md:px-4 md:py-2 flex justify-between items-center text-brand-black flex-nowrap gap-2 max-w-full">
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="text-xs font-black tracking-wider uppercase font-mono text-brand-black whitespace-nowrap">
+            Project-MELV <span className="text-brand-purple bg-brand-purple/10 px-1 py-0.5 rounded border border-brand-purple/30 ml-1 text-[10px]">SIH 26127</span>
           </div>
-          <nav className="hidden md:flex gap-6 text-[10px] uppercase font-bold tracking-widest text-brand-gray font-mono">
-            <a href="#problem" className="hover:text-brand-paper transition-colors">Problem</a>
-            <a href="#solution" className="hover:text-brand-paper transition-colors">Solution</a>
-            <a href="#features" className="hover:text-brand-paper transition-colors">Features</a>
-            <a href="#architecture" className="hover:text-brand-paper transition-colors">Architecture</a>
-            <a href="#benchmarks" className="hover:text-brand-paper transition-colors">Benchmarks</a>
-            <a href="#demo" className="hover:text-brand-paper transition-colors">Demo</a>
-          </nav>
-          <Link
-            to="/vision-lab"
-            className="bg-brand-acid text-brand-black font-bold text-[10px] uppercase tracking-widest px-4 py-2 border border-brand-black shadow-editorial hover:bg-brand-paper transition-all font-mono"
-          >
-            ★ Live Demo
-          </Link>
         </div>
+        <nav className="hidden md:flex gap-1.5 text-[11px] uppercase font-bold tracking-tight text-brand-black font-mono flex-shrink-0 flex-nowrap">
+          <a href="#problem" className="punch-btn px-2.5 py-1 bg-white hover:bg-brand-paper rounded-md whitespace-nowrap">Problem</a>
+          <a href="#solution" className="punch-btn px-2.5 py-1 bg-white hover:bg-brand-paper rounded-md whitespace-nowrap">Solution</a>
+          <a href="#features" className="punch-btn px-2.5 py-1 bg-white hover:bg-brand-paper rounded-md whitespace-nowrap">Features</a>
+          <a href="#architecture" className="punch-btn px-2.5 py-1 bg-white hover:bg-brand-paper rounded-md whitespace-nowrap">Architecture</a>
+          <a href="#benchmarks" className="punch-btn px-2.5 py-1 bg-white hover:bg-brand-paper rounded-md whitespace-nowrap">Benchmarks</a>
+        </nav>
+        <Link
+          to="/sandbox"
+          className="punch-btn px-2.5 py-1 bg-brand-acid text-brand-black font-bold text-[11px] uppercase tracking-wider rounded-md font-mono flex-shrink-0 whitespace-nowrap"
+        >
+          ★ Live Sandbox
+        </Link>
       </header>
 
       {/* ============================================
@@ -396,7 +393,7 @@ export default function HomePage() {
             </Link>
 
             {/* Feature 2 */}
-            <Link to="/trajectory" className="md:col-span-6 lg:col-span-4 bg-brand-paper text-brand-black p-8 chamfer-card cursor-pointer group hover:-translate-y-2 transition-transform duration-300 block lg:mt-16">
+            <Link to="/trajectory" className="md:col-span-6 lg:col-span-4 bg-brand-paper text-brand-black p-8 chamfer-card cursor-pointer group hover:-translate-y-2 transition-transform duration-300 block">
               <div className="editorial-number text-6xl opacity-20 mb-4 leading-none">02</div>
               <div className="text-[10px] font-bold uppercase tracking-widest mb-2">Trajectory Reconstruction</div>
               <h3 className="editorial-headline text-2xl md:text-3xl mb-3">LIVE TRAJECTORY</h3>
@@ -422,7 +419,7 @@ export default function HomePage() {
             </Link>
 
             {/* Feature 4 */}
-            <Link to="/alerts" className="md:col-span-6 lg:col-span-4 bg-brand-paper text-brand-black p-8 chamfer-card cursor-pointer group hover:-translate-y-2 transition-transform duration-300 block lg:-mt-8">
+            <Link to="/alerts" className="md:col-span-6 lg:col-span-4 bg-brand-paper text-brand-black p-8 chamfer-card cursor-pointer group hover:-translate-y-2 transition-transform duration-300 block">
               <div className="editorial-number text-6xl opacity-20 mb-4 leading-none">04</div>
               <div className="text-[10px] font-bold uppercase tracking-widest mb-2 text-brand-purple">Security & Alerts</div>
               <h3 className="editorial-headline text-2xl md:text-3xl mb-3">ALERTS & DISPATCH</h3>

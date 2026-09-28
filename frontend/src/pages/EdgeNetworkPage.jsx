@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { useTracking } from '../context/TrackingContext';
 import { Network, Server, HardDrive, Cpu, Wifi, CheckCircle2 } from 'lucide-react';
+import CameraHoverPreview from '../components/common/CameraHoverPreview';
 
 export default function EdgeNetworkPage() {
   const { cameras } = useTracking();
+  const [hoverPreview, setHoverPreview] = useState(null);
+  const hoverTimeoutRef = useRef(null);
+
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto font-mono text-xs">
@@ -39,7 +43,7 @@ export default function EdgeNetworkPage() {
           </div>
           <div className="text-[15px] font-black text-brand-black tracking-tighter pt-2 leading-tight uppercase">NVIDIA Jetson Orin Nano</div>
           <div className="text-[10px] text-brand-gray font-bold uppercase tracking-widest leading-relaxed mt-auto pt-4">
-            Runs <strong className="text-brand-black">IISc VehicleNet-Y26n TensorRT + PaddleOCR</strong> locally in 14ms per frame.
+            Runs <strong className="text-brand-black">YOLOv8n TensorRT FP16 + EasyOCR</strong> locally in 28.4ms (35.2 FPS @ 11.8W).
           </div>
         </div>
 
@@ -76,13 +80,41 @@ export default function EdgeNetworkPage() {
             </thead>
             <tbody className="divide-y divide-brand-black/20">
               {cameras.map((c) => (
-                <tr key={c.id} className="hover:bg-brand-acid/30 transition-colors">
+                <tr
+                  key={c.id}
+                  className="hover:bg-brand-acid/30 transition-colors cursor-pointer group"
+                  onMouseEnter={(e) => {
+                    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                    setHoverPreview({
+                      camId: c.id,
+                      name: c.name,
+                      zone: c.zone,
+                      x: e.clientX,
+                      y: e.clientY
+                    });
+                  }}
+                  onMouseMove={(e) => {
+                    setHoverPreview(prev => prev ? {
+                      ...prev,
+                      x: e.clientX,
+                      y: e.clientY
+                    } : null);
+                  }}
+                  onMouseLeave={() => {
+                    hoverTimeoutRef.current = setTimeout(() => {
+                      setHoverPreview(null);
+                    }, 60);
+                  }}
+                >
                   <td className="py-3 font-bold font-mono">
                     <span className={`px-2 py-1 border border-brand-black shadow-editorial ${c.type === 'physical_demo' ? 'bg-brand-acid text-brand-black rotate-2 inline-block' : 'bg-brand-black text-brand-paper -rotate-1 inline-block'}`}>
                       {c.id}
                     </span>
                   </td>
-                  <td className="py-3 text-brand-black font-bold">{c.name}</td>
+                  <td className="py-3 text-brand-black font-bold flex items-center gap-1.5">
+                    <span>{c.name}</span>
+                    <span className="text-[8px] bg-brand-black text-brand-acid px-1 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity">PREVIEW</span>
+                  </td>
                   <td className="py-3 text-brand-dark-gray font-bold">{c.zone}</td>
                   <td className="py-3 font-bold text-brand-black bg-white/50">{c.fps} FPS</td>
                   <td className="py-3 font-bold text-brand-gray">{c.bandwidth_usage}</td>
@@ -95,6 +127,8 @@ export default function EdgeNetworkPage() {
           </table>
         </div>
       </div>
+      <CameraHoverPreview previewData={hoverPreview} />
     </div>
   );
 }
+

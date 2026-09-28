@@ -17,8 +17,10 @@ import {
   Play,
   Pause
 } from 'lucide-react';
+import { getApiUrl } from '../../utils/apiConfig';
 
 export default function CityDigitalTwin3D({ onSignalChange }) {
+
   const canvasRef = useRef(null);
   const [viewMode, setViewMode] = useState('iso'); // 'iso' (3D Isometric) or 'top' (2D CAD Topographic)
   const [showHeatmap, setShowHeatmap] = useState(true);
@@ -38,7 +40,7 @@ export default function CityDigitalTwin3D({ onSignalChange }) {
 
   // Fetch real signals from backend on mount
   useEffect(() => {
-    fetch('http://localhost:8000/api/signals')
+    fetch(getApiUrl('/api/signals'))
       .then(res => res.json())
       .then(data => {
         if (data.current_cycle_sec) {
@@ -57,7 +59,7 @@ export default function CityDigitalTwin3D({ onSignalChange }) {
   // AI Optimize handler
   const handleAiOptimize = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/signals');
+      const res = await fetch(getApiUrl('/api/signals'));
       const data = await res.json();
       setCycleTime(data.current_cycle_sec || 48);
       setNorthGreen(data.approaches?.[0]?.allocated_green_sec || 22);
@@ -76,13 +78,14 @@ export default function CityDigitalTwin3D({ onSignalChange }) {
     const nextState = !preemptionActive;
     setPreemptionActive(nextState);
     try {
-      await fetch('http://localhost:8000/api/signals/preempt', {
+      await fetch(getApiUrl('/api/signals/preempt'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ activate: nextState, vehicle: 'TN-01-AMB-108' })
       });
     } catch {}
   };
+
 
   // Signal timer countdown loop
   useEffect(() => {

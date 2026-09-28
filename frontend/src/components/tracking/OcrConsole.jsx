@@ -8,7 +8,7 @@ export default function OcrConsole() {
 
   useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+      containerRef.current.scrollTop = 0;
     }
   }, [consoleLogs]);
 
@@ -22,7 +22,7 @@ export default function OcrConsole() {
             EDGE TELEMETRY STREAM
           </span>
           <span className="text-[9px] text-brand-gray uppercase tracking-widest hidden sm:inline">
-            [PADDLEOCR + RTO GRAMMAR]
+            [EASYOCR + RTO GRAMMAR]
           </span>
         </div>
         <span className="w-2 h-2 bg-brand-acid animate-pulse rotate-45"></span>

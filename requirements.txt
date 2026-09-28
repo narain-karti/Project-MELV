@@ -1,7 +1,25 @@
-ultralytics
-supervision
-easyocr
-opencv-python
-numpy
-streamlit
-torch
+# Project-MELV: Unified Python Dependencies
+# Backend (FastAPI + YOLO + EasyOCR) + CCTV Dashboard (Streamlit)
+
+# Web framework
+fastapi>=0.110.0
+uvicorn>=0.28.0
+python-multipart>=0.0.9
+pydantic>=2.6.0
+
+# ML / Computer Vision
+ultralytics>=8.1.0
+supervision>=0.19.0
+easyocr>=1.7.0
+torch>=2.3.0
+opencv-python-headless>=4.9.0
+
+# Image / Data
+pillow>=10.2.0
+numpy>=1.24.0
+
+# Streamlit Dashboard (optional)
+streamlit>=1.30.0
+
+# Utilities
+requests>=2.31.0

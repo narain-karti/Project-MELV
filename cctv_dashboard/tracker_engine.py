@@ -24,19 +24,35 @@ from .anpr_engine import ANPREngine, HistoricalVehicleRegistry
 
 
 class TrafficVisionEngine:
-    def __init__(self, vehicle_weights: str = None, plate_weights: str = None):
+    def __init__(self, vehicle_weights: str = None, plate_weights: str = None, shared_engine: 'TrafficVisionEngine' = None):
         """
         Initializes the dual YOLO models, ByteTrack tracker,
         Supervision annotators, and ANPR recognition engine.
         """
-        v_weights = vehicle_weights or VEHICLE_MODEL_PATH
-        p_weights = plate_weights or LICENSE_PLATE_MODEL_PATH
+        if shared_engine is not None:
+            self.vehicle_model = shared_engine.vehicle_model
+            self.plate_model = shared_engine.plate_model
+            self.anpr = shared_engine.anpr
+        else:
+            v_weights = vehicle_weights or VEHICLE_MODEL_PATH
+            p_weights = plate_weights or LICENSE_PLATE_MODEL_PATH
 
-        print(f"[VisionEngine] Loading vehicle model: {v_weights}...")
-        self.vehicle_model = YOLO(v_weights)
+            try:
+                print(f"[VisionEngine] Loading vehicle model: {v_weights}...")
+                self.vehicle_model = YOLO(v_weights)
+            except Exception as e:
+                print(f"[VisionEngine WARNING] Could not load YOLO vehicle model ({e}). Using mock/fallback detector.")
+                self.vehicle_model = None
 
-        print(f"[VisionEngine] Loading license plate model: {p_weights}...")
-        self.plate_model = YOLO(p_weights)
+            try:
+                print(f"[VisionEngine] Loading license plate model: {p_weights}...")
+                self.plate_model = YOLO(p_weights)
+            except Exception as e:
+                print(f"[VisionEngine WARNING] Could not load YOLO plate model ({e}). Using mock/fallback detector.")
+                self.plate_model = None
+
+            print("[VisionEngine] Initializing ANPR OCR Engine...")
+            self.anpr = ANPREngine()
 
         print("[VisionEngine] Initializing Supervision ByteTrack & TraceAnnotator...")
         self.byte_tracker = sv.ByteTrack(
@@ -51,8 +67,6 @@ class TrafficVisionEngine:
             position=sv.Position.CENTER
         )
 
-        print("[VisionEngine] Initializing ANPR OCR Engine...")
-        self.anpr = ANPREngine()
         self.registry = HistoricalVehicleRegistry(BLACKLIST_PLATES)
 
         # Polygon Counting Zones (initialized on first frame with known dimensions)
@@ -126,45 +140,52 @@ class TrafficVisionEngine:
         # =========================================================================
         # 1. VEHICLE DETECTION & BYTETRACK MULTI-OBJECT TRACKING
         # =========================================================================
-        v_results = self.vehicle_model(
-            annotated_frame,
-            conf=VEHICLE_CONF_THRESHOLD,
-            classes=COCO_VEHICLE_CLASSES,
-            verbose=False
-        )[0]
-
-        detections = sv.Detections.from_ultralytics(v_results)
-        # Update ByteTrack tracker with detected vehicle boxes
-        detections = self.byte_tracker.update_with_detections(detections)
-
-        # Draw motion trail footprints behind each vehicle
-        annotated_frame = self.trace_annotator.annotate(
-            scene=annotated_frame,
-            detections=detections
-        )
-
-        # Build list of active vehicle boxes and IDs: [x1, y1, x2, y2, tracker_id]
         vehicle_boxes_and_ids = []
-        if detections.tracker_id is not None:
-            for xyxy, tid in zip(detections.xyxy, detections.tracker_id):
-                vehicle_boxes_and_ids.append([xyxy[0], xyxy[1], xyxy[2], xyxy[3], int(tid)])
-                self.total_unique_vehicles.add(int(tid))
+        if self.vehicle_model is not None:
+            v_results = self.vehicle_model(
+                annotated_frame,
+                conf=VEHICLE_CONF_THRESHOLD,
+                classes=COCO_VEHICLE_CLASSES,
+                verbose=False
+            )[0]
+
+            detections = sv.Detections.from_ultralytics(v_results)
+            # Update ByteTrack tracker with detected vehicle boxes
+            detections = self.byte_tracker.update_with_detections(detections)
+
+            # Draw motion trail footprints behind each vehicle
+            annotated_frame = self.trace_annotator.annotate(
+                scene=annotated_frame,
+                detections=detections
+            )
+
+            # Build list of active vehicle boxes and IDs: [x1, y1, x2, y2, tracker_id]
+            if detections.tracker_id is not None:
+                for xyxy, tid in zip(detections.xyxy, detections.tracker_id):
+                    vehicle_boxes_and_ids.append([xyxy[0], xyxy[1], xyxy[2], xyxy[3], int(tid)])
+                    self.total_unique_vehicles.add(int(tid))
+        else:
+            detections = sv.Detections.empty()
 
         # =========================================================================
         # 2. LICENSE PLATE DETECTION (Custom YOLO Weights)
         # =========================================================================
-        p_results = self.plate_model(
-            frame,
-            conf=PLATE_CONF_THRESHOLD,
-            verbose=False
-        )[0]
+        plate_detections = sv.Detections.empty()
+        if self.plate_model is not None:
+            p_results = self.plate_model(
+                frame,
+                conf=PLATE_CONF_THRESHOLD,
+                verbose=False
+            )[0]
+            plate_detections = sv.Detections.from_ultralytics(p_results)
+
 
         detected_plates_this_frame = []
 
-        if p_results.boxes and len(p_results.boxes) > 0:
-            for p_box in p_results.boxes:
-                p_xyxy = p_box.xyxy[0].cpu().numpy()
+        if len(plate_detections) > 0:
+            for p_xyxy in plate_detections.xyxy:
                 x1_p, y1_p, x2_p, y2_p = map(int, p_xyxy)
+
 
                 # Ensure valid coordinates within frame boundaries
                 x1_p, y1_p = max(0, x1_p), max(0, y1_p)

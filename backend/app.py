@@ -12,6 +12,7 @@ import os
 import io
 import time
 import sys
+import hashlib
 import threading
 import base64
 from typing import Optional, List
@@ -40,6 +41,17 @@ from cctv_dashboard.config import (
 )
 from cctv_dashboard.anpr_engine import ANPREngine
 from cctv_dashboard.tracker_engine import TrafficVisionEngine
+from backend.trajectory_store import (
+    record_detection,
+    query_trajectory,
+    get_alerts_catalog as db_get_alerts_catalog,
+    insert_alert,
+    add_to_blacklist as db_add_to_blacklist,
+    update_alert_status,
+    issue_challan,
+    get_challan,
+    list_challans
+)
 
 app = FastAPI(
     title="Project-MELV Edge-AI Master Backend",
@@ -60,9 +72,10 @@ app.add_middleware(
 # REAL-TIME CCTV VIDEO STREAMING MANAGER (THREADED OPENCV INFERENCE ENGINE)
 # =============================================================================
 class CCTVStreamManager:
-    def __init__(self, video_path: str, camera_id: str = "CAM-01"):
+    def __init__(self, video_path: str, camera_id: str = "CAM-01", shared_engine: Optional[TrafficVisionEngine] = None):
         self.video_path = video_path
         self.camera_id = camera_id
+        self.shared_engine = shared_engine
         self.lock = threading.Lock()
         self.latest_frame_jpeg = None
         self.latest_metrics = {
@@ -88,8 +101,16 @@ class CCTVStreamManager:
         print(f"[STREAM-{self.camera_id}] Background video worker started on: {self.video_path}")
 
     def _worker_loop(self):
+        # If secondary stream, wait up to 6 seconds for cam1 engine to load models
+        if self.shared_engine is None and self.camera_id != "CAM-01":
+            for _ in range(30):
+                if 'stream_mgr_cam1' in globals() and stream_mgr_cam1 and stream_mgr_cam1.engine:
+                    self.shared_engine = stream_mgr_cam1.engine
+                    break
+                time.sleep(0.2)
+
         try:
-            self.engine = TrafficVisionEngine()
+            self.engine = TrafficVisionEngine(shared_engine=self.shared_engine)
         except Exception as e:
             print(f"[STREAM-{self.camera_id} ERROR] Engine initialization failed: {e}")
             return
@@ -149,6 +170,13 @@ class CCTVStreamManager:
                             self.recent_plates.append(plate_item)
                             if len(self.recent_plates) > 30:
                                 self.recent_plates.pop(0)
+                            # Record to SQLite trajectory store
+                            record_detection(
+                                plate=plate_item['plate'],
+                                camera_id=self.camera_id,
+                                confidence=plate_item['conf'],
+                                tracker_id=plate_item['tracker_id']
+                            )
 
                         if plate_item['is_alert']:
                             if not any(a['plate'] == plate_item['plate'] for a in self.recent_alerts[-5:]):
@@ -162,14 +190,19 @@ class CCTVStreamManager:
         cap.release()
 
 
+DEFAULT_SANDBOX_VIDEO = os.path.join(BASE_DIR, "backend", "data", "sandbox_default.mp4")
+if not os.path.exists(DEFAULT_SANDBOX_VIDEO):
+    DEFAULT_SANDBOX_VIDEO = os.path.join(BASE_DIR, "13002160_1920_1080_60fps.mp4")
+
 # Instantiate stream managers for cameras
 stream_mgr_cam1 = CCTVStreamManager(DEFAULT_VIDEO_PATH, "CAM-01")
 stream_mgr_cam2 = CCTVStreamManager(SECONDARY_VIDEO_PATH, "CAM-02")
-stream_mgr_sandbox = None
+stream_mgr_sandbox = CCTVStreamManager(DEFAULT_SANDBOX_VIDEO, "SANDBOX")
 
 # Start background stream workers
 stream_mgr_cam1.start()
 stream_mgr_cam2.start()
+stream_mgr_sandbox.start()
 
 
 # =============================================================================
@@ -211,6 +244,13 @@ def health():
 
 def mjpeg_frame_generator(stream_mgr: CCTVStreamManager):
     """Yields continuous multipart JPEG frames from the shared buffer."""
+    # Wait up to 4 seconds for initial frame if engine is starting
+    for _ in range(40):
+        with stream_mgr.lock:
+            if stream_mgr.latest_frame_jpeg is not None:
+                break
+        time.sleep(0.1)
+
     while True:
         with stream_mgr.lock:
             frame_bytes = stream_mgr.latest_frame_jpeg
@@ -277,8 +317,9 @@ async def upload_sandbox_video(file: UploadFile = File(...)):
             stream_mgr_sandbox.running = False
             time.sleep(0.2)
 
-        # Create new manager for uploaded video
-        stream_mgr_sandbox = CCTVStreamManager(dest_path, "SANDBOX")
+        # Create new manager for uploaded video reusing in-memory engine models
+        shared_engine = stream_mgr_cam1.engine if (stream_mgr_cam1 and stream_mgr_cam1.engine) else None
+        stream_mgr_sandbox = CCTVStreamManager(dest_path, "SANDBOX", shared_engine=shared_engine)
         stream_mgr_sandbox.start()
 
         return {
@@ -421,34 +462,26 @@ async def detect_vehicle(file: UploadFile = File(...)):
 # =============================================================================
 @app.get("/api/trajectory/{plate_number}")
 def get_trajectory(plate_number: str):
-    """Reconstructs spatiotemporal trajectory history across camera nodes."""
+    """Reconstructs spatiotemporal trajectory history across camera nodes from SQLite."""
     plate = plate_number.strip().upper()
     is_bl = plate in BLACKLIST_PLATES
 
-    # Grounded trajectory data for benchmark targets
-    if plate == "TN07BX8819":
-        records = [
-            {"node": "CAM-05", "location": "AMET University Campus Gate (ECR)", "time": "10:13:34 IST", "speed_kmh": 68.0, "status": "Southbound Inflow"},
-            {"node": "CAM-01", "location": "CLV Nagar 1st St - West Gate (ECR)", "time": "10:14:16 IST", "speed_kmh": 72.8, "status": "SPEED VIOLATION (+22.8 km/h)"},
-            {"node": "CAM-02", "location": "CLV Nagar 1st St - East Junction", "time": "10:14:31 IST (Predicted)", "speed_kmh": 0.0, "status": "TARGET INTERCEPT UNIT DISPATCHED"}
-        ]
-    elif plate == "TN11AH4920":
-        records = [
-            {"node": "CAM-02", "location": "CLV Nagar 1st St - East Junction", "time": "10:11:02 IST", "speed_kmh": 32.5, "status": "Normal Inflow"},
-            {"node": "CAM-01", "location": "CLV Nagar 1st St - West Gate (ECR)", "time": "10:11:45 IST", "speed_kmh": 38.6, "status": "Transit Cleared"},
-            {"node": "CAM-05", "location": "AMET University Crosswalk", "time": "10:12:30 IST", "speed_kmh": 41.2, "status": "Cleared"}
-        ]
-    elif plate == "TN09BK6112":
-        records = [
-            {"node": "CAM-01", "location": "Kanathur ECR Toll", "time": "10:00:10 IST", "speed_kmh": 45.0, "status": "First Capture"},
-            {"node": "CAM-08", "location": "Tambaram Outer Ring Road", "time": "10:04:22 IST", "speed_kmh": 382.4, "status": "GHOST IDENTITY / CLONED PLATE (PHYSICAL IMPOSSIBILITY)"}
-        ]
-    else:
-        # Dynamic calculation for arbitrary plate
-        records = [
-            {"node": "CAM-01", "location": "CLV Nagar 1st St - West Gate (ECR)", "time": time.strftime("%H:%M:%S IST"), "speed_kmh": 42.1, "status": "Live Capture"},
-            {"node": "CAM-02", "location": "CLV Nagar 1st St - East Junction", "time": "Predicted (+18s)", "speed_kmh": 40.0, "status": "Predicted Next Intersection"}
-        ]
+    # Query real trajectory from SQLite
+    records = query_trajectory(plate)
+
+    # If no DB records, provide seed data for demo plates
+    if not records:
+        if plate == "TN07BX8819":
+            records = [
+                {"node": "CAM-05", "location": "AMET University Campus Gate (ECR)", "time": "10:13:34 IST", "speed_kmh": 68.0, "status": "Southbound Inflow", "confidence": 0.942},
+                {"node": "CAM-01", "location": "CLV Nagar 1st St - West Gate (ECR)", "time": "10:14:16 IST", "speed_kmh": 72.8, "status": "SPEED VIOLATION (+22.8 km/h)", "confidence": 0.982},
+                {"node": "CAM-02", "location": "CLV Nagar 1st St - East Junction", "time": "10:14:31 IST (Predicted)", "speed_kmh": 0.0, "status": "TARGET INTERCEPT UNIT DISPATCHED", "confidence": 0.0}
+            ]
+        elif plate == "TN11AH4920":
+            records = [
+                {"node": "CAM-02", "location": "CLV Nagar 1st St - East Junction", "time": "10:11:02 IST", "speed_kmh": 32.5, "status": "Normal Inflow", "confidence": 0.968},
+                {"node": "CAM-01", "location": "CLV Nagar 1st St - West Gate (ECR)", "time": "10:11:45 IST", "speed_kmh": 38.5, "status": "Transit Cleared", "confidence": 0.974},
+            ]
 
     return {
         "plate": plate,
@@ -463,8 +496,8 @@ Generated At: {time.strftime('%Y-%m-%d %H:%M:%S IST')}
 Target Registration: {plate}
 Blacklist Status: {'ACTIVE PURSUIT (WANTED)' if is_bl else 'CLEARED / ROUTINE'}
 Corridor: East Coast Road (SH 49) / CLV Nagar Arterial
-Inter-Node Velocity: {records[-1]['speed_kmh'] if records else 40.0} km/h
-Digital Fingerprint Hash: {hex(abs(hash(plate)))}
+Trajectory Nodes: {len(records)}
+Digital Fingerprint Hash: {hashlib.sha256(plate.encode()).hexdigest()[:32]}
 ========================================================================"""
     }
 
@@ -474,27 +507,53 @@ Digital Fingerprint Hash: {hex(abs(hash(plate)))}
 # =============================================================================
 @app.get("/api/analytics")
 def get_analytics():
-    """Returns macro urban traffic analytics for the Kanathur arterial corridor."""
+    """Returns macro urban traffic analytics — live KPIs from engine + baseline corridor data."""
+    # Live metrics from inference engines
+    cam1_metrics = stream_mgr_cam1.latest_metrics if stream_mgr_cam1 else {}
+    cam2_metrics = stream_mgr_cam2.latest_metrics if stream_mgr_cam2 else {}
+
+    live_unique = cam1_metrics.get('unique_count', 0) + cam2_metrics.get('unique_count', 0)
+    live_inflow = cam1_metrics.get('inflow_count', 0) + cam2_metrics.get('inflow_count', 0)
+    live_outflow = cam1_metrics.get('outflow_count', 0) + cam2_metrics.get('outflow_count', 0)
+    live_density = cam1_metrics.get('active_density', 0) + cam2_metrics.get('active_density', 0)
+    live_plates = cam1_metrics.get('total_scanned_plates', 0) + cam2_metrics.get('total_scanned_plates', 0)
+
     return {
+        "live_metrics": {
+            "unique_vehicles_counted": live_unique,
+            "total_inflow": live_inflow,
+            "total_outflow": live_outflow,
+            "active_density": live_density,
+            "total_plates_scanned": live_plates,
+            "active_cameras": sum(1 for m in [stream_mgr_cam1, stream_mgr_cam2] if m and m.running),
+            "timestamp": time.time()
+        },
         "daily_volume": 842190,
         "hourly_volume": [
-            {"hour": "06:00", "volume": 120, "avg_speed": 54},
-            {"hour": "07:00", "volume": 240, "avg_speed": 49},
-            {"hour": "08:00", "volume": 580, "avg_speed": 34},
-            {"hour": "09:00", "volume": 720, "avg_speed": 28},
-            {"hour": "10:00", "volume": 610, "avg_speed": 32},
-            {"hour": "11:00", "volume": 480, "avg_speed": 41},
-            {"hour": "12:00", "volume": 420, "avg_speed": 45},
-            {"hour": "13:00", "volume": 490, "avg_speed": 43},
-            {"hour": "14:00", "volume": 680, "avg_speed": 39},
-            {"hour": "15:00", "volume": 890, "avg_speed": 26},
-            {"hour": "16:00", "volume": 760, "avg_speed": 29},
-            {"hour": "17:00", "volume": 540, "avg_speed": 38},
-            {"hour": "18:00", "volume": 390, "avg_speed": 46},
-            {"hour": "19:00", "volume": 280, "avg_speed": 50},
-            {"hour": "20:00", "volume": 190, "avg_speed": 52},
-            {"hour": "21:00", "volume": 140, "avg_speed": 55},
-            {"hour": "22:00", "volume": 110, "avg_speed": 58}
+            {"hour": "00:00", "volume": 420, "avg_speed": 58},
+            {"hour": "01:00", "volume": 290, "avg_speed": 60},
+            {"hour": "02:00", "volume": 210, "avg_speed": 62},
+            {"hour": "03:00", "volume": 260, "avg_speed": 61},
+            {"hour": "04:00", "volume": 380, "avg_speed": 59},
+            {"hour": "05:00", "volume": 680, "avg_speed": 55},
+            {"hour": "06:00", "volume": 1250, "avg_speed": 48},
+            {"hour": "07:00", "volume": 2480, "avg_speed": 39},
+            {"hour": "08:00", "volume": 3840, "avg_speed": 28},
+            {"hour": "09:00", "volume": 4820, "avg_speed": 19},
+            {"hour": "10:00", "volume": 4650, "avg_speed": 21},
+            {"hour": "11:00", "volume": 3910, "avg_speed": 26},
+            {"hour": "12:00", "volume": 3200, "avg_speed": 34},
+            {"hour": "13:00", "volume": 3050, "avg_speed": 35},
+            {"hour": "14:00", "volume": 2980, "avg_speed": 36},
+            {"hour": "15:00", "volume": 3410, "avg_speed": 33},
+            {"hour": "16:00", "volume": 3890, "avg_speed": 30},
+            {"hour": "17:00", "volume": 4920, "avg_speed": 18},
+            {"hour": "18:00", "volume": 5460, "avg_speed": 14},
+            {"hour": "19:00", "volume": 5210, "avg_speed": 16},
+            {"hour": "20:00", "volume": 4180, "avg_speed": 24},
+            {"hour": "21:00", "volume": 3120, "avg_speed": 38},
+            {"hour": "22:00", "volume": 1840, "avg_speed": 46},
+            {"hour": "23:00", "volume": 890, "avg_speed": 52}
         ],
         "modal_split": [
             {"name": "Two-Wheeler", "value": 44, "color": "#C8E84D"},
@@ -620,87 +679,8 @@ def get_alerts():
 
 @app.get("/api/alerts/catalog")
 def get_alerts_catalog():
-    """Returns comprehensive categorical law enforcement & safety incident records."""
-    return [
-        {
-            "id": "ALT-2026-001",
-            "type": "STOLEN_PURSUIT",
-            "severity": "CRITICAL",
-            "plate": "TN07BX8819",
-            "vehicle": "Mahindra Scorpio (White)",
-            "camera_id": "CAM-01",
-            "location": "CLV Nagar 1st St - West Gate (ECR)",
-            "timestamp": "10:14:16 IST",
-            "details": "Active CCTNS Red Notice. Stolen from Thiruvanmiyur Police Limits.",
-            "status": "INTERCEPT_DISPATCHED",
-            "confidence": 0.982
-        },
-        {
-            "id": "ALT-2026-002",
-            "type": "SPEED_VIOLATION",
-            "severity": "HIGH",
-            "plate": "TN07BX8819",
-            "vehicle": "Mahindra Scorpio",
-            "camera_id": "CAM-01",
-            "location": "CLV Nagar 1st St - West Gate",
-            "timestamp": "10:14:16 IST",
-            "details": "Recorded 72.8 km/h in designated 40 km/h municipal school zone.",
-            "status": "E_CHALLAN_ISSUED",
-            "confidence": 0.978
-        },
-        {
-            "id": "ALT-2026-003",
-            "type": "GHOST_PLATE",
-            "severity": "CRITICAL",
-            "plate": "TN09BK6112",
-            "vehicle": "Hyundai Creta (Grey)",
-            "camera_id": "CAM-08",
-            "location": "Tambaram Outer Ring Road",
-            "timestamp": "10:04:22 IST",
-            "details": "Spatiotemporal Teleportation Anomaly: Detected at Kanathur Toll and Tambaram within 4min (Requires 382 km/h). Counterfeit cloned plate.",
-            "status": "FORENSIC_FLAGGED",
-            "confidence": 0.965
-        },
-        {
-            "id": "ALT-2026-004",
-            "type": "WRONG_WAY",
-            "severity": "HIGH",
-            "plate": "TN22AK1924",
-            "vehicle": "Bajaj Pulsar 150",
-            "camera_id": "CAM-02",
-            "location": "Eastbound Corridor Slip Lane",
-            "timestamp": "10:09:44 IST",
-            "details": "Traveling contra-flow against designated one-way rotary stream.",
-            "status": "WARDEN_ALERTED",
-            "confidence": 0.954
-        },
-        {
-            "id": "ALT-2026-005",
-            "type": "SIGNAL_JUMP",
-            "severity": "MEDIUM",
-            "plate": "TN02DF7712",
-            "vehicle": "Maruti Swift (Silver)",
-            "camera_id": "CAM-05",
-            "location": "AMET University Intersection",
-            "timestamp": "10:07:12 IST",
-            "details": "Stop line violation after red cycle onset (+2.4s phase delay).",
-            "status": "AUTO_FINED",
-            "confidence": 0.961
-        },
-        {
-            "id": "ALT-2026-006",
-            "type": "EMERGENCY_CLEARANCE",
-            "severity": "PREEMPTION",
-            "plate": "TN01AMB108",
-            "vehicle": "Ambulance (108 Life Support)",
-            "camera_id": "CAM-01",
-            "location": "ECR Main Carriageway Northbound",
-            "timestamp": "10:15:02 IST",
-            "details": "Acoustic siren + optical strobe lock. Green wave corridor activated on Nodes 1->2->5.",
-            "status": "CORRIDOR_ACTIVE",
-            "confidence": 0.994
-        }
-    ]
+    """Returns comprehensive categorical law enforcement & safety incident records from SQLite."""
+    return db_get_alerts_catalog(limit=60)
 
 
 class AlertRequest(BaseModel):
@@ -711,15 +691,33 @@ class AlertRequest(BaseModel):
 
 @app.post("/api/alerts")
 def add_alert(request: AlertRequest):
-    """Dynamically adds a target vehicle to the active pursuit blacklist."""
+    """Dynamically adds a target vehicle to the active pursuit blacklist & logs alert record."""
     clean_plate = request.plate.strip().upper()
     if clean_plate not in BLACKLIST_PLATES:
         BLACKLIST_PLATES.append(clean_plate)
+        db_add_to_blacklist(clean_plate)
         # Update registry in live stream engines
         if stream_mgr_cam1.engine:
             stream_mgr_cam1.engine.registry.blacklist.add(clean_plate)
         if stream_mgr_cam2.engine:
             stream_mgr_cam2.engine.registry.blacklist.add(clean_plate)
+
+    now = time.time()
+    now_str = time.strftime("%H:%M:%S IST", time.localtime(now))
+    insert_alert({
+        "id": f"ALT-2026-{int(now * 1000) % 100000:05d}",
+        "type": "STOLEN_PURSUIT",
+        "severity": "CRITICAL",
+        "plate": clean_plate,
+        "vehicle": "Law Enforcement Watchlist Target",
+        "camera_id": "CAM-01",
+        "location": "CLV Nagar 1st St - West Gate (ECR)",
+        "timestamp": now_str,
+        "details": f"Flagged manually ({request.reason}). FIR: {request.fir_number}. Broadcasted to all ANPR node streams.",
+        "status": "INTERCEPT_DISPATCHED",
+        "confidence": 0.99,
+        "created_epoch": now
+    })
 
     return {
         "success": True,
@@ -728,6 +726,56 @@ def add_alert(request: AlertRequest):
     }
 
 
+class ChallanIssueRequest(BaseModel):
+    plate: str
+    violation_type: str = "SPEED_VIOLATION"
+    fine_inr: int = 1000
+    location: str = "CLV Nagar 1st St (ECR Corridor)"
+    camera_id: str = "CAM-01"
+    alert_id: Optional[str] = None
+
+
+class AlertStatusUpdateRequest(BaseModel):
+    alert_id: str
+    status: str  # PATROL_EN_ROUTE, E_CHALLAN_DELIVERED, RESOLVED
+
+
+@app.post("/api/challan/issue")
+def api_issue_challan(req: ChallanIssueRequest):
+    """Issues and cryptographically signs an automated MoRTH Parivahan e-Challan."""
+    receipt = issue_challan(
+        plate=req.plate,
+        violation_type=req.violation_type,
+        fine_inr=req.fine_inr,
+        location=req.location,
+        camera_id=req.camera_id,
+        alert_id=req.alert_id
+    )
+    return {"success": True, "challan": receipt}
+
+
+@app.get("/api/challan/catalog")
+def api_list_challans():
+    """Returns recent MoRTH Parivahan e-Challan receipts."""
+    return list_challans(limit=50)
+
+
+@app.get("/api/challan/{challan_no}")
+def api_get_challan(challan_no: str):
+    """Fetches a specific e-Challan receipt by number."""
+    rec = get_challan(challan_no)
+    if not rec:
+        raise HTTPException(status_code=404, detail="Challan not found")
+    return rec
+
+
+@app.post("/api/alerts/status")
+def api_update_alert_status(req: AlertStatusUpdateRequest):
+    """Updates status of an active incident in the persistent SQLite store."""
+    update_alert_status(req.alert_id, req.status)
+    return {"success": True, "alert_id": req.alert_id, "status": req.status}
+
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("backend.app:app", host="0.0.0.0", port=8000, reload=False)

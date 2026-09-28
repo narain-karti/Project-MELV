@@ -10,8 +10,13 @@ Implements Felipe Tambasco's Automatic Number Plate Recognition pipeline:
 import re
 import cv2
 import numpy as np
-import easyocr
 import torch
+try:
+    import easyocr
+except Exception as e:
+    easyocr = None
+    print(f"[ANPR WARNING] easyocr could not be loaded ({e}). Falling back to spatial ANPR detection.")
+
 from .config import (
     DICT_CHAR_TO_INT,
     DICT_INT_TO_CHAR,
@@ -27,9 +32,18 @@ class ANPREngine:
         if use_gpu is None:
             use_gpu = torch.cuda.is_available()
         self.use_gpu = use_gpu
-        print(f"[ANPR] Initializing EasyOCR (GPU={self.use_gpu})...")
-        self.reader = easyocr.Reader(['en'], gpu=self.use_gpu)
-        print("[ANPR] EasyOCR Reader initialized successfully.")
+        self.reader = None
+        if easyocr is not None:
+            try:
+                print(f"[ANPR] Initializing EasyOCR (GPU={self.use_gpu})...")
+                self.reader = easyocr.Reader(['en'], gpu=self.use_gpu)
+                print("[ANPR] EasyOCR Reader initialized successfully.")
+            except Exception as e:
+                print(f"[ANPR WARNING] EasyOCR initialization failed: {e}")
+                self.reader = None
+        else:
+            print("[ANPR] EasyOCR module unavailable; fallback detection active.")
+
 
     @staticmethod
     def get_car(plate_bbox, vehicle_bboxes_and_ids):
@@ -82,7 +96,9 @@ class ANPREngine:
         """
         Preprocesses cropped license plate sub-image:
         1. Grayscale conversion
-        2. Binary inverse thresholding (cv2.threshold with THRESH_BINARY_INV)
+        2. Bilateral filter (dust/streak suppression while preserving edges)
+        3. CLAHE contrast enhancement
+        4. Binary inverse thresholding (Otsu-adaptive)
         Forces dark characters onto a stark white background.
         """
         if plate_crop is None or plate_crop.size == 0:
@@ -100,8 +116,15 @@ class ANPREngine:
             scale = max(32 / max(h, 1), 90 / max(w, 1))
             gray = cv2.resize(gray, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_CUBIC)
 
-        # Apply binary inverse thresholding (cv2.THRESH_BINARY_INV + Otsu)
-        _, thresh = cv2.threshold(gray, 64, 255, cv2.THRESH_BINARY_INV)
+        # Bilateral filter removes noise while keeping edges sharp
+        filtered = cv2.bilateralFilter(gray, d=9, sigmaColor=75, sigmaSpace=75)
+
+        # Contrast enhancement via CLAHE
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        enhanced = clahe.apply(filtered)
+
+        # Apply binary inverse thresholding with Otsu's adaptive threshold
+        _, thresh = cv2.threshold(enhanced, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
         return thresh
 
@@ -171,8 +194,12 @@ class ANPREngine:
         if thresh is None:
             return None, 0.0
 
+        if self.reader is None:
+            return None, 0.0
+
         try:
             results = self.reader.readtext(thresh)
+
             if not results:
                 # Fallback to reading raw crop
                 results = self.reader.readtext(plate_crop)

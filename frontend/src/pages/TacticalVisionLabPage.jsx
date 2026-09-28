@@ -34,8 +34,10 @@ import bytetrackData from '../data/bytetrack_anpr_demo.json';
 import trafficData from '../data/traffic_analysis_data.json';
 import IntersectionDigitalTwin3D from '../components/tracking/IntersectionDigitalTwin3D';
 import { ActionModal } from '../App';
+import { getApiUrl } from '../utils/apiConfig';
 
 export default function TacticalVisionLabPage() {
+
   const { isPlaying, setIsPlaying, setDigitalIdentity, setConsoleLogs, setNotifications } = useTracking();
   const [selectedCam, setSelectedCam] = useState('ROUNDABOUT-4WAY');
   const [streamMode, setStreamMode] = useState('baked'); // 'baked' (30 FPS hardware accelerated) or 'live' (FastAPI RTSP)
@@ -95,8 +97,9 @@ export default function TacticalVisionLabPage() {
     const fetchTelemetry = async () => {
       try {
         const queryCam = selectedCam === 'ROUNDABOUT-4WAY' ? 'CAM-01' : selectedCam;
-        const res = await fetch(`http://localhost:8000/api/telemetry?camera=${queryCam}`);
+        const res = await fetch(getApiUrl(`/api/telemetry?camera=${queryCam}`));
         if (res.ok) {
+
           const data = await res.json();
           if (active) {
             setBackendTelemetry(data);
@@ -276,9 +279,10 @@ export default function TacticalVisionLabPage() {
               ) : (
                 <div className="relative w-full h-[480px] bg-black flex items-center justify-center">
                   <img
-                    src={`http://localhost:8000/api/stream/cctv?camera=${selectedCam === 'ROUNDABOUT-4WAY' ? 'CAM-01' : selectedCam}`}
+                    src={getApiUrl(`/api/stream/cctv?camera=${selectedCam === 'ROUNDABOUT-4WAY' ? 'CAM-01' : selectedCam}`)}
                     alt="Live CCTV Computer Vision Stream"
                     className="w-full h-full object-contain"
+
                     onError={() => {
                       console.warn("Backend live stream unavailable. Switching to 30 FPS pre-rendered video.");
                       setStreamMode('baked');
