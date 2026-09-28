@@ -708,10 +708,10 @@ export default function LiveInspectorPage() {
           <div className="mt-4 pt-3 border-t-2 border-brand-black space-y-2">
             <button
               onClick={handleExportDossier}
-              className="w-full py-2.5 bg-brand-acid text-brand-black font-extrabold text-xs uppercase tracking-wider border-2 border-brand-black punch-btn flex items-center justify-center gap-2"
+              className="w-full py-2.5 px-4 bg-brand-acid text-brand-black font-extrabold text-xs uppercase tracking-wider border-2 border-brand-black punch-btn text-center leading-relaxed"
             >
-              <Download className="w-4 h-4" />
-              <span>Export Full Law Enforcement Dossier (JSON/PDF)</span>
+              <Download className="w-4 h-4 inline-block mr-2 -mt-1" />
+              Export Full Law Enforcement Dossier (JSON/PDF)
             </button>
           </div>
         </div>

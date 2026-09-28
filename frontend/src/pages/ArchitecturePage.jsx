@@ -137,7 +137,7 @@ export default function ArchitecturePage() {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex flex-wrap gap-2 border-b-2 border-brand-dark-gray/60 pb-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 border-b-2 border-brand-dark-gray/60 pb-3">
         {[
           { id: 'flowcharts', label: '[01] Complete Architecture Diagrams & Flowcharts' },
           { id: 'pipeline', label: '[02] 6-Stage End-to-End Vision Pipeline' },

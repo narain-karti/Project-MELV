@@ -114,7 +114,7 @@ function InternalTopNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="mx-2 mt-2 mb-1.5 md:mx-3 md:mt-2.5 md:mb-2 px-3 py-1.5 md:px-3.5 md:py-2 rounded-xl bg-white border-2 border-brand-black shadow-[3px_3px_0px_#141414] z-30 select-none relative flex justify-between items-center flex-nowrap gap-2 transition-all w-[calc(100%-1rem)] md:w-[calc(100%-1.5rem)] max-w-full">
+    <header className="mx-2 mt-2 mb-1.5 md:mx-3 md:mt-2.5 md:mb-2 px-2 py-1.5 md:px-3 md:py-2 rounded-xl bg-white border-2 border-brand-black shadow-[3px_3px_0px_#141414] z-30 select-none relative flex justify-between items-center flex-nowrap gap-1 md:gap-2 transition-all w-[calc(100%-1rem)] md:w-[calc(100%-1.5rem)] max-w-full overflow-hidden">
       <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
         <Link
           to="/"
@@ -129,14 +129,14 @@ function InternalTopNav() {
       </div>
 
       {/* Desktop Nav with tactile Punch In-Out Buttons in 1 clean line */}
-      <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 flex-nowrap flex-shrink-0">
+      <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 flex-nowrap min-w-0">
         {NAV_ITEMS.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <Link
               key={item.id}
               to={item.path}
-              className={`punch-btn px-2 py-1 xl:px-2.5 xl:py-1 text-[10px] xl:text-[11px] font-bold font-mono tracking-tight uppercase rounded-md whitespace-nowrap flex-shrink-0 ${
+              className={`punch-btn px-1.5 py-1 xl:px-2 xl:py-1 text-[9px] xl:text-[10px] font-bold font-mono tracking-tighter uppercase rounded-md whitespace-nowrap truncate ${
                 isActive
                   ? 'punch-btn-active bg-brand-acid text-brand-black font-extrabold ring-1 ring-brand-black'
                   : 'bg-white text-brand-black hover:bg-brand-paper'
