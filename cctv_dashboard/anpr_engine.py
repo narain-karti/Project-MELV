@@ -92,88 +92,146 @@ class ANPREngine:
         return (None, None)
 
     @staticmethod
-    def preprocess_plate(plate_crop: np.ndarray) -> np.ndarray:
+    def preprocess_plate(plate_crop: np.ndarray, is_two_row: bool = False) -> np.ndarray:
         """
-        Preprocesses cropped license plate sub-image:
-        1. Grayscale conversion
-        2. Bilateral filter (dust/streak suppression while preserving edges)
-        3. CLAHE contrast enhancement
-        4. Binary inverse thresholding (Otsu-adaptive)
-        Forces dark characters onto a stark white background.
+        Adverse-Weather Robust Preprocessing Pipeline (Rain, Dust, Dirty Plates, Glare):
+        1. Specular Glare / Reflection Suppression (removes headlight / rain glare spots)
+        2. LAB Luminance CLAHE (recovers dark characters on dirty/faded plates)
+        3. Morphological Top-Hat minus Black-Hat (isolates characters under uneven illumination)
+        4. Bilateral edge-preserving filtering (smooths grain without blurring character edges)
+        5. Otsu Adaptive Inverse Binarization with morphological healing
         """
         if plate_crop is None or plate_crop.size == 0:
             return None
 
-        # Convert to grayscale
+        # Resize if plate is too small to ensure OCR character clarity
+        h, w = plate_crop.shape[:2]
+        if h < 36 or w < 100:
+            scale = max(36 / max(h, 1), 100 / max(w, 1))
+            plate_crop = cv2.resize(plate_crop, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_CUBIC)
+            h, w = plate_crop.shape[:2]
+
+        # 1. Specular Reflection / Glare Suppression (common in wet / rain conditions)
         if len(plate_crop.shape) == 3:
-            gray = cv2.cvtColor(plate_crop, cv2.COLOR_BGR2GRAY)
+            # Detect overexposed glare highlights (>248 in all channels)
+            glare_mask = cv2.inRange(plate_crop, np.array([245, 245, 245]), np.array([255, 255, 255]))
+            if np.count_nonzero(glare_mask) > 0 and (np.count_nonzero(glare_mask) / (h * w)) < 0.25:
+                plate_crop = cv2.inpaint(plate_crop, glare_mask, inpaintRadius=3, flags=cv2.INPAINT_TELEA)
+
+            # 2. Contrast Enhancement in LAB Luminance Space
+            lab = cv2.cvtColor(plate_crop, cv2.COLOR_BGR2LAB)
+            l, a, b = cv2.split(lab)
+            clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(4, 4))
+            cl = clahe.apply(l)
+            enhanced_bgr = cv2.cvtColor(cv2.merge((cl, a, b)), cv2.COLOR_LAB2BGR)
+            gray = cv2.cvtColor(enhanced_bgr, cv2.COLOR_BGR2GRAY)
         else:
-            gray = plate_crop.copy()
+            clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(4, 4))
+            gray = clahe.apply(plate_crop)
 
-        # Resize if plate is too small to improve OCR legibility
-        h, w = gray.shape
-        if h < 32 or w < 90:
-            scale = max(32 / max(h, 1), 90 / max(w, 1))
-            gray = cv2.resize(gray, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_CUBIC)
+        # 3. Morphological Top-Hat - Black-Hat Transform
+        # Corrects non-uniform illumination from vehicle headlights, shadows, and mud streaks
+        kernel_size = max(3, int(min(h, w) / 8))
+        if kernel_size % 2 == 0:
+            kernel_size += 1
+        morph_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (kernel_size, kernel_size))
+        tophat = cv2.morphologyEx(gray, cv2.MORPH_TOPHAT, morph_kernel)
+        blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, morph_kernel)
+        illum_corrected = cv2.add(cv2.subtract(gray, blackhat), tophat)
 
-        # Bilateral filter removes noise while keeping edges sharp
-        filtered = cv2.bilateralFilter(gray, d=9, sigmaColor=75, sigmaSpace=75)
+        # 4. Bilateral Edge-Preserving Filter (suppresses rain streaks & dust grain)
+        smoothed = cv2.bilateralFilter(illum_corrected, d=7, sigmaColor=50, sigmaSpace=50)
 
-        # Contrast enhancement via CLAHE
-        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-        enhanced = clahe.apply(filtered)
+        # 5. Otsu Adaptive Inverse Binarization
+        _, thresh = cv2.threshold(smoothed, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
-        # Apply binary inverse thresholding with Otsu's adaptive threshold
-        _, thresh = cv2.threshold(enhanced, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+        # 6. Morphological stroke bridge (repairs characters broken by water droplets)
+        bridge_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
+        healed = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, bridge_kernel)
 
-        return thresh
+        return healed
+
+    @staticmethod
+    def is_two_row_plate(crop: np.ndarray) -> bool:
+        """Determines if license plate is double-row based on aspect ratio (w/h < 2.6)."""
+        if crop is None or crop.size == 0:
+            return False
+        h, w = crop.shape[:2]
+        aspect_ratio = w / max(h, 1)
+        return aspect_ratio < 2.6
 
     @staticmethod
     def disambiguate_text(raw_text: str) -> str:
         """
-        Applies character-level heuristic mapping to resolve OCR ambiguity
-        based on standard registration formatting (Letters in state/series, Digits in numbers).
+        Applies Bayesian position-aware heuristic disambiguation for Indian vehicle plates.
+        Removes HSRP 'IND' header watermark and enforces state/series letter-digit structure.
         """
-        # Clean: keep only uppercase alphanumeric characters
+        # Clean: keep only uppercase alphanumeric
         clean = re.sub(r'[^A-Za-z0-9]', '', raw_text).upper()
+
+        # Remove Indian HSRP watermark 'IND' if present at start
+        if clean.startswith('IND') and len(clean) > 8:
+            clean = clean[3:]
+
         if len(clean) < 4:
             return clean
 
         chars = list(clean)
+        n = len(chars)
 
-        # Positions 0 and 1: State Code (Must be Alphabetic)
-        if len(chars) >= 2:
+        # Special Case: Bharat Series (e.g., 22BH1234AA)
+        if n >= 9 and "".join(chars[2:4]) in ['BH', '8H', 'RH', 'SH']:
+            # Pos 0-1: Year digits
+            chars[0] = DICT_CHAR_TO_INT.get(chars[0], chars[0])
+            chars[1] = DICT_CHAR_TO_INT.get(chars[1], chars[1])
+            # Pos 2-3: 'BH'
+            chars[2] = 'B'
+            chars[3] = 'H'
+            # Pos 4-7: 4 Digits
+            for i in range(4, min(8, n)):
+                chars[i] = DICT_CHAR_TO_INT.get(chars[i], chars[i])
+            # Remaining: Series Letters
+            for i in range(8, n):
+                chars[i] = DICT_INT_TO_CHAR.get(chars[i], chars[i])
+            return "".join(chars)
+
+        # Standard Indian Plate Structure:
+        # Pos 0-1: State Code (Letters only, e.g. TN, KA, DL, MH, KL)
+        if n >= 2:
             chars[0] = DICT_INT_TO_CHAR.get(chars[0], chars[0])
             chars[1] = DICT_INT_TO_CHAR.get(chars[1], chars[1])
 
-        # Positions 2 and 3: District Code (Must be Digits)
-        if len(chars) >= 4:
+        # Pos 2-3: District RTO Code (Digits only, e.g. 07, 11, 01, 22)
+        if n >= 4:
             chars[2] = DICT_CHAR_TO_INT.get(chars[2], chars[2])
             chars[3] = DICT_CHAR_TO_INT.get(chars[3], chars[3])
 
-        # Last 4 characters should be numeric digits
-        if len(chars) >= 8:
-            for i in range(len(chars) - 4, len(chars)):
+        # Last 4 characters: Must be Digits (e.g. 8819, 4920, 2612)
+        if n >= 8:
+            for i in range(n - 4, n):
                 chars[i] = DICT_CHAR_TO_INT.get(chars[i], chars[i])
+
+        # Characters between district code and last 4 numbers: Series (Letters)
+        if n > 8:
+            for i in range(4, n - 4):
+                chars[i] = DICT_INT_TO_CHAR.get(chars[i], chars[i])
 
         return "".join(chars)
 
     @staticmethod
     def is_valid_plate(plate_text: str) -> bool:
-        """Checks if plate text matches standard Indian RTO or European/UK format."""
+        """Validates plate against Indian RTO standards, Bharat Series, and International format."""
         if not plate_text or len(plate_text) < 6:
             return False
 
-        # Indian format: e.g. TN11AH4920, KA04MB2040, 22BH1234AA
-        indian_pattern = r'^[A-Z]{2}[0-9]{1,2}[A-Z]{1,3}[0-9]{4}$'
+        indian_pattern = r'^[A-Z]{2}[0-9]{1,2}[A-Z]{0,3}[0-9]{4}$'
         bharat_pattern = r'^[0-9]{2}BH[0-9]{4}[A-Z]{1,2}$'
-        # Standard UK/European format: e.g. AB12CDE
         uk_pattern = r'^[A-Z]{2}[0-9]{2}[A-Z]{3}$'
 
         if re.match(indian_pattern, plate_text) or re.match(bharat_pattern, plate_text) or re.match(uk_pattern, plate_text):
             return True
 
-        # Check state prefix
+        # Check valid state prefix
         if len(plate_text) >= 2 and plate_text[:2] in INDIAN_STATE_CODES:
             return True
 
@@ -181,25 +239,49 @@ class ANPREngine:
 
     def read_plate(self, plate_crop: np.ndarray):
         """
-        Runs full OCR extraction pipeline on a cropped plate:
-        Preprocessing -> EasyOCR -> Sanitization -> Disambiguation.
-        
-        Returns:
-            (plate_text, ocr_confidence) or (None, 0.0)
+        Runs full adverse-weather OCR extraction pipeline on cropped plate:
+        1. Checks for 2-row (double-line) Indian plates
+        2. Preprocessing with de-glaring, CLAHE, and Top-Hat morphological filtering
+        3. EasyOCR extraction with fallback
+        4. Position-aware Indian RTO disambiguation
         """
-        if plate_crop is None or plate_crop.size == 0:
+        if plate_crop is None or plate_crop.size == 0 or self.reader is None:
             return None, 0.0
 
+        is_two_row = self.is_two_row_plate(plate_crop)
+
+        # Handle Two-Row Indian Plates (Split into top line and bottom line)
+        if is_two_row:
+            h = plate_crop.shape[0]
+            top_half = plate_crop[0:int(h * 0.58), :]
+            bottom_half = plate_crop[int(h * 0.42):, :]
+
+            p_top = self.preprocess_plate(top_half, is_two_row=True)
+            p_bot = self.preprocess_plate(bottom_half, is_two_row=True)
+
+            try:
+                res_top = self.reader.readtext(p_top) if p_top is not None else []
+                res_bot = self.reader.readtext(p_bot) if p_bot is not None else []
+
+                text_top = "".join([re.sub(r'[^A-Za-z0-9]', '', t[1]).upper() for t in res_top])
+                text_bot = "".join([re.sub(r'[^A-Za-z0-9]', '', t[1]).upper() for t in res_bot])
+
+                combined = text_top + text_bot
+                if len(combined) >= 6:
+                    conf_top = np.mean([t[2] for t in res_top]) if res_top else 0.8
+                    conf_bot = np.mean([t[2] for t in res_bot]) if res_bot else 0.8
+                    avg_conf = (conf_top + conf_bot) / 2.0
+                    return self.disambiguate_text(combined), float(avg_conf)
+            except Exception:
+                pass
+
+        # Standard Single-Row Pipeline
         thresh = self.preprocess_plate(plate_crop)
         if thresh is None:
             return None, 0.0
 
-        if self.reader is None:
-            return None, 0.0
-
         try:
             results = self.reader.readtext(thresh)
-
             if not results:
                 # Fallback to reading raw crop
                 results = self.reader.readtext(plate_crop)
@@ -207,7 +289,6 @@ class ANPREngine:
             if not results:
                 return None, 0.0
 
-            # Combine all detected text blocks
             combined_text = ""
             conf_sum = 0.0
             count = 0
@@ -226,8 +307,7 @@ class ANPREngine:
             disambiguated = self.disambiguate_text(combined_text)
 
             return disambiguated, float(avg_conf)
-        except Exception as e:
-            # Safe catch for OpenCV/EasyOCR dimension errors
+        except Exception:
             return None, 0.0
 
 

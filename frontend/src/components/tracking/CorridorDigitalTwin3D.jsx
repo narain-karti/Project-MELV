@@ -31,7 +31,8 @@ export default function CorridorDigitalTwin3D({
   currentTime = 0, 
   isPlaying = true, 
   onSelectVehicle, 
-  selectedVehicleId = null 
+  selectedVehicleId = null,
+  activeVehicles = null
 }) {
   const canvasRef = useRef(null);
   const [viewMode, setViewMode] = useState('iso'); // 'iso' or 'top'
@@ -190,23 +191,37 @@ export default function CorridorDigitalTwin3D({
         ctx.restore();
       }
 
-      // 5. Vehicles Simulation Along Corridor
+      // 5. Vehicles Simulation Along Corridor (Calibrated directly to video currentTime)
       const laneXCoords = { 1: -30, 2: 0, 3: 30 };
+      const effectiveVehicles = (activeVehicles && activeVehicles.length > 0) ? activeVehicles : CORRIDOR_VEHICLES;
 
-      CORRIDOR_VEHICLES.forEach(v => {
-        // Compute position along corridor
-        const laneX = laneXCoords[v.lane] || 0;
-        const loopRange = 300;
-        const progress = ((v.initialY + (tick * (v.baseSpeed / 30.0))) % loopRange) - 150;
-        const vehY = progress;
-        const vehX = laneX + Math.sin(tick * 0.04 + v.id) * 1.5; // slight realistic lane sway
+      // When video loops, reset motion trails
+      if (currentTime < 0.4) {
+        trailsRef.current = {};
+      }
+
+      effectiveVehicles.forEach(v => {
+        let vehX, vehY;
+
+        if (v.norm_x !== undefined && v.norm_y !== undefined) {
+          // Direct real-time mapping from actual video detections
+          vehX = (v.norm_x - 0.5) * 65;
+          vehY = (v.norm_y - 0.5) * 260;
+        } else {
+          // Video time-synchronized calibrated motion: speeds match real video pacing
+          const laneX = laneXCoords[v.lane] || 0;
+          const loopRange = 300;
+          const progress = ((v.initialY + (currentTime * v.baseSpeed * 0.75)) % loopRange) - 150;
+          vehY = progress;
+          vehX = laneX + Math.sin(currentTime * 1.5 + v.id) * 1.2;
+        }
 
         // Track trail
         if (!trailsRef.current[v.id]) trailsRef.current[v.id] = [];
         const trails = trailsRef.current[v.id];
-        if (isPlaying && tick % 3 === 0) {
+        if (isPlaying && tick % 4 === 0) {
           trails.push({ x: vehX, y: vehY });
-          if (trails.length > 18) trails.shift();
+          if (trails.length > 14) trails.shift();
         }
 
         // Draw Motion Trail

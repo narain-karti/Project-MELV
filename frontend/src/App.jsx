@@ -3,21 +3,20 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation, Link, Navigate 
 import { TrackingProvider, useTracking } from './context/TrackingContext';
 import SystemTicker from './components/common/SystemTicker';
 import HomePage from './pages/HomePage';
-import LiveTrackingPage from './pages/LiveTrackingPage';
+import UnifiedTrajectoryVisionPage from './pages/UnifiedTrajectoryVisionPage';
 import LiveInspectorPage from './pages/LiveInspectorPage';
 import TrajectoryQueryPage from './pages/TrajectoryQueryPage';
 import TrafficAnalyticsPage from './pages/TrafficAnalyticsPage';
 import AlertsManagementPage from './pages/AlertsManagementPage';
 import EdgeNetworkPage from './pages/EdgeNetworkPage';
-import TacticalVisionLabPage from './pages/TacticalVisionLabPage';
 import ArchitecturePage from './pages/ArchitecturePage';
 import { ArrowLeft, Menu, X } from 'lucide-react';
 
 const ROUTE_MAP = {
   home: '/',
-  tactical_vision: '/vision-lab',
-  live_tracking: '/trajectory',
   ai_inspector: '/sandbox',
+  live_tracking: '/trajectory',
+  tactical_vision: '/trajectory',
   trajectory_query: '/query',
   traffic_analytics: '/analytics',
   alerts: '/alerts',
@@ -30,9 +29,8 @@ const TAB_FROM_PATH = Object.fromEntries(
 );
 
 const NAV_ITEMS = [
-  { id: 'tactical_vision', label: '[00] Vision Lab', path: '/vision-lab' },
-  { id: 'live_tracking', label: '[01] Trajectory', path: '/trajectory' },
-  { id: 'ai_inspector', label: '[02] Sandbox', path: '/sandbox' },
+  { id: 'ai_inspector', label: '[01] Benchmark Arena', path: '/sandbox' },
+  { id: 'live_tracking', label: '[02] Live Trajectory & Vision', path: '/trajectory' },
   { id: 'trajectory_query', label: '[03] Query', path: '/query' },
   { id: 'traffic_analytics', label: '[04] Analytics', path: '/analytics' },
   { id: 'alerts', label: '[05] Alerts', path: '/alerts' },
@@ -214,15 +212,15 @@ function InternalLayout() {
       <SystemTicker />
       <main className="flex-1 p-3 md:p-4 overflow-y-auto overflow-x-hidden bg-brand-black w-full max-w-full">
         <Routes>
-          <Route path="/vision-lab" element={<TacticalVisionLabPage />} />
-          <Route path="/trajectory" element={<LiveTrackingPage />} />
           <Route path="/sandbox" element={<LiveInspectorPage />} />
+          <Route path="/trajectory" element={<UnifiedTrajectoryVisionPage />} />
+          <Route path="/vision-lab" element={<Navigate to="/trajectory" replace />} />
           <Route path="/query" element={<TrajectoryQueryPage />} />
           <Route path="/analytics" element={<TrafficAnalyticsPage />} />
           <Route path="/alerts" element={<AlertsManagementPage />} />
           <Route path="/edge-network" element={<EdgeNetworkPage />} />
           <Route path="/architecture" element={<ArchitecturePage />} />
-          <Route path="*" element={<Navigate to="/vision-lab" replace />} />
+          <Route path="*" element={<Navigate to="/sandbox" replace />} />
         </Routes>
       </main>
     </div>

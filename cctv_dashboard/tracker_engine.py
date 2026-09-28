@@ -207,8 +207,22 @@ class TrafficVisionEngine:
                 cv2.rectangle(annotated_frame, (x1_p, y1_p), (x2_p, y2_p), (0, 255, 255), 2)
 
                 if parent_tracker_id is not None:
-                    # C. OCR Recognition & Disambiguation
-                    plate_text, ocr_conf = self.anpr.read_plate(plate_crop)
+                    existing_record = self.registry.get(parent_tracker_id)
+                    should_run_ocr = True
+
+                    # Throttle OCR: if plate is already locked with high confidence (>0.70), skip expensive OCR
+                    if existing_record and existing_record.get('locked', False):
+                        should_run_ocr = False
+                        plate_text = existing_record['best_plate']
+                        ocr_conf = existing_record['best_conf']
+                    elif existing_record and existing_record.get('best_conf', 0) > 0.60 and (frame_idx % 3 != 0):
+                        should_run_ocr = False
+                        plate_text = existing_record['best_plate']
+                        ocr_conf = existing_record['best_conf']
+
+                    if should_run_ocr:
+                        # C. OCR Recognition & Disambiguation with adverse weather enhancement
+                        plate_text, ocr_conf = self.anpr.read_plate(plate_crop)
 
                     # D. Update Historical Confidence Registry
                     record = self.registry.register_or_update(
@@ -219,7 +233,7 @@ class TrafficVisionEngine:
                         vehicle_class="Vehicle"
                     )
 
-                    if plate_text:
+                    if record and record['best_plate'] and record['best_plate'] != "SCANNING...":
                         detected_plates_this_frame.append({
                             'tracker_id': parent_tracker_id,
                             'plate': record['best_plate'],
