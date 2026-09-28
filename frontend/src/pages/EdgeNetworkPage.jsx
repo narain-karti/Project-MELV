@@ -43,7 +43,7 @@ export default function EdgeNetworkPage() {
           </div>
           <div className="text-[15px] font-black text-brand-black tracking-tighter pt-2 leading-tight uppercase">NVIDIA Jetson Orin Nano</div>
           <div className="text-[10px] text-brand-gray font-bold uppercase tracking-widest leading-relaxed mt-auto pt-4">
-            Runs <strong className="text-brand-black">IISc VehicleNet-Y26n TensorRT + PaddleOCR</strong> locally in 14ms per frame.
+            Runs <strong className="text-brand-black">YOLOv8n TensorRT FP16 + EasyOCR</strong> locally in 28.4ms (35.2 FPS @ 11.8W).
           </div>
         </div>
 

@@ -1,0 +1,79 @@
+version: '3.8'
+
+# =============================================================================
+# Project-MELV :: Enterprise Multi-Container Orchestration
+# SIH PS 26127: TimescaleDB + PostGIS + Eclipse Mosquitto MQTT + FastAPI + React
+# =============================================================================
+
+services:
+  # 1. Spatiotemporal Database (TimescaleDB Hypertable + PostGIS)
+  timescaledb:
+    image: timescale/timescaledb-ha:pg16
+    container_name: melv-timescaledb
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: melv_spatial
+      POSTGRES_USER: melv_admin
+      POSTGRES_PASSWORD: melv_secure_pass_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./backend/init_timescaledb.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+      - timescaledb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U melv_admin -d melv_spatial"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. Edge Telemetry MQTT Broker (Eclipse Mosquitto)
+  mqtt_broker:
+    image: eclipse-mosquitto:2.0
+    container_name: melv-mqtt-broker
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto_data:/mosquitto/data
+
+  # 3. Master Edge-AI Backend (FastAPI + YOLO + EasyOCR + Trajectory Store)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: melv-backend
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgresql://melv_admin:melv_secure_pass_2026@timescaledb:5432/melv_spatial
+      - MQTT_HOST=mqtt_broker
+      - MQTT_PORT=1883
+    ports:
+      - "8000:8000"
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+      mqtt_broker:
+        condition: service_started
+    volumes:
+      - ./backend:/app/backend
+      - ./cctv_dashboard:/app/cctv_dashboard
+      - ./models:/app/models
+
+  # 4. Command Center Frontend (React 19 + Vite Tactical HUD)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: melv-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  timescaledb_data:
+  mosquitto_data:

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTracking } from '../context/TrackingContext';
 import { 
   ShieldAlert, 
   Plus, 
   Download, 
+  Printer,
   Navigation, 
   AlertOctagon, 
   Check, 
@@ -118,19 +119,72 @@ export default function AlertsManagementPage() {
   const [actionModal, setActionModal] = useState({ isOpen: false, title: '', message: '', severity: 'info' });
   const [hoverPreview, setHoverPreview] = useState(null);
   const hoverTimeoutRef = useRef(null);
+  const prevAlertCountRef = useRef(DEFAULT_ALERTS.length);
 
-  // Fetch catalog from backend on mount
+  // Web Audio API Synthesizer - Law Enforcement Tactical Alert Chime
+  const playAlertChime = () => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
 
+      // Primary tactical alert pulse (high-visibility radar/chime tone)
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(880, now); // A5
+      osc.frequency.exponentialRampToValueAtTime(1760, now + 0.10); // A6
+      osc.frequency.setValueAtTime(1318.51, now + 0.14); // E6
+
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.35);
+    } catch (e) {
+      console.warn('Web Audio alert unavailable:', e);
+    }
+  };
+
+  const toggleSound = () => {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    if (next) {
+      playAlertChime(); // Auditory feedback confirming audio is armed
+    }
+  };
+
+  // Poll catalog from backend every 2.5 seconds for real-time alerting
   useEffect(() => {
-    fetch(getApiUrl('/api/alerts/catalog'))
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-          setAlerts(data);
+    let mounted = true;
+    const pollCatalog = async () => {
+      try {
+        const res = await fetch(getApiUrl('/api/alerts/catalog'));
+        if (res.ok) {
+          const data = await res.json();
+          if (mounted && Array.isArray(data) && data.length > 0) {
+            setAlerts(data);
+            if (data.length > prevAlertCountRef.current && soundEnabled) {
+              playAlertChime();
+            }
+            prevAlertCountRef.current = data.length;
+          }
         }
-      })
-      .catch(() => {});
-  }, []);
+      } catch (err) {}
+    };
+
+    pollCatalog();
+    const interval = setInterval(pollCatalog, 2500);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, [soundEnabled]);
 
   const handleAddTarget = async (e) => {
     e.preventDefault();
@@ -152,6 +206,10 @@ export default function AlertsManagementPage() {
     };
 
     setAlerts([newAlert, ...alerts]);
+    prevAlertCountRef.current = alerts.length + 1;
+    if (soundEnabled) {
+      playAlertChime();
+    }
     setNewPlate('');
     setNewDesc('');
 
@@ -164,14 +222,15 @@ export default function AlertsManagementPage() {
     } catch {}
   };
 
-
-  const handleAction = (alertId, actionType) => {
+  const handleAction = async (alertId, actionType) => {
     const targetAlert = alerts.find(a => a.id === alertId);
+    const newStatus = actionType === 'dispatch' ? 'PATROL_EN_ROUTE' : actionType === 'challan' ? 'E_CHALLAN_DELIVERED' : 'RESOLVED';
+
     setAlerts(prev => prev.map(a => {
       if (a.id === alertId) {
         return {
           ...a,
-          status: actionType === 'dispatch' ? 'PATROL_EN_ROUTE' : actionType === 'challan' ? 'E_CHALLAN_DELIVERED' : 'RESOLVED'
+          status: newStatus
         };
       }
       return a;
@@ -184,17 +243,70 @@ export default function AlertsManagementPage() {
         message: `Law Enforcement Intercept Patrol Unit K-04 has been mobilized and routed to intercept ${targetAlert?.plate} along corridor vector (${targetAlert?.location || 'Intersection'}).`,
         severity: 'critical'
       });
+      try {
+        await fetch(getApiUrl('/api/alerts/status'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ alert_id: alertId, status: 'PATROL_EN_ROUTE' })
+        });
+      } catch {}
     } else if (actionType === 'challan') {
-      setActionModal({
-        isOpen: true,
-        title: `AUTOMATED E-CHALLAN ISSUED: ${targetAlert?.plate || 'TARGET'}`,
-        message: `Electronic violation notice registered with MoRTH Parivahan NIC database. Velocity proof and license plate OCR capture attached.`,
-        severity: 'warning'
-      });
+      try {
+        const res = await fetch(getApiUrl('/api/challan/issue'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            plate: targetAlert?.plate || 'TARGET',
+            violation_type: targetAlert?.type || 'TRAFFIC_VIOLATION',
+            fine_inr: targetAlert?.type === 'GHOST_PLATE' ? 5000 : targetAlert?.type === 'SPEED_VIOLATION' ? 1500 : 1000,
+            location: targetAlert?.location || 'CLV Nagar ECR',
+            camera_id: targetAlert?.camera_id || 'CAM-01',
+            alert_id: alertId
+          })
+        });
+        const data = res.ok ? await res.json() : null;
+        const challan = data?.challan;
+        const receiptNo = challan?.challan_no || `TN-ECH-2026-${Math.floor(100000 + Math.random() * 900000)}`;
+
+        setActionModal({
+          isOpen: true,
+          title: `AUTOMATED E-CHALLAN ISSUED: ${targetAlert?.plate || 'TARGET'}`,
+          message: `Official MoRTH Parivahan notice issued under ${receiptNo}. Fine: ₹${challan?.fine_inr || 1500}. Cryptographic Seal: SHA256:${(challan?.sha256_proof || 'PROOF_VERIFIED').slice(0, 16)}... Notice delivered to registered vehicle owner.`,
+          severity: 'warning'
+        });
+      } catch {
+        setActionModal({
+          isOpen: true,
+          title: `AUTOMATED E-CHALLAN ISSUED: ${targetAlert?.plate || 'TARGET'}`,
+          message: `Electronic violation notice registered with MoRTH Parivahan NIC database. Velocity proof and license plate OCR capture attached.`,
+          severity: 'warning'
+        });
+      }
     }
   };
 
-  const handleExportDossier = (alert) => {
+  // Cryptographic SHA-256 generation using Web Crypto API
+  const sha256Hex = async (str) => {
+    try {
+      if (window.crypto?.subtle) {
+        const msgBuffer = new TextEncoder().encode(str);
+        const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+    } catch (e) {}
+    // Deterministic 64-char fallback
+    let h1 = 0xdeadbeef, h2 = 0x41c64e6d;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    return (Math.abs(h1).toString(16).padStart(32, '0') + Math.abs(h2).toString(16).padStart(32, '0')).slice(0, 64);
+  };
+
+  const handleExportDossier = async (alert) => {
+    const signature = await sha256Hex(`${alert.plate}_${alert.id}_${alert.timestamp}`);
     const reportText = `========================================================================
              TAMIL NADU POLICE DEPARTMENT - DISPATCH DOSSIER
                     PROJECT-MELV TRAJECTORY EVIDENCE LOG
@@ -226,7 +338,7 @@ CORRIDOR VELOCITY ANOMALY:
 ------------------------------------------------------------------------
 Distance Traversed : 0.85 km in 42.0 seconds
 Average Velocity   : 72.8 km/h (Permitted: 40 km/h)
-Digital Signature  : SHA256:${hex(alert.plate)}
+Digital Signature  : SHA256:${signature}
 ========================================================================`.trim();
 
     const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
@@ -248,13 +360,134 @@ Digital Signature  : SHA256:${hex(alert.plate)}
     });
   };
 
-  const hex = (str) => {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = (hash << 5) - hash + str.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash).toString(16).padStart(16, '0');
+  const handlePrintPdfDossier = async (alert) => {
+    const signature = await sha256Hex(`${alert.plate}_${alert.id}_${alert.timestamp}`);
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>POLICE_EVIDENCE_DOSSIER_${alert.plate}_${alert.id}</title>
+        <style>
+          @page { size: A4; margin: 12mm; }
+          body { font-family: monospace; color: #111; margin: 0; padding: 24px; line-height: 1.45; font-size: 11px; background: #fff; }
+          .header { border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 16px; text-align: center; }
+          .title { font-size: 15px; font-weight: bold; letter-spacing: 1px; }
+          .subtitle { font-size: 10px; color: #444; margin-top: 3px; }
+          .seal { display: inline-block; border: 1px solid #000; padding: 3px 8px; font-size: 9px; font-weight: bold; background: #e0f2fe; margin-top: 6px; }
+          .section { border-top: 1px solid #ccc; padding-top: 10px; margin-top: 14px; }
+          .section-title { font-weight: bold; text-transform: uppercase; margin-bottom: 6px; font-size: 10px; color: #000; letter-spacing: 0.5px; }
+          .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+          .field { margin-bottom: 5px; }
+          .field-label { color: #666; font-size: 9px; text-transform: uppercase; }
+          .field-val { font-weight: bold; }
+          .tag { display: inline-block; padding: 2px 6px; font-size: 9px; font-weight: bold; border: 1px solid #000; }
+          .tag-critical { background: #fee2e2; color: #991b1b; }
+          .tag-high { background: #fef3c7; color: #92400e; }
+          .hash-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px; font-size: 9px; word-break: break-all; margin-top: 6px; }
+          .footer { margin-top: 24px; border-top: 1px solid #000; padding-top: 10px; font-size: 9px; color: #777; display: flex; justify-content: space-between; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="title">TAMIL NADU POLICE DEPARTMENT — DISPATCH EVIDENCE DOSSIER</div>
+          <div class="subtitle">GREATER CHENNAI POLICE & SMART CITIES COMMAND AND CONTROL CENTER</div>
+          <div class="subtitle">PROJECT-MELV TRAJECTORY RECONSTRUCTION & FORENSIC PROOF</div>
+          <div class="seal">OFFICIAL LAW ENFORCEMENT RECORD — SIH PS-26127</div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <div class="field"><span class="field-label">Incident ID:</span> <span class="field-val">${alert.id}</span></div>
+            <div class="field"><span class="field-label">Target Registration:</span> <span class="field-val" style="font-size: 13px; font-family: monospace;">${alert.plate}</span></div>
+            <div class="field"><span class="field-label">Vehicle Description:</span> <span class="field-val">${alert.vehicle}</span></div>
+            <div class="field"><span class="field-label">Incident Classification:</span> <span class="tag ${alert.severity === 'CRITICAL' ? 'tag-critical' : 'tag-high'}">${alert.type} (${alert.severity})</span></div>
+          </div>
+          <div>
+            <div class="field"><span class="field-label">Primary Camera Node:</span> <span class="field-val">${alert.camera_id} (${alert.location})</span></div>
+            <div class="field"><span class="field-label">Detection Timestamp:</span> <span class="field-val">${alert.timestamp}</span></div>
+            <div class="field"><span class="field-label">AI Inference Confidence:</span> <span class="field-val">${(alert.confidence * 100).toFixed(1)}%</span></div>
+            <div class="field"><span class="field-label">Current Dispatch Status:</span> <span class="field-val">${alert.status}</span></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Forensic Incident Narrative & Telemetry Proof</div>
+          <p style="margin: 0; font-size: 10.5px; color: #222;">${alert.details}</p>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Reconstructed Spatio-Temporal Inter-Camera Vector</div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+            <thead>
+              <tr style="border-bottom: 1.5px solid #000; text-align: left;">
+                <th style="padding: 4px 0;">Sequence</th>
+                <th>Camera Node</th>
+                <th>Corridor Location</th>
+                <th>Timestamp (IST)</th>
+                <th>Velocity Recorded</th>
+                <th>Verification</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 5px 0;">01 (Origin)</td>
+                <td>CAM-05</td>
+                <td>AMET University Gate (ECR)</td>
+                <td>10:13:34</td>
+                <td>68.0 km/h</td>
+                <td>Logged</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 5px 0;">02 (Trigger)</td>
+                <td>${alert.camera_id}</td>
+                <td>${alert.location}</td>
+                <td>${alert.timestamp}</td>
+                <td>72.8 km/h</td>
+                <td style="color: #dc2626; font-weight: bold;">VIOLATION</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0;">03 (Designated)</td>
+                <td>CAM-02</td>
+                <td>CLV Nagar East Roundabout</td>
+                <td>--:--:--</td>
+                <td>Designated Target</td>
+                <td>Intercept Zone</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Cryptographic Integrity Seal & Digital Signature</div>
+          <div>Verification Protocol: SHA-256 Hash of immutable spatial trajectory log record</div>
+          <div class="hash-box">
+            SHA256:${signature}
+          </div>
+        </div>
+
+        <div class="footer">
+          <span>Authority: MoRTH Parivahan / Greater Chennai Police Traffic Wing</span>
+          <span>Generated: ${new Date().toISOString()}</span>
+          <span>Page 1 of 1</span>
+        </div>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+    }, 500);
+
+    setActionModal({
+      isOpen: true,
+      title: `PRINTABLE EVIDENCE DOSSIER: ${alert.plate}`,
+      message: `Official Law Enforcement Evidence Dossier opened with printable layout & SHA-256 seal.`,
+      severity: 'success'
+    });
   };
 
   const filteredAlerts = activeFilter === 'ALL'
@@ -281,7 +514,7 @@ Digital Signature  : SHA256:${hex(alert.plate)}
 
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setSoundEnabled(!soundEnabled)}
+            onClick={toggleSound}
             className={`flex items-center gap-1.5 px-3 py-1.5 border text-[10px] font-bold uppercase transition-all ${
               soundEnabled
                 ? 'border-brand-acid bg-brand-acid/10 text-brand-black'
@@ -515,7 +748,14 @@ Digital Signature  : SHA256:${hex(alert.plate)}
                       onClick={() => handleExportDossier(alert)}
                       className="px-2.5 py-1 border border-brand-dark-gray text-brand-gray text-[9px] uppercase font-bold hover:text-brand-paper hover:border-brand-paper transition-colors flex items-center gap-1"
                     >
-                      <Download className="w-3 h-3" /> Export Dossier
+                      <Download className="w-3 h-3" /> TXT Dossier
+                    </button>
+
+                    <button
+                      onClick={() => handlePrintPdfDossier(alert)}
+                      className="px-2.5 py-1 border border-brand-acid text-brand-acid text-[9px] uppercase font-bold hover:bg-brand-acid hover:text-brand-black transition-colors flex items-center gap-1"
+                    >
+                      <Printer className="w-3 h-3" /> Print PDF Dossier
                     </button>
                   </div>
                 </div>

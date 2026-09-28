@@ -22,6 +22,7 @@ export default function Leaflet2D() {
   const polylineRef = useRef(null);
   const corridorLineRef = useRef(null);
   const vehicleMarkerRef = useRef(null);
+  const { cameras, activeTrajectory, currentTime } = useTracking();
   const [hoverPreview, setHoverPreview] = useState(null);
   const hoverTimeoutRef = useRef(null);
 

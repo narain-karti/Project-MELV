@@ -24,28 +24,35 @@ from .anpr_engine import ANPREngine, HistoricalVehicleRegistry
 
 
 class TrafficVisionEngine:
-    def __init__(self, vehicle_weights: str = None, plate_weights: str = None):
+    def __init__(self, vehicle_weights: str = None, plate_weights: str = None, shared_engine: 'TrafficVisionEngine' = None):
         """
         Initializes the dual YOLO models, ByteTrack tracker,
         Supervision annotators, and ANPR recognition engine.
         """
-        v_weights = vehicle_weights or VEHICLE_MODEL_PATH
-        p_weights = plate_weights or LICENSE_PLATE_MODEL_PATH
+        if shared_engine is not None:
+            self.vehicle_model = shared_engine.vehicle_model
+            self.plate_model = shared_engine.plate_model
+            self.anpr = shared_engine.anpr
+        else:
+            v_weights = vehicle_weights or VEHICLE_MODEL_PATH
+            p_weights = plate_weights or LICENSE_PLATE_MODEL_PATH
 
-        try:
-            print(f"[VisionEngine] Loading vehicle model: {v_weights}...")
-            self.vehicle_model = YOLO(v_weights)
-        except Exception as e:
-            print(f"[VisionEngine WARNING] Could not load YOLO vehicle model ({e}). Using mock/fallback detector.")
-            self.vehicle_model = None
+            try:
+                print(f"[VisionEngine] Loading vehicle model: {v_weights}...")
+                self.vehicle_model = YOLO(v_weights)
+            except Exception as e:
+                print(f"[VisionEngine WARNING] Could not load YOLO vehicle model ({e}). Using mock/fallback detector.")
+                self.vehicle_model = None
 
-        try:
-            print(f"[VisionEngine] Loading license plate model: {p_weights}...")
-            self.plate_model = YOLO(p_weights)
-        except Exception as e:
-            print(f"[VisionEngine WARNING] Could not load YOLO plate model ({e}). Using mock/fallback detector.")
-            self.plate_model = None
+            try:
+                print(f"[VisionEngine] Loading license plate model: {p_weights}...")
+                self.plate_model = YOLO(p_weights)
+            except Exception as e:
+                print(f"[VisionEngine WARNING] Could not load YOLO plate model ({e}). Using mock/fallback detector.")
+                self.plate_model = None
 
+            print("[VisionEngine] Initializing ANPR OCR Engine...")
+            self.anpr = ANPREngine()
 
         print("[VisionEngine] Initializing Supervision ByteTrack & TraceAnnotator...")
         self.byte_tracker = sv.ByteTrack(
@@ -60,8 +67,6 @@ class TrafficVisionEngine:
             position=sv.Position.CENTER
         )
 
-        print("[VisionEngine] Initializing ANPR OCR Engine...")
-        self.anpr = ANPREngine()
         self.registry = HistoricalVehicleRegistry(BLACKLIST_PLATES)
 
         # Polygon Counting Zones (initialized on first frame with known dimensions)
@@ -202,8 +207,22 @@ class TrafficVisionEngine:
                 cv2.rectangle(annotated_frame, (x1_p, y1_p), (x2_p, y2_p), (0, 255, 255), 2)
 
                 if parent_tracker_id is not None:
-                    # C. OCR Recognition & Disambiguation
-                    plate_text, ocr_conf = self.anpr.read_plate(plate_crop)
+                    existing_record = self.registry.get(parent_tracker_id)
+                    should_run_ocr = True
+
+                    # Throttle OCR: if plate is already locked with high confidence (>0.70), skip expensive OCR
+                    if existing_record and existing_record.get('locked', False):
+                        should_run_ocr = False
+                        plate_text = existing_record['best_plate']
+                        ocr_conf = existing_record['best_conf']
+                    elif existing_record and existing_record.get('best_conf', 0) > 0.60 and (frame_idx % 3 != 0):
+                        should_run_ocr = False
+                        plate_text = existing_record['best_plate']
+                        ocr_conf = existing_record['best_conf']
+
+                    if should_run_ocr:
+                        # C. OCR Recognition & Disambiguation with adverse weather enhancement
+                        plate_text, ocr_conf = self.anpr.read_plate(plate_crop)
 
                     # D. Update Historical Confidence Registry
                     record = self.registry.register_or_update(
@@ -214,7 +233,7 @@ class TrafficVisionEngine:
                         vehicle_class="Vehicle"
                     )
 
-                    if plate_text:
+                    if record and record['best_plate'] and record['best_plate'] != "SCANNING...":
                         detected_plates_this_frame.append({
                             'tracker_id': parent_tracker_id,
                             'plate': record['best_plate'],

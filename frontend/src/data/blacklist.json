@@ -38,5 +38,26 @@
     "flagged_by": "CBD Traffic Management",
     "registered_date": "2026-09-26",
     "status": "FLAGGED"
+  },
+  {
+    "plate_number": "AB12CDE",
+    "vehicle_desc": "Reference Test Vehicle",
+    "category": "Benchmark Blacklist Entry",
+    "severity": "LOW",
+    "fir_number": "TEST-REF-001",
+    "flagged_by": "System Reference",
+    "registered_date": "2026-09-01",
+    "status": "TEST"
+  },
+  {
+    "plate_number": "TN09BK4589",
+    "vehicle_desc": "Commercial Heavy Vehicle",
+    "category": "Daytime Heavy Vehicle Ban Infraction",
+    "severity": "MEDIUM",
+    "fir_number": "CHALLAN-HV-2026-0589",
+    "flagged_by": "CBD Traffic Management",
+    "registered_date": "2026-09-25",
+    "status": "FLAGGED"
   }
 ]
+
