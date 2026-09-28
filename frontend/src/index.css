@@ -4,15 +4,13 @@
 
 @layer base {
   html {
-    font-size: 17.6px;
-    zoom: 1.1;
     overflow-x: hidden;
     max-width: 100%;
     width: 100%;
     height: 100%;
   }
   body {
-    background-color: var(--brand-black, #202020);
+    background-color: var(--brand-black, #141414);
     color: var(--brand-paper, #E5E5E6);
     overflow-x: hidden;
     max-width: 100%;
@@ -102,7 +100,9 @@
   );
 }
 
-/* Old utilities kept for compatibility with existing components */
+.tactical-dark-tiles {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3);
+}
 .surveillance-scanline {
   background: linear-gradient(
     rgba(18, 16, 16, 0) 50%,

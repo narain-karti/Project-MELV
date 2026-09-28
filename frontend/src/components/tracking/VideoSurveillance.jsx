@@ -12,28 +12,32 @@ export default function VideoSurveillance() {
   return (
     <div className="space-y-2">
       {/* Stream Mode Switcher */}
-      <div className="flex items-center justify-between bg-brand-paper border border-brand-black px-3 py-1.5 chamfer-card shadow-editorial text-[9px] font-mono font-bold uppercase">
+      <div className="flex items-center justify-between bg-[#141417] border border-white/10 px-3 py-2 rounded-t-lg text-[9px] font-mono font-bold uppercase">
         <div className="flex items-center space-x-2">
           <span className="w-2 h-2 rounded-full bg-brand-acid animate-ping"></span>
-          <span className="text-brand-black tracking-widest">DUAL CCTV CORRIDOR SURVEILLANCE</span>
+          <span className="text-white tracking-widest font-extrabold">DUAL CCTV CORRIDOR SURVEILLANCE</span>
         </div>
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => setIsLiveStream(false)}
-            className={`px-2 py-0.5 border border-brand-black transition-all flex items-center gap-1 ${
-              !isLiveStream ? 'bg-brand-acid text-brand-black font-bold' : 'bg-white text-brand-gray hover:text-brand-black'
+            className={`px-2.5 py-1 border transition-all rounded flex items-center gap-1.5 ${
+              !isLiveStream 
+                ? 'bg-brand-acid text-black font-extrabold border-brand-acid shadow-[0_0_8px_rgba(200,232,77,0.3)]' 
+                : 'bg-white/5 text-white/60 border-white/10 hover:text-white'
             }`}
           >
-            <Radio className="w-3 h-3 text-brand-black animate-pulse" />
+            <Radio className="w-3 h-3 text-black animate-pulse" />
             <span>30 FPS AI BAKE (SMOOTH LOOP)</span>
           </button>
           <button
             onClick={() => setIsLiveStream(true)}
-            className={`px-2 py-0.5 border border-brand-black transition-all flex items-center gap-1 ${
-              isLiveStream ? 'bg-brand-acid text-brand-black font-bold' : 'bg-white text-brand-gray hover:text-brand-black'
+            className={`px-2.5 py-1 border transition-all rounded flex items-center gap-1.5 ${
+              isLiveStream 
+                ? 'bg-red-500 text-white font-extrabold border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]' 
+                : 'bg-white/5 text-white/60 border-white/10 hover:text-white'
             }`}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping"></span>
             <span>LIVE RTSP MESH (:8000)</span>
           </button>
         </div>

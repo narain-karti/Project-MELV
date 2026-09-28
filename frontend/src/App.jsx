@@ -112,21 +112,27 @@ function InternalTopNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="mx-2 mt-2 mb-1.5 md:mx-3 md:mt-2.5 md:mb-2 px-3 py-1.5 md:px-3.5 md:py-2 rounded-xl bg-white border-2 border-brand-black shadow-[3px_3px_0px_#141414] z-30 select-none relative flex justify-between items-center flex-nowrap gap-2 transition-all w-[calc(100%-1rem)] md:w-[calc(100%-1.5rem)] max-w-full">
-      <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+    <header className="px-3 py-1.5 md:px-4 md:py-2 bg-[#121214]/95 border-b border-white/10 backdrop-blur-md z-30 select-none relative flex justify-between items-center flex-nowrap gap-3 transition-all w-full flex-shrink-0">
+      <div className="flex items-center gap-2.5 flex-shrink-0">
         <Link
           to="/"
-          className="punch-btn flex items-center gap-1 px-2 py-1 bg-brand-black text-white hover:bg-brand-acid hover:text-brand-black text-[10px] md:text-[11px] font-bold font-mono uppercase tracking-wider rounded-md flex-shrink-0 whitespace-nowrap"
+          className="flex items-center gap-1.5 px-2.5 py-1 bg-white/10 hover:bg-brand-acid hover:text-black text-brand-paper text-[10px] md:text-[11px] font-bold font-mono uppercase tracking-wider rounded border border-white/15 transition-all flex-shrink-0 whitespace-nowrap"
         >
-          <ArrowLeft className="w-3 h-3" />
+          <ArrowLeft className="w-3.5 h-3.5" />
           <span>Home</span>
         </Link>
-        <div className="text-[11px] md:text-xs font-black tracking-widest uppercase font-mono text-brand-black border-l-2 border-brand-black/20 pl-2 md:pl-2.5 flex-shrink-0 whitespace-nowrap">
-          Project-MELV
+        <div className="flex items-center gap-2 border-l border-white/15 pl-2.5 flex-shrink-0 whitespace-nowrap">
+          <span className="w-2 h-2 rounded-full bg-brand-acid animate-pulse"></span>
+          <span className="text-xs font-black tracking-widest uppercase font-mono text-brand-paper">
+            Project-MELV
+          </span>
+          <span className="hidden sm:inline-block bg-brand-acid/15 text-brand-acid border border-brand-acid/30 text-[9px] font-bold px-1.5 py-0.2 rounded font-mono">
+            SIH 26127
+          </span>
         </div>
       </div>
 
-      {/* Desktop Nav with tactile Punch In-Out Buttons in 1 clean line */}
+      {/* Desktop Nav in clean streamlined dark tabs */}
       <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 flex-nowrap flex-shrink-0">
         {NAV_ITEMS.map((item) => {
           const isActive = location.pathname === item.path;
@@ -134,10 +140,10 @@ function InternalTopNav() {
             <Link
               key={item.id}
               to={item.path}
-              className={`punch-btn px-2 py-1 xl:px-2.5 xl:py-1 text-[10px] xl:text-[11px] font-bold font-mono tracking-tight uppercase rounded-md whitespace-nowrap flex-shrink-0 ${
+              className={`px-2.5 py-1 text-[10px] xl:text-[11px] font-bold font-mono tracking-tight uppercase rounded border transition-all whitespace-nowrap flex-shrink-0 ${
                 isActive
-                  ? 'punch-btn-active bg-brand-acid text-brand-black font-extrabold ring-1 ring-brand-black'
-                  : 'bg-white text-brand-black hover:bg-brand-paper'
+                  ? 'bg-brand-acid text-black border-brand-acid font-black shadow-[0_0_12px_rgba(200,232,77,0.3)]'
+                  : 'bg-white/5 text-brand-gray border-white/10 hover:bg-white/10 hover:text-brand-paper'
               }`}
             >
               {item.label}
@@ -146,40 +152,43 @@ function InternalTopNav() {
         })}
       </nav>
 
-      {/* Mobile Menu Toggle */}
-      <button
-        className="lg:hidden punch-btn p-1.5 bg-white text-brand-black rounded-md flex-shrink-0"
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-      >
-        {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-      </button>
+      {/* Right Action Badges */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        {/* Role Clearance Level Badge & Switcher */}
+        <button
+          onClick={() => {
+            if (setUserRole) {
+              const roles = ['TACTICAL_DISPATCH', 'FIELD_OFFICER', 'COMMAND_ADMIN'];
+              const nextIdx = (roles.indexOf(userRole) + 1) % roles.length;
+              setUserRole(roles[nextIdx]);
+            }
+          }}
+          title="Click to cycle role clearance level"
+          className="hidden md:flex items-center gap-1.5 text-[9px] xl:text-[10px] font-mono font-bold px-2 py-1 border border-white/15 bg-white/5 hover:bg-white/10 text-brand-paper rounded cursor-pointer transition-colors whitespace-nowrap"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-brand-purple"></span>
+          <span className="text-brand-gray font-normal">ROLE:</span>
+          <span className="text-brand-paper font-bold">{userRole.replace('_', ' ')}</span>
+        </button>
 
-      {/* Role Clearance Level Badge & Switcher */}
-      <button
-        onClick={() => {
-          if (setUserRole) {
-            const roles = ['TACTICAL_DISPATCH', 'FIELD_OFFICER', 'COMMAND_ADMIN'];
-            const nextIdx = (roles.indexOf(userRole) + 1) % roles.length;
-            setUserRole(roles[nextIdx]);
-          }
-        }}
-        title="Click to cycle role clearance level (Tactical Dispatch / Field Officer / Command Admin)"
-        className="hidden md:flex items-center gap-1.5 text-[9px] xl:text-[10px] font-mono font-bold px-2 py-1 border-2 border-brand-black bg-white hover:bg-brand-paper text-brand-black rounded-md shadow-[2px_2px_0px_#181818] whitespace-nowrap flex-shrink-0 cursor-pointer transition-colors"
-      >
-        <span className="w-1.5 h-1.5 rounded-full bg-brand-purple"></span>
-        <span className="text-brand-gray font-normal">ROLE:</span>
-        <span className="text-brand-black font-extrabold">{userRole.replace('_', ' ')}</span>
-      </button>
+        {/* Engine Status Badge */}
+        <div className="flex items-center gap-1.5 text-[9px] xl:text-[10px] font-mono font-bold px-2 py-1 border border-brand-acid/30 bg-brand-acid/10 text-brand-acid rounded whitespace-nowrap">
+          <span className={`w-1.5 h-1.5 rounded-full ${backendOnline ? 'bg-brand-acid animate-ping' : 'bg-red-500'}`}></span>
+          <span>:8000 [{backendOnline ? 'ACTIVE' : 'OFFLINE'}]</span>
+        </div>
 
-      {/* Engine Status Badge */}
-      <div className="hidden xl:flex items-center gap-1.5 text-[9px] xl:text-[10px] font-mono font-bold px-2 py-1 border-2 border-brand-black bg-brand-black text-brand-acid rounded-md shadow-[2px_2px_0px_#181818] whitespace-nowrap flex-shrink-0">
-        <span className={`w-1.5 h-1.5 rounded-full ${backendOnline ? 'bg-brand-acid animate-ping' : 'bg-red-500'}`}></span>
-        <span>ENGINE :8000 [{backendOnline ? 'ACTIVE' : 'OFFLINE'}]</span>
+        {/* Mobile Menu Toggle */}
+        <button
+          className="lg:hidden p-1.5 bg-white/10 text-brand-paper rounded border border-white/15 flex-shrink-0"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+        </button>
       </div>
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white border-2 border-brand-black shadow-[4px_4px_0px_#141414] rounded-xl p-3 z-50 lg:hidden">
+        <div className="absolute top-[calc(100%+4px)] left-2 right-2 bg-[#18181b] border border-white/15 shadow-2xl rounded-lg p-3 z-50 lg:hidden">
           <nav className="flex flex-col gap-1.5">
             {NAV_ITEMS.map((item) => {
               const isActive = location.pathname === item.path;
@@ -188,10 +197,10 @@ function InternalTopNav() {
                   key={item.id}
                   to={item.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`punch-btn py-2 px-3 text-xs uppercase font-bold tracking-wider font-mono rounded-md ${
+                  className={`py-2 px-3 text-xs uppercase font-bold tracking-wider font-mono rounded ${
                     isActive
-                      ? 'punch-btn-active bg-brand-acid text-brand-black font-extrabold'
-                      : 'bg-white text-brand-black hover:bg-brand-paper'
+                      ? 'bg-brand-acid text-black font-extrabold'
+                      : 'bg-white/5 text-brand-paper hover:bg-white/10'
                   }`}
                 >
                   {item.label}
@@ -211,17 +220,7 @@ function InternalLayout() {
       <InternalTopNav />
       <SystemTicker />
       <main className="flex-1 p-3 md:p-4 overflow-y-auto overflow-x-hidden bg-brand-black w-full max-w-full">
-        <Routes>
-          <Route path="/sandbox" element={<LiveInspectorPage />} />
-          <Route path="/trajectory" element={<UnifiedTrajectoryVisionPage />} />
-          <Route path="/vision-lab" element={<Navigate to="/trajectory" replace />} />
-          <Route path="/query" element={<TrajectoryQueryPage />} />
-          <Route path="/analytics" element={<TrafficAnalyticsPage />} />
-          <Route path="/alerts" element={<AlertsManagementPage />} />
-          <Route path="/edge-network" element={<EdgeNetworkPage />} />
-          <Route path="/architecture" element={<ArchitecturePage />} />
-          <Route path="*" element={<Navigate to="/sandbox" replace />} />
-        </Routes>
+        <Outlet />
       </main>
     </div>
   );
@@ -234,16 +233,16 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route element={<InternalLayout />}>
-          <Route path="/vision-lab" element={<TacticalVisionLabPage />} />
-          <Route path="/trajectory" element={<LiveTrackingPage />} />
           <Route path="/sandbox" element={<LiveInspectorPage />} />
+          <Route path="/trajectory" element={<UnifiedTrajectoryVisionPage />} />
+          <Route path="/vision-lab" element={<Navigate to="/trajectory" replace />} />
           <Route path="/query" element={<TrajectoryQueryPage />} />
           <Route path="/analytics" element={<TrafficAnalyticsPage />} />
           <Route path="/alerts" element={<AlertsManagementPage />} />
           <Route path="/edge-network" element={<EdgeNetworkPage />} />
           <Route path="/architecture" element={<ArchitecturePage />} />
         </Route>
-        <Route path="*" element={<Navigate to="/vision-lab" replace />} />
+        <Route path="*" element={<Navigate to="/sandbox" replace />} />
       </Routes>
     </>
   );

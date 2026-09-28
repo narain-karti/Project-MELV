@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import camerasData from '../data/camera_nodes.json';
 import { Search, MapPin, Clock, Gauge, AlertTriangle, ShieldCheck, ArrowRight, Download } from 'lucide-react';
 import { ActionModal } from '../App';

@@ -22,7 +22,6 @@ export default function Leaflet2D() {
   const polylineRef = useRef(null);
   const corridorLineRef = useRef(null);
   const vehicleMarkerRef = useRef(null);
-  const { cameras, activeTrajectory, currentTime } = useTracking();
   const [hoverPreview, setHoverPreview] = useState(null);
   const hoverTimeoutRef = useRef(null);
 
@@ -38,9 +37,10 @@ export default function Leaflet2D() {
         attributionControl: false
       });
 
-      // Dark tactical tiles (free, no API key required)
-      L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19
+      // OpenStreetMap standard tiles with tactical dark CSS filter (100% free, no API key, no watermark)
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        className: 'tactical-dark-tiles',
       }).addTo(map);
 
       // Baseline Street Corridor line
@@ -211,11 +211,11 @@ export default function Leaflet2D() {
       <div ref={mapContainerRef} className="w-full h-full min-h-[340px] bg-slate-950" />
 
       {/* Street Name Badge */}
-      <div className="absolute top-3 left-3 z-[1000] bg-black/85 border border-slate-800 px-3 py-1.5 rounded text-[11px] font-mono text-slate-300 flex items-center space-x-2">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span className="font-bold text-slate-100">CLV Nagar 1st Street, Kanathur</span>
-        <span className="text-slate-500">|</span>
-        <span className="text-lime-hud">Chennai, Tamil Nadu</span>
+      <div className="absolute top-3 left-3 z-[1000] bg-[#121215]/90 backdrop-blur-sm border border-white/15 px-3 py-1.5 rounded text-[11px] font-mono text-brand-paper flex items-center space-x-2 shadow-lg">
+        <span className="w-2 h-2 rounded-full bg-brand-acid animate-pulse"></span>
+        <span className="font-bold text-white">CLV Nagar 1st Street, Kanathur</span>
+        <span className="text-white/40">|</span>
+        <span className="text-brand-acid font-semibold">Chennai, Tamil Nadu</span>
       </div>
 
       {/* Trajectory Velocity Overlay HUD */}

@@ -26,35 +26,35 @@ export default function DigitalIdentityCard() {
 
   return (
     <div
-      className={`bg-brand-paper border p-4 flex flex-col justify-between transition-all duration-300 relative overflow-hidden chamfer-card ${
+      className={`bg-[#141417] border p-4 flex flex-col justify-between transition-all duration-300 relative overflow-hidden rounded-lg shadow-xl ${
         isBlacklist
-          ? 'border-brand-purple shadow-editorial'
-          : 'border-brand-black shadow-editorial hover:-translate-y-1 hover:-translate-x-1'
+          ? 'border-red-500/60 shadow-[0_0_15px_rgba(239,68,68,0.2)]'
+          : 'border-white/10 hover:border-brand-acid/40'
       }`}
     >
       {/* Top Identity Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-brand-black/20">
+      <div className="flex items-center justify-between pb-3 border-b border-white/10">
         <div className="flex items-center space-x-3">
-          <div className="bg-brand-black text-brand-paper p-1.5">
+          <div className="bg-white/10 text-brand-paper p-2 rounded border border-white/10">
             {getVehicleIcon(digitalIdentity.vehicleClass)}
           </div>
           <div>
             <div className="text-[9px] font-mono uppercase tracking-widest text-brand-gray font-bold">
               DIGITAL IDENTITY
             </div>
-            <div className="text-xs font-bold text-brand-black uppercase">
+            <div className="text-xs font-bold text-white uppercase">
               {digitalIdentity.vehicleClass} • {digitalIdentity.color}
             </div>
           </div>
         </div>
 
         {isBlacklist ? (
-          <span className="flex items-center gap-1 bg-brand-purple text-brand-paper border border-brand-black px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-widest animate-pulse -rotate-2 shadow-editorial">
+          <span className="flex items-center gap-1 bg-red-500/20 text-red-400 border border-red-500/40 px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-widest animate-pulse rounded">
             <ShieldAlert className="w-3 h-3" />
             WANTED
           </span>
         ) : (
-          <span className="flex items-center gap-1 bg-brand-black text-brand-acid border border-brand-black px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-widest rotate-1">
+          <span className="flex items-center gap-1 bg-brand-acid/15 text-brand-acid border border-brand-acid/40 px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-widest rounded">
             <CheckCircle2 className="w-3 h-3" />
             VERIFIED
           </span>
@@ -64,33 +64,33 @@ export default function DigitalIdentityCard() {
       {/* Center: License Plate Display */}
       <div className="my-4 flex items-center justify-between">
         <div
-          className={`px-3 py-1.5 border-2 flex items-center space-x-2 font-mono font-bold text-lg tracking-wider transform -skew-x-6 ${
+          className={`px-3 py-1.5 border-2 flex items-center space-x-2 font-mono font-bold text-lg tracking-wider rounded ${
             isCommercial
-              ? 'bg-[#FFD700] text-black border-black'
-              : 'bg-white text-brand-black border-brand-black shadow-editorial'
+              ? 'bg-[#FFD700] text-black border-amber-500'
+              : 'bg-white text-black border-white shadow-md'
           }`}
         >
-          <div className="flex flex-col items-center pr-2 border-r border-brand-black text-[9px] leading-tight">
+          <div className="flex flex-col items-center pr-2 border-r border-black/30 text-[9px] leading-tight">
             <span>IND</span>
           </div>
-          <span className="pl-1">{digitalIdentity.plate}</span>
+          <span className="pl-1 tracking-wider">{digitalIdentity.plate}</span>
         </div>
 
-        <div className="text-right font-mono border border-brand-black px-2 py-1 bg-brand-acid text-brand-black rotate-1">
-          <div className="text-[8px] uppercase tracking-widest font-bold">Confidence</div>
-          <div className="text-sm font-bold">{digitalIdentity.confidence}%</div>
+        <div className="text-right font-mono border border-brand-acid/30 px-2.5 py-1 bg-brand-acid/15 text-brand-acid rounded">
+          <div className="text-[8px] uppercase tracking-widest font-bold text-brand-acid/70">Confidence</div>
+          <div className="text-sm font-black">{digitalIdentity.confidence}%</div>
         </div>
       </div>
 
       {/* Bottom: Location & Timestamp */}
-      <div className="grid grid-cols-2 gap-2 text-[9px] font-mono pt-3 border-t border-brand-black/20 text-brand-gray uppercase font-bold tracking-widest">
+      <div className="grid grid-cols-2 gap-2 text-[9px] font-mono pt-3 border-t border-white/10 text-brand-gray uppercase font-bold tracking-widest">
         <div className="flex items-center space-x-1.5 truncate">
-          <MapPin className="w-3 h-3 text-brand-black flex-shrink-0" />
-          <span className="truncate">{digitalIdentity.cameraName}</span>
+          <MapPin className="w-3 h-3 text-brand-acid flex-shrink-0" />
+          <span className="truncate text-white/80">{digitalIdentity.cameraName}</span>
         </div>
         <div className="flex items-center justify-end space-x-1.5">
-          <Clock className="w-3 h-3 text-brand-black" />
-          <span>{digitalIdentity.timestamp}</span>
+          <Clock className="w-3 h-3 text-white/60" />
+          <span className="text-white/80">{digitalIdentity.timestamp}</span>
         </div>
       </div>
 

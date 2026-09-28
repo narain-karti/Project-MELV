@@ -13,9 +13,9 @@ export default function OcrConsole() {
   }, [consoleLogs]);
 
   return (
-    <div className="bg-brand-paper border border-brand-black overflow-hidden flex flex-col h-48 font-mono text-xs chamfer-card shadow-editorial">
+    <div className="bg-[#141417] border border-white/10 overflow-hidden flex flex-col h-48 font-mono text-xs rounded-lg shadow-xl">
       {/* Console Header */}
-      <div className="h-8 px-3 bg-brand-black border-b border-brand-black flex items-center justify-between text-brand-paper">
+      <div className="h-8 px-3 bg-[#18181c] border-b border-white/10 flex items-center justify-between text-brand-paper">
         <div className="flex items-center space-x-2">
           <Terminal className="w-3.5 h-3.5 text-brand-acid" />
           <span className="text-[10px] font-bold text-brand-paper uppercase tracking-widest">
@@ -25,7 +25,7 @@ export default function OcrConsole() {
             [EASYOCR + RTO GRAMMAR]
           </span>
         </div>
-        <span className="w-2 h-2 bg-brand-acid animate-pulse rotate-45"></span>
+        <span className="w-2 h-2 bg-brand-acid animate-pulse rounded-full"></span>
       </div>
 
       {/* Terminal Content */}

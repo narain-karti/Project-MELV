@@ -106,13 +106,13 @@ export default function UnifiedTrajectoryVisionPage() {
          ========================================================================= */}
       <section className="space-y-6">
         {/* Section Headline */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-brand-black pb-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-4">
           <div>
             <div className="text-[10px] font-bold uppercase tracking-widest text-brand-acid mb-1 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-brand-acid animate-pulse"></span>
               FLAGSHIP COMMAND MODULE [02]
             </div>
-            <h2 className="editorial-headline text-3xl md:text-4xl text-brand-paper">
+            <h2 className="editorial-headline text-3xl md:text-4xl text-white">
               LIVE TRAJECTORY &amp; CORRIDOR SURVEILLANCE
             </h2>
           </div>
@@ -120,13 +120,13 @@ export default function UnifiedTrajectoryVisionPage() {
           <div className="mt-3 md:mt-0 flex items-center gap-2">
             <button
               onClick={scrollToVisionLab}
-              className="punch-btn px-3 py-1.5 bg-brand-acid text-brand-black text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 border border-brand-black shadow-[2px_2px_0px_#181818]"
+              className="px-3 py-1.5 bg-brand-acid text-black text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1.5 rounded shadow-[0_0_10px_rgba(200,232,77,0.3)] hover:brightness-110 transition-all"
             >
               <span>Scroll to Vision Lab</span>
               <ArrowDown className="w-3.5 h-3.5" />
             </button>
 
-            <div className="text-[10px] font-mono font-bold uppercase text-brand-paper bg-brand-black px-3 py-1.5 border border-brand-dark-gray/60 inline-flex items-center">
+            <div className="text-[10px] font-mono font-bold uppercase text-brand-paper bg-white/5 px-3 py-1.5 border border-white/10 rounded inline-flex items-center">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-acid mr-2 animate-ping"></span>
               KANATHUR ECR CORRIDOR
             </div>
@@ -134,30 +134,25 @@ export default function UnifiedTrajectoryVisionPage() {
         </div>
 
         {/* Master Trajectory Grid (8 cols left feeds + GIS, 4 cols right identity + terminal) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           {/* Left Column (8 of 12 cols): Dual CCTV Feeds + GIS Map */}
-          <div className="lg:col-span-8 flex flex-col space-y-6">
+          <div className="lg:col-span-8 flex flex-col space-y-5">
             {/* Dual Video Feeds */}
-            <div className="bg-brand-paper border border-brand-black p-1 chamfer-card shadow-editorial">
+            <div className="bg-[#121215] border border-white/10 rounded-lg p-1.5 shadow-xl">
               <VideoSurveillance />
             </div>
 
             {/* Tactical GIS Map & 3D Spatial Engine */}
-            <div className="min-h-[420px] bg-brand-paper border border-brand-black p-1 chamfer-card relative shadow-editorial">
+            <div className="min-h-[420px] bg-[#121215] border border-white/10 rounded-lg p-1 relative shadow-xl">
               <TacticalMap />
-              <div className="absolute top-0 right-0 bg-brand-black text-brand-paper text-[9px] font-bold px-2 py-1 uppercase tracking-wider font-mono z-[400] border-l border-b border-brand-black">
-                SPATIAL ENGINE (EPSG:4326 WGS84)
-              </div>
             </div>
           </div>
 
           {/* Right Column (4 of 12 cols): Target Dossier + Live OCR Terminal + Dispatch */}
-          <div className="lg:col-span-4 flex flex-col space-y-6">
+          <div className="lg:col-span-4 flex flex-col space-y-5">
             <DigitalIdentityCard />
             <OcrConsole />
-            <div className="min-h-[220px]">
-              <NotificationFeed />
-            </div>
+            <NotificationFeed />
           </div>
         </div>
       </section>
@@ -197,17 +192,17 @@ export default function UnifiedTrajectoryVisionPage() {
          ========================================================================= */}
       <section className="space-y-6">
         {/* Camera Selector Strip */}
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-brand-paper border border-brand-black p-3 chamfer-card shadow-editorial">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-[#141417] border border-white/10 p-3 rounded-lg shadow-xl">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase text-brand-black">Active Camera Node:</span>
+            <span className="text-[10px] font-bold uppercase text-white/70">Active Camera Node:</span>
             {Object.keys(cameraMeta).map((camKey) => (
               <button
                 key={camKey}
                 onClick={() => setSelectedCam(camKey)}
-                className={`punch-btn px-2.5 py-1 text-[10px] font-bold uppercase border transition-all ${
+                className={`px-3 py-1.5 text-[10px] font-bold uppercase rounded border transition-all ${
                   selectedCam === camKey
-                    ? 'bg-brand-black text-brand-acid border-brand-black punch-btn-active'
-                    : 'bg-white text-brand-black border-brand-dark-gray hover:bg-brand-acid/20'
+                    ? 'bg-brand-acid text-black border-brand-acid font-black shadow-[0_0_10px_rgba(200,232,77,0.3)]'
+                    : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white'
                 }`}
               >
                 {cameraMeta[camKey].name.split(' ')[0]} ({camKey})
@@ -215,9 +210,9 @@ export default function UnifiedTrajectoryVisionPage() {
             ))}
           </div>
 
-          <div className="text-[10px] text-brand-gray flex items-center gap-3">
-            <span>Model: <strong className="text-brand-black">{camConfig.modelType.split('+')[0]}</strong></span>
-            <span>Speed Limit: <strong className="text-brand-black">{camConfig.speedLimit}</strong></span>
+          <div className="text-[10px] text-white/50 flex items-center gap-3">
+            <span>Model: <strong className="text-white">{camConfig.modelType.split('+')[0]}</strong></span>
+            <span>Speed Limit: <strong className="text-brand-acid">{camConfig.speedLimit}</strong></span>
           </div>
         </div>
 

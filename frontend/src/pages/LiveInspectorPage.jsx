@@ -74,6 +74,8 @@ export default function LiveInspectorPage() {
   const [selectedFeed, setSelectedFeed] = useState(BENCHMARK_FEEDS[0]);
   const [activeVideoSrc, setActiveVideoSrc] = useState('/videos/sandbox_annotated.mp4');
   const [isCustomUpload, setIsCustomUpload] = useState(false);
+  const [isLiveAiStream, setIsLiveAiStream] = useState(false);
+  const [streamNonce, setStreamNonce] = useState(Date.now());
   const [uploadedFileName, setUploadedFileName] = useState('13002160_1920_1080_60fps.mp4');
   const [isUploading, setIsUploading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -149,7 +151,7 @@ export default function LiveInspectorPage() {
     };
 
     fetchTelemetry();
-    const interval = setInterval(fetchTelemetry, 2500);
+    const interval = setInterval(fetchTelemetry, isCustomUpload ? 1200 : 2500);
     return () => {
       active = false;
       clearInterval(interval);
@@ -195,10 +197,12 @@ export default function LiveInspectorPage() {
       });
 
       if (res.ok) {
+        setIsLiveAiStream(true);
+        setStreamNonce(Date.now());
         setActionModal({
           isOpen: true,
-          title: 'CUSTOM CCTV VIDEO INGESTED',
-          message: `File "${file.name}" uploaded successfully. YOLOv8 + ByteTrack + Adverse-Weather Indian ANPR pipeline is now analyzing the video loop in real time.`,
+          title: 'CUSTOM CCTV VIDEO INGESTED & AI ACTIVE',
+          message: `File "${file.name}" uploaded successfully. Real-time YOLOv8 + ByteTrack + Adverse-Weather Indian ANPR inference is now streaming with frame-baked bounding boxes & telemetry.`,
           severity: 'success'
         });
       }
@@ -214,6 +218,7 @@ export default function LiveInspectorPage() {
     setSelectedFeed(feed);
     setActiveVideoSrc(feed.videoUrl);
     setIsCustomUpload(false);
+    setIsLiveAiStream(false);
     setUploadedFileName(feed.title);
     if (videoRef.current) {
       videoRef.current.load();
@@ -292,27 +297,27 @@ Timestamp                 : ${selectedDossierVehicle.timestamp}
   return (
     <div className="space-y-6 font-mono select-none max-w-[1600px] mx-auto pb-12">
       {/* Top Banner: Arena Header */}
-      <div className="bg-brand-paper border-2 border-brand-black p-5 chamfer-card shadow-[4px_4px_0px_#181818] flex flex-col md:flex-row items-center justify-between gap-4 text-brand-black">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 bg-brand-acid text-brand-black font-black border border-brand-black shadow-[2px_2px_0px_#181818]">
+      <div className="bg-[#141418] border border-white/10 p-4 md:p-5 rounded-lg shadow-xl flex flex-col md:flex-row items-center justify-between gap-4 text-brand-paper">
+        <div className="flex items-center space-x-3.5">
+          <div className="p-2.5 bg-brand-acid text-black font-black rounded border border-brand-acid shadow-[0_0_12px_rgba(200,232,77,0.3)]">
             <Eye className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-[10px] font-black uppercase tracking-widest text-brand-black flex items-center gap-2">
+            <div className="text-[10px] font-black uppercase tracking-widest text-brand-acid flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-brand-acid animate-ping"></span>
               PRIMARY EVALUATION ARENA [01]
             </div>
-            <h1 className="text-xl md:text-2xl font-black uppercase tracking-wider text-brand-black mt-0.5">
+            <h1 className="text-xl md:text-2xl font-black uppercase tracking-wider text-white mt-0.5">
               JUDGE BENCHMARK ARENA — LIVE CCTV EVALUATION
             </h1>
-            <span className="text-[10px] text-brand-gray font-sans block mt-0.5">
+            <span className="text-[10px] text-white/50 font-sans block mt-0.5">
               SIH Problem Statement 26127: Test Any Custom Video • Adverse-Weather Indian ANPR • Video-Synchronized 3D Digital Twin
             </span>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="text-[10px] px-3 py-1.5 bg-brand-black text-brand-acid font-bold uppercase border border-brand-black shadow-[2px_2px_0px_#181818] flex items-center gap-1.5">
+          <div className="text-[10px] px-3 py-1.5 bg-white/5 text-brand-acid font-bold uppercase border border-brand-acid/30 rounded flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-brand-acid animate-pulse"></span>
             ACTIVE FEED: {isCustomUpload ? 'CUSTOM JUDGE CCTV' : 'PRESET BENCHMARK'}
           </div>
@@ -339,31 +344,67 @@ Timestamp                 : ${selectedDossierVehicle.timestamp}
               </div>
 
               <div className="flex items-center gap-2">
+                {/* Real-time Bounding Box Mode Toggle */}
+                {isCustomUpload && (
+                  <button
+                    onClick={() => {
+                      setIsLiveAiStream(!isLiveAiStream);
+                      setStreamNonce(Date.now());
+                    }}
+                    className={`px-2.5 py-0.5 text-[9px] font-bold uppercase rounded border transition-all flex items-center gap-1 ${
+                      isLiveAiStream
+                        ? 'bg-brand-acid text-black border-brand-acid font-black shadow-[0_0_8px_rgba(200,232,77,0.4)]'
+                        : 'bg-white/10 text-white/70 border-white/20 hover:text-white'
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${isLiveAiStream ? 'bg-black animate-ping' : 'bg-red-400'}`}></span>
+                    <span>{isLiveAiStream ? 'AI BOUNDING BOXES: ON' : 'RAW VIDEO'}</span>
+                  </button>
+                )}
+
                 <span className="text-[9px] px-2 py-0.5 font-bold uppercase bg-brand-acid text-brand-black border border-brand-black shadow-[1px_1px_0px_#181818]">
                   YOLOv8 + ByteTrack
                 </span>
-                <button
-                  onClick={togglePlay}
-                  className="px-2 py-0.5 bg-brand-dark-gray text-brand-paper text-[9px] font-bold uppercase hover:bg-brand-paper hover:text-brand-black transition-colors"
-                >
-                  {isPlaying ? 'Pause' : 'Play'}
-                </button>
+                {!isLiveAiStream && (
+                  <button
+                    onClick={togglePlay}
+                    className="px-2 py-0.5 bg-brand-dark-gray text-brand-paper text-[9px] font-bold uppercase hover:bg-brand-paper hover:text-brand-black transition-colors"
+                  >
+                    {isPlaying ? 'Pause' : 'Play'}
+                  </button>
+                )}
               </div>
             </div>
 
-            {/* Native 60 FPS Hardware-Accelerated Video Loop */}
+            {/* Video Viewport: Live MJPEG stream with baked bounding boxes or native loop */}
             <div className="relative aspect-video w-full bg-black overflow-hidden border border-brand-dark-gray/40">
-              <video
-                ref={videoRef}
-                key={activeVideoSrc}
-                src={activeVideoSrc}
-                autoPlay
-                loop
-                muted
-                playsInline
-                onTimeUpdate={(e) => setVideoTime(e.target.currentTime)}
-                className="w-full h-full object-cover"
-              />
+              {isLiveAiStream ? (
+                <div className="relative w-full h-full bg-black flex items-center justify-center">
+                  <img
+                    key={streamNonce}
+                    src={getApiUrl(`/api/stream/cctv?camera=SANDBOX&t=${streamNonce}`)}
+                    alt="Live Inferred Sandbox Stream"
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Live AI Overlay Badge */}
+                  <div className="absolute top-2 right-2 bg-brand-black/90 border border-brand-acid text-brand-acid px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest shadow-md flex items-center gap-1.5 z-20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-acid animate-ping"></span>
+                    <span>LIVE AI BAKE (:8000)</span>
+                  </div>
+                </div>
+              ) : (
+                <video
+                  ref={videoRef}
+                  key={activeVideoSrc}
+                  src={activeVideoSrc}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  onTimeUpdate={(e) => setVideoTime(e.target.currentTime)}
+                  className="w-full h-full object-cover"
+                />
+              )}
 
               {/* Scanline tactical overlay */}
               <div className="absolute inset-0 surveillance-scanline pointer-events-none opacity-20"></div>
@@ -372,10 +413,10 @@ Timestamp                 : ${selectedDossierVehicle.timestamp}
               <div className="absolute top-2 left-2 flex items-center gap-2 pointer-events-none z-10">
                 <span className="bg-brand-black/90 backdrop-blur-sm border border-brand-dark-gray/50 px-2 py-1 text-[9px] font-mono font-bold text-brand-acid flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-acid animate-ping"></span>
-                  <span>ADVERSE-WEATHER INDIAN ANPR ACTIVE</span>
+                  <span>{isLiveAiStream ? 'LIVE INFERENCE ENGINE ACTIVE' : 'ADVERSE-WEATHER INDIAN ANPR ACTIVE'}</span>
                 </span>
                 <span className="bg-brand-black/90 backdrop-blur-sm border border-brand-dark-gray/50 px-2 py-1 text-[9px] font-mono text-brand-paper">
-                  FPS: 60.0 • ZERO LAG
+                  {isLiveAiStream ? 'LIVE 25 FPS • REAL-TIME' : 'FPS: 60.0 • ZERO LAG'}
                 </span>
               </div>
 
