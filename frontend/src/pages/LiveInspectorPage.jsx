@@ -26,6 +26,8 @@ import {
 import { getApiUrl } from '../utils/apiConfig';
 import CorridorDigitalTwin3D from '../components/tracking/CorridorDigitalTwin3D';
 import { ActionModal } from '../App';
+import { Link } from 'react-router-dom';
+import TrafficSimulationPage from '../app/simulation/page';
 
 const BENCHMARK_FEEDS = [
   {
@@ -82,6 +84,7 @@ export default function LiveInspectorPage() {
   const [streamMode, setStreamMode] = useState('baked'); // 'baked' or 'client'
   const [streamKey, setStreamKey] = useState(Date.now());
   const [streamError, setStreamError] = useState(false);
+  const [sandboxViewTab, setSandboxViewTab] = useState('vision_twin'); // 'vision_twin' | 'simulation_3d'
   
   // Selected vehicle for Digital Footprint dossier inspection (Bangkok Arterial Corridor)
   const [selectedDossierVehicle, setSelectedDossierVehicle] = useState({
@@ -294,12 +297,55 @@ export default function LiveInspectorPage() {
         </div>
       </div>
 
-      {/* =========================================================================
-          PRIMARY SIDE-BY-SIDE VIEWPORT:
-          Left: Video Loop with Live Bounding Boxes + ANPR
-          Right: 3D Map Digital Twin with Traffic Heat Map & Trajectory
-         ========================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+      {/* Live Sandbox Interactive Navigation Sub-Tabs */}
+      <div className="flex items-center justify-between bg-white border-2 border-brand-black p-2.5 shadow-[3px_3px_0px_#181818] rounded-xl flex-wrap gap-2.5">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSandboxViewTab('vision_twin')}
+            className={`px-3.5 py-2 text-xs font-mono font-extrabold uppercase tracking-wider transition-all rounded-lg flex items-center gap-2 border border-brand-black ${
+              sandboxViewTab === 'vision_twin'
+                ? 'bg-brand-acid text-brand-black shadow-[2px_2px_0px_#141414]'
+                : 'bg-brand-paper text-brand-dark-gray hover:bg-brand-acid/30'
+            }`}
+          >
+            <Cpu className="w-3.5 h-3.5" />
+            <span>[01] Live Video Ingestion &amp; Corridor Twin</span>
+          </button>
+          <button
+            onClick={() => setSandboxViewTab('simulation_3d')}
+            className={`px-3.5 py-2 text-xs font-mono font-extrabold uppercase tracking-wider transition-all rounded-lg flex items-center gap-2 border border-brand-black ${
+              sandboxViewTab === 'simulation_3d'
+                ? 'bg-cyan-400 text-black shadow-[2px_2px_0px_#141414]'
+                : 'bg-cyan-950/20 text-cyan-700 hover:bg-cyan-400/20'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-cyan-600" />
+            <span>[02] Traffic AI Simulation 3D</span>
+            <span className="px-1.5 py-0.2 text-[9px] bg-cyan-400 text-black rounded font-bold">R3F</span>
+          </button>
+        </div>
+
+        <Link
+          to="/simulation"
+          className="text-xs font-mono font-bold text-brand-black hover:text-cyan-700 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-paper border border-brand-black shadow-[1px_1px_0px_#181818] transition-all"
+        >
+          <span>Fullscreen Standalone Tab [09]</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+
+      {sandboxViewTab === 'simulation_3d' ? (
+        <div className="border-2 border-brand-black rounded-2xl overflow-hidden shadow-[4px_4px_0px_#181818]">
+          <TrafficSimulationPage />
+        </div>
+      ) : (
+        <>
+          {/* =========================================================================
+              PRIMARY SIDE-BY-SIDE VIEWPORT:
+              Left: Video Loop with Live Bounding Boxes + ANPR
+              Right: 3D Map Digital Twin with Traffic Heat Map & Trajectory
+             ========================================================================= */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
         
         {/* LEFT VIEWPORT: Real-Time CCTV Ingestion Player */}
         <div className="border-2 border-brand-black bg-brand-black p-4 flex flex-col justify-between shadow-[4px_4px_0px_#181818]">
@@ -716,7 +762,9 @@ export default function LiveInspectorPage() {
           </div>
         </div>
 
-      </div>
+          </div>
+        </>
+      )}
 
       {/* Confirmation Modal */}
       <ActionModal
