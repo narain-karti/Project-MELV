@@ -4,7 +4,6 @@ import TacticalMap from '../components/tracking/TacticalMap';
 import DigitalIdentityCard from '../components/tracking/DigitalIdentityCard';
 import OcrConsole from '../components/tracking/OcrConsole';
 import NotificationFeed from '../components/tracking/NotificationFeed';
-import { MapPin, Video, Activity } from 'lucide-react';
 
 export default function LiveTrackingPage() {
   return (

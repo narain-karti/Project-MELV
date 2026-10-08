@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
 import { TrackingProvider, useTracking } from './context/TrackingContext';
 import SystemTicker from './components/common/SystemTicker';
-import HomePage from './pages/HomePage';
-import LiveTrackingPage from './pages/LiveTrackingPage';
-import LiveInspectorPage from './pages/LiveInspectorPage';
-import TrajectoryQueryPage from './pages/TrajectoryQueryPage';
-import TrafficAnalyticsPage from './pages/TrafficAnalyticsPage';
-import AlertsManagementPage from './pages/AlertsManagementPage';
-import EdgeNetworkPage from './pages/EdgeNetworkPage';
-import TacticalVisionLabPage from './pages/TacticalVisionLabPage';
-import ArchitecturePage from './pages/ArchitecturePage';
-import DualAiVisionDemoPage from './pages/DualAiVisionDemoPage';
-import TrafficSimulationPage from './app/simulation/page';
 import { ArrowLeft, Menu, X } from 'lucide-react';
+
+// Code-split pages for instant initial load and small bundle size
+const HomePage = lazy(() => import('./pages/HomePage'));
+const LiveTrackingPage = lazy(() => import('./pages/LiveTrackingPage'));
+const LiveInspectorPage = lazy(() => import('./pages/LiveInspectorPage'));
+const TrajectoryQueryPage = lazy(() => import('./pages/TrajectoryQueryPage'));
+const TrafficAnalyticsPage = lazy(() => import('./pages/TrafficAnalyticsPage'));
+const AlertsManagementPage = lazy(() => import('./pages/AlertsManagementPage'));
+const EdgeNetworkPage = lazy(() => import('./pages/EdgeNetworkPage'));
+const TacticalVisionLabPage = lazy(() => import('./pages/TacticalVisionLabPage'));
+const ArchitecturePage = lazy(() => import('./pages/ArchitecturePage'));
+const DualAiVisionDemoPage = lazy(() => import('./pages/DualAiVisionDemoPage'));
+const TrafficSimulationPage = lazy(() => import('./app/simulation/page'));
 
 const ROUTE_MAP = {
   home: '/',
@@ -63,55 +65,7 @@ function RouteSync() {
 }
 
 
-// Modal component for dispatch/action confirmations
-function ActionModal({ isOpen, onClose, title, message, severity = 'info' }) {
-  if (!isOpen) return null;
-
-  const severityStyles = {
-    critical: 'border-red-500 bg-red-500/10',
-    warning: 'border-amber-400 bg-amber-400/10',
-    success: 'border-brand-acid bg-brand-acid/10',
-    info: 'border-brand-purple bg-brand-purple/10',
-  };
-
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
-      <div
-        className={`relative max-w-lg w-[90%] border-2 ${severityStyles[severity] || severityStyles.info} p-6 chamfer-card shadow-editorial bg-brand-black`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button onClick={onClose} className="absolute top-3 right-3 text-brand-gray hover:text-brand-paper transition-colors">
-          <X className="w-4 h-4" />
-        </button>
-        <div className="text-[10px] font-bold uppercase tracking-widest text-brand-acid mb-2 font-mono">
-          System Notification
-        </div>
-        <h3 className="text-lg font-bold text-brand-paper uppercase tracking-wider mb-3 font-mono">
-          {title}
-        </h3>
-        <p className="text-sm text-brand-gray font-mono leading-relaxed mb-6">
-          {message}
-        </p>
-        <div className="flex gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 py-2.5 bg-brand-acid text-brand-black font-bold text-[10px] uppercase tracking-widest border border-brand-black shadow-editorial hover:bg-brand-paper transition-all"
-          >
-            Acknowledged
-          </button>
-          <button
-            onClick={onClose}
-            className="px-4 py-2.5 border border-brand-dark-gray text-brand-gray text-[10px] uppercase tracking-widest font-bold hover:text-brand-paper hover:border-brand-paper transition-all"
-          >
-            Dismiss
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Export modal for use in other components
+import ActionModal from './components/common/ActionModal';
 export { ActionModal };
 
 function InternalTopNav() {
@@ -213,26 +167,35 @@ function InternalTopNav() {
   );
 }
 
+const RouteLoadingFallback = () => (
+  <div className="w-full h-48 flex items-center justify-center font-mono text-[10px] text-brand-acid uppercase tracking-widest">
+    <span className="w-2 h-2 rounded-full bg-brand-acid animate-ping mr-2"></span>
+    SYNCHRONIZING TACTICAL MODULE...
+  </div>
+);
+
 function InternalLayout() {
   return (
     <div className="fixed inset-0 flex flex-col w-full h-full max-h-screen bg-brand-black text-brand-paper overflow-hidden select-none font-sans">
       <InternalTopNav />
       <SystemTicker />
       <main className="flex-1 p-3 md:p-4 overflow-y-auto overflow-x-hidden bg-brand-black w-full max-w-full">
-        <Routes>
-          <Route path="/vision-lab" element={<TacticalVisionLabPage />} />
-          <Route path="/trajectory" element={<LiveTrackingPage />} />
-          <Route path="/sandbox" element={<LiveInspectorPage />} />
-          <Route path="/query" element={<TrajectoryQueryPage />} />
-          <Route path="/analytics" element={<TrafficAnalyticsPage />} />
-          <Route path="/alerts" element={<AlertsManagementPage />} />
-          <Route path="/edge-network" element={<EdgeNetworkPage />} />
-          <Route path="/architecture" element={<ArchitecturePage />} />
-          <Route path="/dual-ai-vision" element={<DualAiVisionDemoPage />} />
-          <Route path="/demo" element={<DualAiVisionDemoPage />} />
-          <Route path="/simulation" element={<TrafficSimulationPage />} />
-          <Route path="*" element={<Navigate to="/vision-lab" replace />} />
-        </Routes>
+        <Suspense fallback={<RouteLoadingFallback />}>
+          <Routes>
+            <Route path="/vision-lab" element={<TacticalVisionLabPage />} />
+            <Route path="/trajectory" element={<LiveTrackingPage />} />
+            <Route path="/sandbox" element={<LiveInspectorPage />} />
+            <Route path="/query" element={<TrajectoryQueryPage />} />
+            <Route path="/analytics" element={<TrafficAnalyticsPage />} />
+            <Route path="/alerts" element={<AlertsManagementPage />} />
+            <Route path="/edge-network" element={<EdgeNetworkPage />} />
+            <Route path="/architecture" element={<ArchitecturePage />} />
+            <Route path="/dual-ai-vision" element={<DualAiVisionDemoPage />} />
+            <Route path="/demo" element={<DualAiVisionDemoPage />} />
+            <Route path="/simulation" element={<TrafficSimulationPage />} />
+            <Route path="*" element={<Navigate to="/vision-lab" replace />} />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   );
@@ -242,10 +205,12 @@ function AppContent() {
   return (
     <>
       <RouteSync />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/*" element={<InternalLayout />} />
-      </Routes>
+      <Suspense fallback={<RouteLoadingFallback />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/*" element={<InternalLayout />} />
+        </Routes>
+      </Suspense>
     </>
   );
 }

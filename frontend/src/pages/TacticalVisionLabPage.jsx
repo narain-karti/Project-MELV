@@ -33,7 +33,7 @@ import {
 import bytetrackData from '../data/bytetrack_anpr_demo.json';
 import trafficData from '../data/traffic_analysis_data.json';
 import IntersectionDigitalTwin3D from '../components/tracking/IntersectionDigitalTwin3D';
-import { ActionModal } from '../App';
+import ActionModal from '../components/common/ActionModal';
 import { getApiUrl } from '../utils/apiConfig';
 
 export default function TacticalVisionLabPage() {

@@ -1,20 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { 
-  Box, 
-  Layers, 
-  Eye, 
-  Flame, 
-  Activity, 
-  Compass, 
-  Radio, 
-  Maximize2, 
-  ShieldCheck, 
-  TrendingUp, 
-  Sliders, 
-  ArrowUpRight,
-  Zap,
-  Info
-} from 'lucide-react';
+import { ArrowUpRight, Zap, Box, Flame, Activity, Radio } from 'lucide-react';
 import trafficData from '../../data/traffic_analysis_data.json';
 import { projectPoint } from '../../utils/isoProject';
 

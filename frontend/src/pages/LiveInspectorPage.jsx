@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { getApiUrl } from '../utils/apiConfig';
 import CorridorDigitalTwin3D from '../components/tracking/CorridorDigitalTwin3D';
-import { ActionModal } from '../App';
+import ActionModal from '../components/common/ActionModal';
 import { Link } from 'react-router-dom';
 import TrafficSimulationPage from '../app/simulation/page';
 
@@ -35,7 +35,7 @@ const BENCHMARK_FEEDS = [
     title: 'Primary Feed: 13002160_1920_1080_60fps.mp4',
     desc: 'Dense arterial urban traffic with taxis, sedans, motorcycles, and commercial vans',
     videoUrl: '/videos/sandbox_annotated.mp4',
-    rawUrl: '/videos/sandbox_default.mp4',
+    rawUrl: '/videos/cam_01_upstream.mp4',
     fps: 60.0,
     resolution: '1920x1080',
     testedAccuracy: '98.4%'

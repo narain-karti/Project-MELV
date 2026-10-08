@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import camerasData from '../data/camera_nodes.json';
 import { Search, MapPin, Clock, Gauge, AlertTriangle, ShieldCheck, ArrowRight, Download } from 'lucide-react';
-import { ActionModal } from '../App';
+import ActionModal from '../components/common/ActionModal';
 import CameraHoverPreview from '../components/common/CameraHoverPreview';
 import { getApiUrl } from '../utils/apiConfig';
 

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useMemo } from 'react';
 import eventsData from '../data/events.json';
 import camerasData from '../data/camera_nodes.json';
 import blacklistData from '../data/blacklist.json';
@@ -229,37 +229,51 @@ export function TrackingProvider({ children }) {
     });
   }, [currentTime, firedEventIds]);
 
+  const contextValue = useMemo(() => ({
+    activeTab,
+    setActiveTab,
+    currentTime,
+    setCurrentTime,
+    isPlaying,
+    setIsPlaying,
+    mapMode,
+    setMapMode,
+    activeReticles,
+    setActiveReticles,
+    digitalIdentity,
+    setDigitalIdentity,
+    activeTrajectory,
+    setActiveTrajectory,
+    interceptAlert,
+    setInterceptAlert,
+    consoleLogs,
+    setConsoleLogs,
+    notifications,
+    setNotifications,
+    backendOnline,
+    backendTelemetry,
+    userRole,
+    setUserRole,
+    cameras: camerasData,
+    blacklist: blacklistData
+  }), [
+    activeTab,
+    currentTime,
+    isPlaying,
+    mapMode,
+    activeReticles,
+    digitalIdentity,
+    activeTrajectory,
+    interceptAlert,
+    consoleLogs,
+    notifications,
+    backendOnline,
+    backendTelemetry,
+    userRole
+  ]);
+
   return (
-    <TrackingContext.Provider
-      value={{
-        activeTab,
-        setActiveTab,
-        currentTime,
-        setCurrentTime,
-        isPlaying,
-        setIsPlaying,
-        mapMode,
-        setMapMode,
-        activeReticles,
-        setActiveReticles,
-        digitalIdentity,
-        setDigitalIdentity,
-        activeTrajectory,
-        setActiveTrajectory,
-        interceptAlert,
-        setInterceptAlert,
-        consoleLogs,
-        setConsoleLogs,
-        notifications,
-        setNotifications,
-        backendOnline,
-        backendTelemetry,
-        userRole,
-        setUserRole,
-        cameras: camerasData,
-        blacklist: blacklistData
-      }}
-    >
+    <TrackingContext.Provider value={contextValue}>
       {children}
     </TrackingContext.Provider>
   );

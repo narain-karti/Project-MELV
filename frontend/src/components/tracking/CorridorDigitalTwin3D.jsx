@@ -1,16 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { 
-  Box, 
-  Layers, 
-  Flame, 
-  Activity, 
-  Radio, 
-  Zap, 
-  Maximize2,
-  Gauge,
-  Navigation,
-  Compass
-} from 'lucide-react';
+import { Flame, Radio } from 'lucide-react';
 import { projectCorridor } from '../../utils/isoProject';
 
 // Curated live vehicles matching 13002160_1920_1080_60fps.mp4 arterial corridor

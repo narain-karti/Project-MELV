@@ -13,7 +13,9 @@ VEHICLE_MODEL_PATH = os.path.join(BASE_DIR, "yolov8n.pt")
 LICENSE_PLATE_MODEL_PATH = os.path.join(BASE_DIR, "models", "license_plate_detector.pt")
 
 # Default Video Feeds
-DEFAULT_VIDEO_PATH = os.path.join(BASE_DIR, "cctv.mp4")
+DEFAULT_VIDEO_PATH = os.path.join(BASE_DIR, "frontend", "public", "videos", "cam_01_upstream.mp4")
+if not os.path.exists(DEFAULT_VIDEO_PATH):
+    DEFAULT_VIDEO_PATH = os.path.join(BASE_DIR, "cctv.mp4")
 SECONDARY_VIDEO_PATH = os.path.join(BASE_DIR, "frontend", "public", "videos", "cam_02_downstream.mp4")
 
 # Detection Classes (COCO Dataset indices for vehicles)

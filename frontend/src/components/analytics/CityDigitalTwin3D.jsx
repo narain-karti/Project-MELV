@@ -1,31 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { 
-  Box, 
-  Layers, 
-  Eye, 
-  Flame, 
-  Activity, 
-  Radio, 
-  Sliders, 
-  Zap, 
-  ShieldAlert, 
   Clock, 
   Sparkles, 
-  CheckCircle2, 
-  AlertTriangle,
+  Zap, 
   RotateCcw,
   Play,
-  Pause
+  Pause,
+  Flame,
+  ShieldAlert
 } from 'lucide-react';
 import { getApiUrl } from '../../utils/apiConfig';
 
-export default function CityDigitalTwin3D({ onSignalChange }) {
+export default function CityDigitalTwin3D() {
 
   const canvasRef = useRef(null);
   const [viewMode, setViewMode] = useState('iso'); // 'iso' (3D Isometric) or 'top' (2D CAD Topographic)
   const [showHeatmap, setShowHeatmap] = useState(true);
-  const [showEmergency, setShowEmergency] = useState(true);
-  const [showCorridorVectors, setShowCorridorVectors] = useState(true);
   const [isSimulating, setIsSimulating] = useState(true);
   
   // Adaptive Traffic Signal Controller State
@@ -36,7 +26,6 @@ export default function CityDigitalTwin3D({ onSignalChange }) {
   const [preemptionActive, setPreemptionActive] = useState(false);
   const [activeSignalPhase, setActiveSignalPhase] = useState('North-South Inflow');
   const [signalCountdown, setSignalCountdown] = useState(18);
-  const [selectedNode, setSelectedNode] = useState(null);
 
   // Fetch real signals from backend on mount
   useEffect(() => {
@@ -370,7 +359,7 @@ export default function CityDigitalTwin3D({ onSignalChange }) {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
     };
-  }, [viewMode, showHeatmap, showEmergency, isSimulating, preemptionActive, activeSignalPhase, signalCountdown]);
+  }, [viewMode, showHeatmap, isSimulating, preemptionActive, activeSignalPhase, signalCountdown]);
 
   return (
     <div className="border border-brand-dark-gray/40 bg-brand-black p-4 mb-6">

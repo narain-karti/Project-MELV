@@ -70,7 +70,7 @@ export default function CameraHoverPreview({ previewData }) {
 
   const fallbackVideoSrc = camId === 'CAM-02' 
     ? '/videos/cam_02_annotated.mp4' 
-    : (camId === 'CAM-01' ? '/videos/cam_01_annotated.mp4' : '/cctv.mp4');
+    : '/videos/cam_01_annotated.mp4';
 
   return (
     <div

@@ -71,12 +71,24 @@ app.add_middleware(
 # =============================================================================
 # REAL-TIME CCTV VIDEO STREAMING MANAGER (THREADED OPENCV INFERENCE ENGINE)
 # =============================================================================
+_global_engine: Optional[TrafficVisionEngine] = None
+_engine_lock = threading.Lock()
+
+def get_shared_vision_engine() -> TrafficVisionEngine:
+    global _global_engine
+    if _global_engine is None:
+        with _engine_lock:
+            if _global_engine is None:
+                _global_engine = TrafficVisionEngine()
+    return _global_engine
+
+
 class CCTVStreamManager:
-    def __init__(self, video_path: str, camera_id: str = "CAM-01", shared_engine: Optional[TrafficVisionEngine] = None):
+    def __init__(self, video_path: str, camera_id: str = "CAM-01"):
         self.video_path = video_path
         self.camera_id = camera_id
-        self.shared_engine = shared_engine
         self.lock = threading.Lock()
+        self.active_viewers = 0
         self.latest_frame_jpeg = None
         self.latest_metrics = {
             'active_density': 0,
@@ -101,16 +113,8 @@ class CCTVStreamManager:
         print(f"[STREAM-{self.camera_id}] Background video worker started on: {self.video_path}")
 
     def _worker_loop(self):
-        # If secondary stream, wait up to 6 seconds for cam1 engine to load models
-        if self.shared_engine is None and self.camera_id != "CAM-01":
-            for _ in range(30):
-                if 'stream_mgr_cam1' in globals() and stream_mgr_cam1 and stream_mgr_cam1.engine:
-                    self.shared_engine = stream_mgr_cam1.engine
-                    break
-                time.sleep(0.2)
-
         try:
-            self.engine = TrafficVisionEngine(shared_engine=self.shared_engine)
+            self.engine = get_shared_vision_engine()
         except Exception as e:
             print(f"[STREAM-{self.camera_id} ERROR] Engine initialization failed: {e}")
             return
@@ -119,6 +123,13 @@ class CCTVStreamManager:
         frame_idx = 0
 
         while self.running:
+            is_viewed = (self.active_viewers > 0)
+
+            # Secondary cameras with 0 viewers sleep to conserve CPU
+            if not is_viewed and self.camera_id != "CAM-01":
+                time.sleep(0.5)
+                continue
+
             ret, frame = cap.read()
             if not ret or frame is None:
                 cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -126,17 +137,23 @@ class CCTVStreamManager:
                 continue
 
             frame_idx += 1
-            # Run true YOLO + ByteTrack + ANPR frame-baking pipeline
+
+            # When camera is not actively watched, sample periodically for telemetry only
+            if not is_viewed:
+                # Fast forward occasionally for natural telemetry variety
+                total_f = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 100)
+                cap.set(cv2.CAP_PROP_POS_FRAMES, (frame_idx * 12) % max(1, total_f))
+
+            # Run YOLO + ByteTrack + ANPR frame-baking pipeline
             try:
                 annotated_frame, metrics, detected_plates = self.engine.process_frame(frame, frame_idx=frame_idx)
             except Exception as e:
-                print(f"[STREAM-{self.camera_id} ERROR] Process frame {frame_idx} error: {e}")
                 annotated_frame = frame
                 metrics = self.latest_metrics
                 detected_plates = []
 
             # Encode frame to JPEG
-            ret, jpeg = cv2.imencode('.jpg', annotated_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
+            ret, jpeg = cv2.imencode('.jpg', annotated_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 75])
             if ret:
                 with self.lock:
                     self.latest_frame_jpeg = jpeg.tobytes()
@@ -184,17 +201,16 @@ class CCTVStreamManager:
                                 if len(self.recent_alerts) > 15:
                                     self.recent_alerts.pop(0)
 
-            # Cap frame rate to ~25 FPS to conserve CPU
-            time.sleep(0.04)
+            # High-FPS when watched (~25 FPS), eco-mode when idle (1.2s)
+            if is_viewed:
+                time.sleep(0.04)
+            else:
+                time.sleep(1.2)
 
         cap.release()
 
 
-DEFAULT_SANDBOX_VIDEO = os.path.join(BASE_DIR, "backend", "data", "sandbox_default.mp4")
-if not os.path.exists(DEFAULT_SANDBOX_VIDEO):
-    DEFAULT_SANDBOX_VIDEO = os.path.join(BASE_DIR, "13002160_1920_1080_60fps.mp4")
-if not os.path.exists(DEFAULT_SANDBOX_VIDEO):
-    DEFAULT_SANDBOX_VIDEO = os.path.join(BASE_DIR, "frontend", "public", "videos", "traffic_analysis.mp4")
+DEFAULT_SANDBOX_VIDEO = os.path.join(BASE_DIR, "frontend", "public", "videos", "traffic_analysis.mp4")
 if not os.path.exists(DEFAULT_SANDBOX_VIDEO):
     DEFAULT_SANDBOX_VIDEO = DEFAULT_VIDEO_PATH
 
@@ -248,21 +264,28 @@ def health():
 
 def mjpeg_frame_generator(stream_mgr: CCTVStreamManager):
     """Yields continuous multipart JPEG frames from the shared buffer."""
-    # Wait up to 4 seconds for initial frame if engine is starting
-    for _ in range(40):
-        with stream_mgr.lock:
-            if stream_mgr.latest_frame_jpeg is not None:
-                break
-        time.sleep(0.1)
+    with stream_mgr.lock:
+        stream_mgr.active_viewers += 1
 
-    while True:
-        with stream_mgr.lock:
-            frame_bytes = stream_mgr.latest_frame_jpeg
+    try:
+        # Wait up to 3 seconds for initial frame if engine is starting
+        for _ in range(30):
+            with stream_mgr.lock:
+                if stream_mgr.latest_frame_jpeg is not None:
+                    break
+            time.sleep(0.1)
 
-        if frame_bytes is not None:
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-        time.sleep(0.04)  # ~25 FPS
+        while True:
+            with stream_mgr.lock:
+                frame_bytes = stream_mgr.latest_frame_jpeg
+
+            if frame_bytes is not None:
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+            time.sleep(0.04)  # ~25 FPS
+    finally:
+        with stream_mgr.lock:
+            stream_mgr.active_viewers = max(0, stream_mgr.active_viewers - 1)
 
 
 @app.get("/api/stream/cctv")
@@ -777,6 +800,7 @@ def api_get_challan(challan_no: str):
 def api_update_alert_status(req: AlertStatusUpdateRequest):
     """Updates status of an active incident in the persistent SQLite store."""
     update_alert_status(req.alert_id, req.status)
+    return {"success": True, "alert_id": req.alert_id, "status": req.status}
 class SendAlertRequest(BaseModel):
     type: str
     confidence: float

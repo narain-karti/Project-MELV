@@ -20,7 +20,7 @@ import {
   CheckCircle2,
   AlertTriangle
 } from 'lucide-react';
-import { ActionModal } from '../App';
+import ActionModal from '../components/common/ActionModal';
 import CameraHoverPreview from '../components/common/CameraHoverPreview';
 import { getApiUrl } from '../utils/apiConfig';
 
