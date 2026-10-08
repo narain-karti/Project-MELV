@@ -16,6 +16,7 @@ export default function CityDigitalTwin3D() {
   const canvasRef = useRef(null);
   const [viewMode, setViewMode] = useState('iso'); // 'iso' (3D Isometric) or 'top' (2D CAD Topographic)
   const [showHeatmap, setShowHeatmap] = useState(true);
+  const [showEmergency, setShowEmergency] = useState(true);
   const [isSimulating, setIsSimulating] = useState(true);
   
   // Adaptive Traffic Signal Controller State
@@ -359,7 +360,7 @@ export default function CityDigitalTwin3D() {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
     };
-  }, [viewMode, showHeatmap, isSimulating, preemptionActive, activeSignalPhase, signalCountdown]);
+  }, [viewMode, showHeatmap, showEmergency, isSimulating, preemptionActive, activeSignalPhase, signalCountdown]);
 
   return (
     <div className="border border-brand-dark-gray/40 bg-brand-black p-4 mb-6">
