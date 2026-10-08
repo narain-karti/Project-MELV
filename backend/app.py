@@ -193,6 +193,10 @@ class CCTVStreamManager:
 DEFAULT_SANDBOX_VIDEO = os.path.join(BASE_DIR, "backend", "data", "sandbox_default.mp4")
 if not os.path.exists(DEFAULT_SANDBOX_VIDEO):
     DEFAULT_SANDBOX_VIDEO = os.path.join(BASE_DIR, "13002160_1920_1080_60fps.mp4")
+if not os.path.exists(DEFAULT_SANDBOX_VIDEO):
+    DEFAULT_SANDBOX_VIDEO = os.path.join(BASE_DIR, "frontend", "public", "videos", "traffic_analysis.mp4")
+if not os.path.exists(DEFAULT_SANDBOX_VIDEO):
+    DEFAULT_SANDBOX_VIDEO = DEFAULT_VIDEO_PATH
 
 # Instantiate stream managers for cameras
 stream_mgr_cam1 = CCTVStreamManager(DEFAULT_VIDEO_PATH, "CAM-01")
@@ -773,7 +777,39 @@ def api_get_challan(challan_no: str):
 def api_update_alert_status(req: AlertStatusUpdateRequest):
     """Updates status of an active incident in the persistent SQLite store."""
     update_alert_status(req.alert_id, req.status)
-    return {"success": True, "alert_id": req.alert_id, "status": req.status}
+class SendAlertRequest(BaseModel):
+    type: str
+    confidence: float
+    location: str
+    force: Optional[bool] = False
+
+
+@app.post("/api/send-alert")
+def api_send_alert(req: SendAlertRequest):
+    """Dispatches real-time incident alert from Project-K video analysis feed."""
+    now = time.time()
+    now_str = time.strftime("%H:%M:%S IST", time.localtime(now))
+    alert_id = f"ALT-2026-{int(now * 1000) % 100000:05d}"
+    alert_dict = {
+        "id": alert_id,
+        "type": req.type.upper(),
+        "severity": "CRITICAL" if req.type.lower() == "accident" else "WARNING",
+        "plate": "EMERGENCY-AI",
+        "vehicle": "Project-K Edge Video Analysis",
+        "camera_id": "PROJECT-K-FEED",
+        "location": req.location,
+        "timestamp": now_str,
+        "details": f"Autonomous Edge Detection: {req.type.upper()} ({req.confidence * 100:.1f}% confidence)",
+        "status": "DISPATCH_NOTIFIED",
+        "confidence": float(req.confidence),
+        "created_epoch": now
+    }
+    insert_alert(alert_dict)
+    return {
+        "status": "success",
+        "message": f"Incident alert {req.type} ({req.confidence * 100:.1f}%) logged and dispatched.",
+        "alert": alert_dict
+    }
 
 
 if __name__ == "__main__":

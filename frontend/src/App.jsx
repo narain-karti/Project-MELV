@@ -11,6 +11,7 @@ import AlertsManagementPage from './pages/AlertsManagementPage';
 import EdgeNetworkPage from './pages/EdgeNetworkPage';
 import TacticalVisionLabPage from './pages/TacticalVisionLabPage';
 import ArchitecturePage from './pages/ArchitecturePage';
+import DualAiVisionDemoPage from './pages/DualAiVisionDemoPage';
 import { ArrowLeft, Menu, X } from 'lucide-react';
 
 const ROUTE_MAP = {
@@ -23,6 +24,7 @@ const ROUTE_MAP = {
   alerts: '/alerts',
   network_status: '/edge-network',
   architecture: '/architecture',
+  dual_ai_vision: '/dual-ai-vision',
 };
 
 const TAB_FROM_PATH = Object.fromEntries(
@@ -38,6 +40,7 @@ const NAV_ITEMS = [
   { id: 'alerts', label: '[05] Alerts', path: '/alerts' },
   { id: 'network_status', label: '[06] Edge Network', path: '/edge-network' },
   { id: 'architecture', label: '[07] Architecture', path: '/architecture' },
+  { id: 'dual_ai_vision', label: '[08] Dual-AI Vision', path: '/dual-ai-vision' },
 ];
 
 // Syncs route with TrackingContext when route changes
@@ -222,6 +225,8 @@ function InternalLayout() {
           <Route path="/alerts" element={<AlertsManagementPage />} />
           <Route path="/edge-network" element={<EdgeNetworkPage />} />
           <Route path="/architecture" element={<ArchitecturePage />} />
+          <Route path="/dual-ai-vision" element={<DualAiVisionDemoPage />} />
+          <Route path="/demo" element={<DualAiVisionDemoPage />} />
           <Route path="*" element={<Navigate to="/vision-lab" replace />} />
         </Routes>
       </main>

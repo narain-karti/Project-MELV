@@ -4,8 +4,8 @@
 
 @layer base {
   html {
-    font-size: 17.6px;
-    zoom: 1.1;
+    font-size: 16px;
+    zoom: 1.0;
     overflow-x: hidden;
     max-width: 100%;
     width: 100%;
